@@ -1,0 +1,175 @@
+<nav class="navbar">
+      <div class="logo">
+            <p><span class="logo-highlight">O</span>RBIT</p>
+      </div>
+
+      <div class="nav-links">
+            <ul>
+                  <li (click)="goToAbout()"><a routerLink="/about">About Us</a></li>
+                  <li (click)="goToServices()">Our Services</li>
+                  <li (click)="goToContact()">Contact Us</li>
+            </ul>
+      </div>
+
+      <div class="cta-button">
+            <button (click)="myfunc()">Sign Up Free</button>
+      </div>
+</nav>
+
+<div class="hero-section">
+      <div id="div1">
+            <h2 class="px-2 border border-white-900 rounded-full ml-8 ">about us</h2>
+            <br>
+            <h1>We’re Orbit <span>👋</span></h1>
+            <br>
+            <p>A forward-thinking team transforming how learning happens online. Our mission is simple: to make virtual
+                  classrooms seamless, engaging, and accessible for everyone.
+
+                  Born from the idea that education should have no boundaries, Orbit combines technology, design, and a
+                  learner-first approach to create classrooms that inspire.
+
+                  At Orbit, we’re not just building software — we’re creating a space where knowledge can orbit freely
+                  around the globe 🌍✨.</p>
+      </div>
+      <div id="div2">
+            <img src="https://www.vidyard.com/wp-content/themes/vidyard-website/img/pages/company/about-us/main-image.png.webp"
+                  alt="" width="50%" style="margin:0 auto;">
+      </div>
+
+
+</div>
+<div id="ourstory">
+      <div id="ourstory1">
+            <p>Our History</p>
+            <h1>The Story of Orbit</h1>
+            <h4>Orbit began as a simple idea: to bridge the gap between traditional classrooms and digital learning.
+                  What
+                  started as a small project has grown into a platform that makes education seamless, engaging, and
+                  accessible
+                  anywhere. Today, Orbit continues to evolve with one mission — shaping the future of learning through
+                  innovation and collaboration.</h4>
+
+      </div>
+      <div id="ourstory2">
+            <div id="ourstory2-1">
+                  <div class="image-container">
+                        <!-- Decorative elements -->
+                        <div class="circle-decoration circle-1"></div>
+                        <div class="circle-decoration circle-2"></div>
+                        <div class="circle-decoration circle-3"></div>
+
+                        <!-- Connection lines -->
+                        <div class="connect-line line-1"></div>
+                        <div class="connect-line line-2"></div>
+                        <div class="connect-line line-3"></div>
+
+                        <!-- Images with captions -->
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                              alt="Team collaboration" class="story-img img1">
+                        <div class="img-caption caption-1">Our founding team</div>
+
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                              alt="Online learning" class="story-img img2">
+                        <div class="img-caption caption-2">First product launch</div>
+
+                        <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                              alt="Creative thinking" class="story-img img3">
+                        <div class="img-caption caption-3">Innovation workshop</div>
+
+                        <img src="https://images.unsplash.com/photo-1522881193457-37ae97c905bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                              alt="Technology in education" class="story-img img4">
+                        <div class="img-caption caption-4">Global expansion</div>
+                  </div>
+            </div>
+            <div id="ourstory2-2">
+                  <h2>Shaping the Future of Learning</h2>
+                  <p>
+                        Orbit began as a dream to make education truly borderless.
+                        In the early days, our small team worked tirelessly to bridge the gap between traditional
+                        classrooms and digital spaces.
+                        What started as an experiment quickly grew into a platform built on innovation and passion.
+                        We listened to teachers who wanted tools that were simple yet powerful.
+                        We connected with students who needed a more engaging way to learn.
+                        Step by step, Orbit evolved into more than just software — it became a community.
+                        A space where creativity thrives and collaboration has no limits.
+                        Every milestone, from our first launch to global adoption, has shaped our journey.
+                        Today, Orbit continues to grow, fueled by feedback and the vision to inspire.
+                        And this is just the beginning — our story is still being written.
+                  </p>
+            </div>
+
+
+
+      </div>
+
+
+</div>
+<!-- <section class="mission-vision">
+      <div class="mv-container">
+            <h2 style="font-size: 2rem;background:none;">{{ missionVisionData.title }}</h2>
+            <p class="mv-intro" [innerHTML]="missionVisionData.intro"></p>
+
+            <div class="mv-cards">
+                  <div class="mv-card" *ngFor="let card of missionVisionData.cards">
+                        <i [class]="card.icon"></i>
+                        <h3>{{ card.title }}</h3>
+                        <p>{{ card.description }}</p>
+                  </div>
+            </div>
+      </div>
+</section> -->
+<section class="our-values">
+      <div class="values-container">
+            <h2 style="background:none">{{ valuesData.title }}</h2>
+            <!-- <p class="values-intro text-center mx-16">{{ valuesData.intro }}</p> -->
+            <br>
+            <p style="text-align: center;color:#000a45">The principles that guide us as we build Orbit.</p>
+            <br>
+            <div class="values-grid">
+                  <div class="value-card" *ngFor="let value of valuesData.values">
+                        <div class="value-icon">
+                              <i [class]="value.icon"></i>
+                        </div>
+                        <h3>{{ value.title }}</h3>
+                        <p>{{ value.description }}</p>
+                  </div>
+            </div>
+      </div>
+</section>
+<div id="meetourteam">
+      <h1
+            style="color: #000a45;font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;text-align: center;">
+            A team of real people</h1>
+      <p style="color:#000a45;width:60%;text-align: center;margin:0 auto;font-weight: 200;">W’re committed to building a
+            diverse
+            team and a
+            work environment that’s
+            inclusive of
+            people of all backgrounds.
+            Get to know the wonderful team who’s building our product, supporting our customers, and creating
+            educational content.</p>
+      <div id="team">
+            <div *ngFor="let item of members" class="memb">
+                  <img [src]="item.img">
+                  <p>{{ item.name }}</p>
+                  <h2>{{item.role}}</h2>
+                  <h3>{{item.place}},<span>{{item.Country}}</span></h3>
+                  <i class="fas fa-arrow-right" style="margin-left:9rem;margin-top:1rem" id="arr"></i>
+            </div>
+      </div>
+</div>
+<div class="bg-gray-50 py-6 text-center">
+      <div class="bg-gray-50 py-6 text-center">
+            <h3 class="text-xl text-gray-700 font-medium mb-2 flex justify-center items-center gap-2">
+                  <i class="fas fa-graduation-cap text-gray-400"></i>
+                  Learning, Together with Orbit
+            </h3>
+            <h4 class="text-gray-500 text-lg max-w-xl mx-auto">
+                  Orbit connects teachers and students in a seamless virtual classroom.
+                  With powerful tools like live video, digital whiteboards, and resource sharing,
+                  we make online learning collaborative, engaging, and effective.
+            </h4>
+      </div>
+
+      <img src="https://res.cloudinary.com/dnevq4wek/image/upload/v1758780141/412af0a9-6da1-4aa7-9346-7096163dd0db_vgmw8p.png"
+            alt="">

@@ -1,0 +1,125 @@
+<!-- This div is for formating and centering of a div  -->
+<div id="main-container">
+      <!-- this div is used for holding two divs one is for branding and another div is for login from user -->
+      <div id="auth-container">
+            <!-- this div is for branding and some animations -->
+            <div id="animationleftdiv">
+
+                  <div class="inner" style="border-right:1px solid white;border-bottom:1px solid white">
+                        <p style="color:orange">ORBIT</p>
+                        <br>
+                        <p style="display:block;margin-left:5%">Face the Future. Learn in Real Time.</p>
+
+
+                        <img src="https://res.cloudinary.com/dnevq4wek/image/upload/v1757005970/conference-call-17675757-unscreen_lbp3du.gif"
+                              width="50%" height="50%" alt="" style="margin:0 auto;margin-left:20%">
+
+                  </div>
+                  <div class="inner" style="border-bottom:1px solid white">
+
+                        <p style="display:block;margin-left:10%;text-align: justify;margin-top:20%">- Summarize. Speak.
+                              Solve. With AI
+
+                        </p>
+                        <img src="https://res.cloudinary.com/dnevq4wek/image/upload/v1757010882/artificial-intelligence-175564-unscreen_hvwitv.gif"
+                              alt="" width="45%" height="50%" alt=""
+                              style="margin:0 auto;margin-top: 5%;margin-left:30%">
+                  </div>
+                  <div class="inner" style="border-right:1px solid white">
+                        <p style="display:block;margin-left:5%;margin-top: 10%;">Your Face Is the Passcode to
+                              Possibility.</p>
+                        <br>
+                        <img src="https://res.cloudinary.com/dnevq4wek/image/upload/v1757011486/face-scan-7920844-unscreen_of0eox.gif"
+                              alt="" width="45%" height="50%" alt="" style="margin-left:20%;margin-top: 5%;">
+                  </div>
+                  <div class="inner">
+                        <p style="display:block;margin-left:10%;margin-top: 10%;">Learning Is Better When Shared.</p>
+                        <br>
+                        <img src="https://res.cloudinary.com/dnevq4wek/image/upload/v1757011274/mentor-16678465-unscreen_c3lceu.gif"
+                              alt="" width="45%" height="50%" alt=""
+                              style="margin:0 auto;margin-top: 5%;margin-left:25%">
+                  </div>
+
+            </div>
+            <!-- This div is for login container and authentication from user -->
+            <div id="authcon1">
+                  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                        <label>Full Name: </label>
+                        <br>
+                        <input type="text" formControlName="fullName" placeholder="Enter Your Full Name: ">
+                        <br>
+                        <div *ngIf="loginForm.get('fullName')?.touched && loginForm.get('fullName')?.invalid"
+                              class="error">
+                              <small *ngIf="loginForm.get('fullName')?.errors?.['required']">Full Name is
+                                    Required</small>
+                              <small *ngIf="loginForm.get('fullName')?.errors?.['minlength']">Full Name is invalid.
+                                    Please enter a valid name.</small>
+                        </div>
+                        <br>
+                        <label>Email-id: </label>
+                        <br>
+                        <input type="email" formControlName="email">
+                        <br>
+                        <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="error">
+                              <small *ngIf="loginForm.get('email')?.errors?.['required']">Please Enter Your Email-Id. It
+                                    is Required</small>
+                              <small *ngIf="loginForm.get('email')?.errors?.['email']">Please Enter a Valid
+                                    Email-Id</small>
+                        </div>
+                        <br>
+                        <!-- Role selection -->
+                        <label>Role</label>
+                        <select formControlName="role">
+                              <option value="student">Student</option>
+                              <option value="teacher">Teacher</option>
+                        </select>
+                        <!-- Role validation errors -->
+                        <div *ngIf="loginForm.get('role')?.touched &&loginForm.get('role')?.invalid" class="error">
+                              <small *ngIf="loginForm.get('role')?.errors?.['required']">Role is required.</small>
+                        </div>
+                        <label>Password: </label>
+                        <br>
+                        <input type="password" formControlName="password">
+                        <br>
+                        <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+                              class="error">
+                              <small *ngIf="loginForm.get('password')?.errors?.['required']">Password is
+                                    Required</small>
+                        </div>
+                        <hr style="width:100%" />
+                        <!-- Photo capture section -->
+                        <div class="photo-section">
+                              <!-- Photo section heading -->
+                              <p style="font-weight:400;color:#0f346c;margin-left:12%"><strong>Photo</strong> (use
+                                    webcam
+                                    or upload)</p>
+                              <br>
+                              <!-- Video preview and capture -->
+                              <div class="video-area">
+                                    <video #video autoplay playsinline muted></video>
+                                    <canvas #canvas hidden></canvas>
+                              </div>
+                              <!-- Photo controls for webcam -->
+                              <div class="photo-controls">
+                                    <button type="button" (click)="startCamera()">Start Camera</button>
+                                    <button type="button" (click)="capturePhoto()">Capture Photo</button>
+                                    <button type="button" (click)="stopCamera()">Stop Camera</button>
+                              </div>
+                              <!-- File upload for photo -->
+                              <p>Or upload a file:</p>
+                              <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" />
+                              <!-- Preview of captured or uploaded image -->
+                              <div class="preview" *ngIf="capturedImage">
+                                    <p style="font-weight:400;color:#0f346c">Preview:</p>
+                                    <br>
+                                    <img [src]="capturedImage" alt="captured photo" />
+                              </div>
+                        </div>
+                        <button type="submit">Join Class</button>
+
+                  </form>
+
+            </div>
+      </div>
+
+</div>

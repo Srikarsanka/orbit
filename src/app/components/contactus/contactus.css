@@ -1,0 +1,304 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  height:8vh;
+  width: 100vw;
+  position: fixed;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+  z-index: 100;
+}
+ 
+.logo p {
+  font-size: 2rem;
+  font-weight: 500;
+  color: #000a45;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.logo-highlight {
+  font-size: 3rem;
+  color: rgb(255, 126, 79);
+  font-weight: 400;
+}
+
+.nav-links ul {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #0f346c;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  margin-top:0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.nav-links li:hover {
+  transform: scale(1.1);
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.cta-button button {
+  background-color: #0f346c;
+  color: whitesmoke;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button button:hover {
+  background-color:white;
+  border:1px solid #000a45;
+  color:#0f346c;
+}
+#hero
+{
+      width:100vw;
+      height:90vh;
+      margin-top:3.8rem
+     
+}
+#hero1
+{
+      width:100vw;
+      height:65vh;
+      background-color: #000a45;
+      h1{
+            font-size:3rem;
+            font-weight: 500;
+            color:white;font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;text-align: center;
+      }
+
+      p{
+            color:white;
+            font-size:1.5rem;
+            text-align: center;
+
+      }
+      
+}
+#hero2 {
+    width: 80vw;
+     border-radius: 2rem;
+    height: 50vh;
+    z-index: 5;
+    background-color: #ffffff;
+    position: relative;
+    margin: 0 auto;
+    top: -230px;
+    border: 1px white solid;
+    display: flex;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+#hero2 .he {
+    
+    width: 25%;
+    height: 100%;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 2rem;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#hero .he .he-1
+{
+  width:90%;
+  height:90%;
+  border-radius: 2rem;
+  margin-left:-1.5rem;
+  background-color: lavender;
+}
+
+#hero2 .he1 {
+    width: 75%;
+    height: 100%;
+    border-radius: 2rem;
+    border: 1px solid white;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    display: flex;
+       display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#hero2 .he1-1 {
+    flex: 1; /* This makes all .he1-1 divs equal width */
+    padding: 1rem;
+    background-color: lavender;
+    height:90%;
+    width:90%; 
+    margin-left:-2rem;
+    display: flex;
+   border-radius: 0.5rem;
+    box-sizing: border-box;
+}
+
+/* Optional: Remove border-right from the last child for cleaner appearance */
+#hero2 .he1-1:last-child {
+    border-right: none;
+    border-radius: 2rem;
+}
+#hero2 .he span {
+    position: absolute;
+    top: 8%;
+    left: 12.5%;
+    transform: translate(-50%, -50%);
+    background: rgb(79, 157, 1);
+    color:white;
+    padding: 0.5rem 0.5rem;
+    
+    /* border-radius: 1rem; */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+#hero2 .he1 #span1 {
+    position: absolute;
+    top: 8%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    background:orangered;
+
+    color:white;
+    padding: 0.5rem 0.5rem;
+    /* border-radius: 1rem; */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+#hero .he1 .he1-2{
+  width:35%;
+  height:100%;
+  border-right: 1px solid gray;
+}
+#hero2 p{
+  width:80%;
+  font-size: 1rem;
+  color:#000a45;
+  margin: 0 auto;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+#hero2 a{
+  width:80%;
+  font-size: 1.2rem;
+  color:rgb(38, 175, 230);
+  text-decoration: underline;
+  text-align: center;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+/* for gif div*/
+#gif
+{
+  width:100vw;
+  height:80vh;
+
+  display:flex;
+  justify-content: space-between;
+}
+#gif #gif-1 {
+   width: 50%;
+   height: 100%;
+
+   display: flex;
+   justify-content: center;
+   align-items: center;
+
+   video{
+    width:60%;
+    height:60%;
+    
+   }
+}
+
+#gif #gif-2
+{
+   width:50%;
+   height:100%;
+ 
+    p{
+      text-transform: uppercase;
+      color: rgb(79, 157, 1);
+      font-weight: 600;
+      font-size:small;
+      letter-spacing: 1px;
+      /* margin-top: 3rem; */
+    
+    }
+
+    h2{
+      font-size: 2rem;
+      font-weight: 500;
+      width: 60%;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      /* text-align: justify; */
+    }
+    h3{
+      width:50%;
+      font-size:medium;
+    }
+  
+   
+}
+/* the below code is for the existing user divs*/
+#exists
+{
+  width:80vw;
+  margin: 0 auto;
+  height:90vh;
+  /* border:1px solid red; */
+  display:flex;
+  background-color:white
+}
+#exists #exists-left
+{
+  width:50%;
+  border-right:1px solid gray;
+  height:100%;
+
+}
+#exists #exists-right
+{
+  width:50%;
+  height:100%;
+}
+/*generalqueries*/
+#general
+{
+  width:98vw;
+  height:90vh;
+  background-color: #000a45;
+  border:1px solid black;
+
+}
+
+@keyframes loves {
+  0% {
+    transform: translateY(-1px) scale(1);
+  }
+  100% {
+    transform: translateY(1px) scale(1.1);
+  }
+}
+#love {
+  animation: loves 2s linear infinite;
+}

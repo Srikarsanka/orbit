@@ -1,0 +1,142 @@
+<nav class="navbar">
+      <div class="logo">
+            <p><span class="logo-highlight">O</span>RBIT</p>
+      </div>
+
+      <div class="nav-links">
+            <ul>
+                  <li (click)="goToAbout()"><a routerLink="/about">About Us</a></li>
+                  <li (click)="goToServices()">Our Services</li>
+                  <li (click)="goToContact()">Contact Us</li>
+            </ul>
+      </div>
+
+      <div class="cta-button">
+            <button (click)="myfunc()">Sign Up Free</button>
+      </div>
+</nav>
+<div id="hero">
+      <div id="hero1">
+            <br>
+            <h1>Looking for something in particular?</h1>
+            <br>
+            <p>We're here to help.</p>
+            <br>
+            <hr style="width:50px;margin:0 auto">
+
+      </div>
+      <div id="hero2">
+            <div class="he">
+                  <span>I'm new here</span>
+                  <div class="he-1">
+                        <img src="https://res.cloudinary.com/dnevq4wek/image/upload/v1757616375/call-removebg-preview_gk6ftz.png"
+                              alt="" style="margin-top: 1rem;margin:1.5rem auto;">
+                        <p>Looking for a demo, or have questions about our products and pricing?</p>
+                        <br>
+                        <a href="" style="margin-left: 3.5rem;margin-top:1rem;">sales@orbit.com</a>
+                  </div>
+            </div>
+            <div class="he1">
+                  <span id="span1">Existing User</span>
+                  <div class="he1-1">
+                        <div class="he1-2"><img
+                                    src="https://res.cloudinary.com/dnevq4wek/image/upload/v1757616446/upgrade-removebg-preview_di1odf.png"
+                                    alt="" style="margin-top: 1rem;margin:1.5rem auto;height:60px">
+                              <p>
+                                    Need help with adding licenses, changing plans, or additional services?</p>
+                              <br>
+                              <a href="" style="margin-left: 3.5rem;margin-top:1rem;">upgrade@orbit.com</a>
+                        </div>
+                        <div class="he1-2"><img
+                                    src="https://res.cloudinary.com/dnevq4wek/image/upload/v1757617384/time-removebg-preview_ekythc.png"
+                                    alt="" style="margin-top: 1rem;margin:1.5rem auto;height:60px">
+                              <p>Want to renew your subscription or need details about your current plan?</p><br><a
+                                    href="" style="margin-left: 3.5rem;margin-top:1rem;">renewal@orbit.com</a>
+                        </div>
+                        <div class="he1-2" style="border-right:0;"><img
+                                    src="https://res.cloudinary.com/dnevq4wek/image/upload/v1757617897/cancel-removebg-preview_wdwxbp.png"
+                                    alt="" style="margin-top: 1rem;margin:1.5rem auto;height:50px">
+                              <p>Need to cancel or downgrade your subscription? We're sad to see you go, but ready to
+                                    help.</p>
+                              <br>
+                              <a href="" style="margin-left: 3.5rem;margin-top:2rem;">cancelation@orbit.com</a>
+                        </div>
+                  </div>
+            </div>
+      </div>
+
+
+
+</div>
+<!-- The below code is for gif and some matter -->
+<div id="gif">
+      <div id="gif-1">
+            <video [src]="videoUrl" autoplay loop muted></video>
+
+      </div>
+      <div id="gif-2">
+            <br><br><br><br>
+            <p>I’m New Here</p>
+            <br>
+            <h2>
+                  Find your way around the Virtual Classroom with our Guide
+            </h2>
+            <br>
+            <h3>Not sure how to get started? No worries. We’ll walk you through the platform and help you understand the
+                  features that best suit your role—whether you’re a faculty member hosting classes or a student
+                  attending them.</h3>
+            <br>
+            <button class="border border-blue-900 py-2 px-2 hover:bg-blue-900 hover:text-white">Get In Touch <i
+                        class="fas fa-angle-right  ml-2 " id="arrow"></i></button>
+      </div>
+
+</div>
+<!-- The below code is for existing customers -->
+<div id="exists" class="rounded-lg border">
+      <div id="exists-left">
+            <img src="https://res.cloudinary.com/dnevq4wek/image/upload/v1757782359/zh-technical-support_thxw1x.png"
+                  alt="" class="ml-32 mt-16" width="25%">
+            <br>
+            <p class="uppercase text-sm ml-32 text-green-800">Existing Customer</p>
+            <br>
+            <h2 class="ml-32 text-4xl ">Visit our help forum for technical support</h2>
+            <br>
+            <h3 class="ml-32 text-lg w-1/2 text-justify">Having trouble using the Orbit Virtual Classroom?
+                  Browse our guides, tutorials, and FAQs, or reach out to our support team for quick assistance.</h3>
+            <br>
+            <button class="border border-blue-900 py-2 px-2 hover:bg-blue-900 hover:text-white ml-32 ">Talk Me to
+                  Help The Center
+                  <i class="fas fa-angle-right  ml-2 " id="arrow"></i></button>
+      </div>
+      <div id="exists-right">
+            <img src="https://res.cloudinary.com/dnevq4wek/image/upload/v1757782341/zh-raise-ticket_1_jxwi0y.png" alt=""
+                  class="ml-28 mt-16" width="25%">
+            <br>
+            <p class="uppercase text-sm ml-28 text-green-800">Existing Customer</p>
+            <br>
+            <h2 class="ml-28 text-4xl w-1/2">Can’t find what you’re looking for?</h2>
+            <br>
+            <h3 class="ml-28 text-lg w-1/2 text-justify">Raise a ticket with Orbit Support and let us know what you need
+                  help with.
+                  Our team will be happy to guide you every step of the way.</h3>
+            <br>
+            <button class="border border-blue-900 py-2 px-2 hover:bg-blue-900 hover:text-white ml-28 mt-4">Submit To
+                  Request
+                  <i class="fas fa-angle-right  ml-2 " id="arrow"></i></button>
+      </div>
+</div>
+
+<div class="bg-gray-50 py-6 text-center">
+      <h3 class="text-xl text-gray-700 font-medium mb-2">You're in great company ❤</h3>
+      <p class="text-gray-500 text-lg max-w-xl mx-auto">
+            Thousands of educators and learners trust Orbit to power their virtual classrooms. We're honored to be part
+            of your journey.
+      </p>
+</div>
+<br><br>
+<img src="https://res.cloudinary.com/dnevq4wek/image/upload/v1758738443/zh-homev2-banner-india-3_qqtfro.webp" alt="">
+<!-- <div class="bg-white py-4">
+      <h2 class="text-center font-light tracking-wide" style="font-size: 4rem; color: #000a45;">
+            THANK YOU FOR CHOOSING ORBIT <span id="love" style="color: red;"></span>
+      </h2>
+</div> -->

@@ -1,0 +1,152 @@
+<!-- Main Container for centering divs -->
+<div id="main-container">
+      <!-- Auth container for signin and signup form -->
+      <div id="auth-container">
+            <!-- Animations div -->
+            <div id="animationleftdiv">
+                  <!-- ORBIT branding -->
+                  <p class="orbit-text">ORBIT</p>
+                  <!-- Tagline -->
+                  <div class="tagline">Transform Way of Learning</div>
+                  <!-- Rocket Animation Icons -->
+                  <i class="fa-solid fa-rocket rocket-cross"></i>
+                  <i class="fa-solid fa-rocket rocket-cross-1"></i>
+                  <!-- Graduation Cap Icons -->
+                  <i class="fa-solid fa-graduation-cap grad-cap-1"></i>
+                  <i class="fa-solid fa-graduation-cap grad-cap-2"></i>
+                  <!-- Laptop Icons -->
+                  <i class="fa-solid fa-laptop laptop-1"></i>
+                  <i class="fa-solid fa-laptop laptop-2"></i>
+                  <!-- Book Icon -->
+                  <i class="fa-solid fa-book-open book-float"></i>
+                  <!-- Lightbulb Icon -->
+                  <i class="fa-solid fa-lightbulb idea-bulb"></i>
+                  <!-- Floating Particles -->
+                  <div class="particle particle-1"></div>
+                  <div class="particle particle-2"></div>
+                  <div class="particle particle-3"></div>
+                  <div class="particle particle-4"></div>
+                  <div class="particle particle-5"></div>
+                  <!-- Orbiting Star -->
+                  <div class="orbit-container">
+                        <div class="orbit-path">
+                              <i class="fa-solid fa-star orbit-star"></i>
+                        </div>
+                  </div>
+            </div>
+            <!-- Authentication div where user can sign and signup -->
+            <div id="auth1con">
+                  <!-- Signup heading -->
+                  <h2 style="color:orange;font-weight:600;font-size:1.3rem;margin-left:20px">Create Account</h2>
+                  <br>
+                  <!-- Angular signup form -->
+                  <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate>
+                        <!-- Full Name input -->
+                        <label>Full Name: </label>
+                        <input type="text" formControlName="fullName" placeholder="Enter your full name">
+                        <!-- Full Name validation errors -->
+                        <div *ngIf="signupForm.get('fullName')?.touched && signupForm.get('fullName')?.invalid"
+                              class="error">
+                              <small *ngIf="signupForm.get('fullName')?.errors?.['required']">Full Name is
+                                    required.</small>
+                              <small *ngIf="signupForm.get('fullName')?.errors?.['minlength']">Full Name must be at
+                                    least 3 characters long.</small>
+                        </div>
+                        <br>
+                        <!-- Email input -->
+                        <label>Email-id: </label>
+                        <input type="email" formControlName="email" placeholder="Enter Your Email-id">
+                        <!-- Email validation errors -->
+                        <div *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.invalid" class="error">
+                              <small *ngIf="signupForm.get('email')?.errors?.['required']">Email is required.</small>
+                              <small *ngIf="signupForm.get('email')?.errors?.['email']">Please enter a valid email
+                                    address.</small>
+                        </div>
+                        <br>
+                        <!-- Date of Birth input -->
+                        <label>Date of Birth: </label>
+                        <input type="date" formControlName="dob" placeholder="Select your date of birth ">
+                        <!-- Date of Birth validation errors -->
+                        <div *ngIf="signupForm.get('dob')?.touched && signupForm.get('dob')?.invalid" class="error">
+                              <small *ngIf="signupForm.get('dob')?.errors?.['required']">Date of Birth is
+                                    required.</small>
+                        </div>
+                        <br>
+                        <!-- Contact Number input -->
+                        <label>Contact Number</label>
+                        <input type="tel" formControlName="contact" placeholder="Digits only" />
+                        <!-- Contact Number validation errors -->
+                        <div class="error"
+                              *ngIf="signupForm.get('contact')?.touched && signupForm.get('contact')?.invalid">
+                              <small *ngIf="signupForm.get('contact')?.errors?.['required']">Contact is
+                                    required.</small>
+                              <small *ngIf="signupForm.get('contact')?.errors?.['pattern']">Enter 10–15 digits.</small>
+                        </div>
+                        <br>
+                        <!-- Role selection -->
+                        <label>Role</label>
+                        <select formControlName="role">
+                              <option value="student">Student</option>
+                              <option value="teacher">Teacher</option>
+                        </select>
+                        <!-- Role validation errors -->
+                        <div *ngIf="signupForm.get('role')?.touched && signupForm.get('role')?.invalid" class="error">
+                              <small *ngIf="signupForm.get('role')?.errors?.['required']">Role is required.</small>
+                        </div>
+                        <br>
+                        <!-- Password input -->
+                        <label>Password</label>
+                        <input type="password" formControlName="password" />
+                        <!-- Password validation errors -->
+                        <div class="error"
+                              *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.invalid">
+                              <small *ngIf="signupForm.get('password')?.errors?.['required']">Password is
+                                    required.</small>
+                              <small *ngIf="signupForm.get('password')?.errors?.['minlength']">Minimum 6
+                                    characters.</small>
+                        </div>
+                        <!-- Confirm password input -->
+                        <label>Re-enter password</label>
+                        <input type="password" formControlName="confirmPassword" />
+                        <!-- Confirm password validation errors -->
+                        <div class="error"
+                              *ngIf="(signupForm.get('confirmPassword')?.touched || submitted) && signupForm.errors?.['passwordMismatch']">
+                              <small>Passwords do not match.</small>
+                        </div>
+                        <br>
+                        <hr style="width:100%" />
+                        <!-- Photo capture section -->
+                        <div class="photo-section">
+                              <!-- Photo section heading -->
+                              <p style="font-weight:400;color:#0f346c;margin-left:12%"><strong>Photo</strong> (use
+                                    webcam
+                                    or upload)</p>
+                              <br>
+                              <!-- Video preview and capture -->
+                              <div class="video-area">
+                                    <video #video autoplay playsinline muted></video>
+                                    <canvas #canvas hidden></canvas>
+                              </div>
+                              <!-- Photo controls for webcam -->
+                              <div class="photo-controls">
+                                    <button type="button" (click)="startCamera()">Start Camera</button>
+                                    <button type="button" (click)="capturePhoto()">Capture Photo</button>
+                                    <button type="button" (click)="stopCamera()">Stop Camera</button>
+                              </div>
+                              <!-- File upload for photo -->
+                              <p>Or upload a file:</p>
+                              <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" />
+                              <!-- Preview of captured or uploaded image -->
+                              <div class="preview" *ngIf="capturedImage">
+                                    <p style="font-weight:400;color:#0f346c">Preview:</p>
+                                    <br>
+                                    <img [src]="capturedImage" alt="captured photo" />
+                              </div>
+                        </div>
+                        <!-- Submit button -->
+                        <button type="submit">Sign Up</button>
+                  </form>
+                  <!-- End of form content -->
+            </div>
+      </div>
+</div>

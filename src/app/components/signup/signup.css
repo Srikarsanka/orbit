@@ -1,0 +1,491 @@
+/* Keyframes for fade-in and slide-up */
+        @keyframes fadeSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Keyframes for typing effect */
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blinkCaret {
+            0%, 100% { border-color: transparent }
+            50% { border-color: white }
+        }
+
+        /* Main container centers everything */
+        #main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 110vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Auth container with rounded edges */
+        #auth-container {
+            border: 3px solid rgb(255, 166, 0);
+            padding: 1.5rem 2rem;
+            width: 90%;
+            display: flex;
+            height: 90%;
+            border-radius: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Left animation panel with fade-in */
+        #animationleftdiv {
+            float: left;
+            width: 50%;
+            height: 100%;
+            border-radius: 2rem;
+            background: linear-gradient(135deg, #0f346c 0%, #1a4a9c 100%);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ORBIT text with enhanced animation */
+        .orbit-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: white;
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+            animation: fadeSlideUp 1s ease-out forwards;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .orbit-text::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ffa600, transparent);
+            animation: pulseLine 2s infinite;
+        }
+
+        @keyframes pulseLine {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Tagline styling */
+        .tagline {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 2rem;
+            animation: fadeSlideUp 1s ease-out 0.3s forwards;
+            opacity: 0;
+            font-weight: 300;
+        }
+
+        /* Button styling with entrance animation */
+    
+
+        /* Rocket Animation */
+        .rocket-cross {
+            font-size: 24px;
+            color: #ffffff;
+            position: absolute;
+            animation: rocketLaunch 15s linear infinite;
+            filter: drop-shadow(0 0 5px rgba(255, 166, 0, 0.8));
+        }
+
+        .rocket-cross-1 {
+            font-size: 20px;
+            color: #ffffff;
+            position: absolute;
+            animation: rocketLaunch2 18s linear infinite 3s;
+            filter: drop-shadow(0 0 5px rgba(0, 183, 255, 0.8));
+        }
+
+        @keyframes rocketLaunch {
+            0% {
+                top: 85%;
+                left: -5%;
+                transform: rotate(45deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            50% {
+                top: 30%;
+                left: 40%;
+                transform: rotate(0deg);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                top: -10%;
+                left: 90%;
+                transform: rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes rocketLaunch2 {
+            0% {
+                top: 90%;
+                left: 95%;
+                transform: rotate(-45deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            50% {
+                top: 40%;
+                left: 50%;
+                transform: rotate(10deg);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                top: -5%;
+                left: -5%;
+                transform: rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        /* Education Icons Styling and Animation */
+        .fa-graduation-cap, .fa-laptop, .fa-book-open, .fa-lightbulb {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.5rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .grad-cap-1 {
+            top: 25%;
+            left: 20%;
+            animation-delay: 0s;
+            font-size: 2rem;
+            color: #ffa600;
+        }
+
+        .grad-cap-2 {
+            top: 65%;
+            left: 75%;
+            animation-delay: 1s;
+            font-size: 1.8rem;
+        }
+
+        .laptop-1 {
+            top: 45%;
+            left: 15%;
+            animation-delay: 2s;
+            font-size: 2.2rem;
+            color: #4ecdc4;
+        }
+
+        .laptop-2 {
+            top: 20%;
+            left: 65%;
+            animation-delay: 3s;
+        }
+
+        .book-float {
+            top: 70%;
+            left: 25%;
+            animation-delay: 4s;
+            font-size: 1.7rem;
+            color: #ff6b6b;
+        }
+
+        .idea-bulb {
+            top: 50%;
+            left: 80%;
+            animation-delay: 5s;
+            font-size: 2rem;
+            color: #ffe66d;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.7;
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+                opacity: 1;
+            }
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: particleFloat 10s linear infinite;
+        }
+
+        .particle-1 {
+            width: 5px;
+            height: 5px;
+            top: 15%;
+            left: 30%;
+            animation-delay: 0s;
+            animation-duration: 15s;
+        }
+
+        .particle-2 {
+            width: 3px;
+            height: 3px;
+            top: 25%;
+            left: 60%;
+            animation-delay: 2s;
+            animation-duration: 12s;
+        }
+
+        .particle-3 {
+            width: 4px;
+            height: 4px;
+            top: 60%;
+            left: 40%;
+            animation-delay: 4s;
+            animation-duration: 18s;
+        }
+
+        .particle-4 {
+            width: 6px;
+            height: 6px;
+            top: 40%;
+            left: 80%;
+            animation-delay: 1s;
+            animation-duration: 14s;
+        }
+
+        .particle-5 {
+            width: 3px;
+            height: 3px;
+            top: 75%;
+            left: 50%;
+            animation-delay: 3s;
+            animation-duration: 16s;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(30px);
+                opacity: 0;
+            }
+        }
+
+        /* Orbiting Elements */
+        .orbit-container {
+            position: absolute;
+            top: 30%;
+            left: 70%;
+            width: 80px;
+            height: 80px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: orbitRotation 20s linear infinite;
+        }
+
+        .orbit-path {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .orbit-star {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffe66d;
+            font-size: 1.2rem;
+            animation: starPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes orbitRotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes starPulse {
+            0%, 100% { 
+                transform: translateX(-50%) scale(1);
+                opacity: 0.7;
+            }
+            50% { 
+                transform: translateX(-50%) scale(1.3);
+                opacity: 1;
+            }
+        }
+
+        /* Background elements for more depth */
+        .circle-bg {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .circle-bg-1 {
+            width: 200px;
+            height: 200px;
+            top: -50px;
+            left: -50px;
+        }
+
+        .circle-bg-2 {
+            width: 150px;
+            height: 150px;
+            bottom: -40px;
+            right: -40px;
+        }
+
+        /* Right auth panel */
+        #auth1con {
+            float: right;
+            width: 50%;
+            height: 100%;
+            overflow-y: AUTO;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+       }
+
+       #auth1con::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+        
+        /* src/app/signup/signup.component.css */
+/* Headings */
+h2 {
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+/* Labels */
+label {
+  display: block;
+  margin: 12px 0 4px 12%;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: #334155;
+}
+
+/* Form Inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+select {
+  width: 76%;
+  margin: 0 auto;
+  display: block;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Form Container */
+form {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 600px;
+  padding: 20px;
+}
+
+/* Buttons */
+button {
+  margin-top: 20px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #0f346c;
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+button[type="button"] {
+  background: #94a3b8;
+  margin-right: 10px;
+}
+
+button[type="button"]:hover {
+  background: #64748b;
+}
+
+/* Error Message */
+.error small {
+  color: #dc2626;
+  margin-left: 12%;
+  font-size: 0.85rem;
+}
+
+/* Photo Section */
+.photo-section {
+  margin-top: 20px;
+}
+
+/* Video Preview */
+.video-area video {
+  width: 50%;
+  max-height: 240px;
+  background: #fff;
+  border: 1px solid #f59e0b;
+  padding: 0.5rem;
+  border-radius: 6px;
+  object-fit: cover;
+  margin:0 auto;
+}
+
+/* Image Preview */
+.preview img {
+  display: block;
+  max-width: 180px;
+  margin:  auto 0;
+  margin-top:5px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
