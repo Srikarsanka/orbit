@@ -45,11 +45,11 @@
                         <label>Full Name: </label>
                         <input type="text" formControlName="fullName" placeholder="Enter your full name">
                         <!-- Full Name validation errors -->
-                        <div *ngIf="signupForm.get('fullName')?.touched && signupForm.get('fullName')?.invalid"
+                        <div [hidden]="!(signupForm.get('fullName')?.touched && signupForm.get('fullName')?.invalid)"
                               class="error">
-                              <small *ngIf="signupForm.get('fullName')?.errors?.['required']">Full Name is
+                              <small [hidden]="!signupForm.get('fullName')?.errors?.['required']">Full Name is
                                     required.</small>
-                              <small *ngIf="signupForm.get('fullName')?.errors?.['minlength']">Full Name must be at
+                              <small [hidden]="!signupForm.get('fullName')?.errors?.['minlength']">Full Name must be at
                                     least 3 characters long.</small>
                         </div>
                         <br>
@@ -57,9 +57,11 @@
                         <label>Email-id: </label>
                         <input type="email" formControlName="email" placeholder="Enter Your Email-id">
                         <!-- Email validation errors -->
-                        <div *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.invalid" class="error">
-                              <small *ngIf="signupForm.get('email')?.errors?.['required']">Email is required.</small>
-                              <small *ngIf="signupForm.get('email')?.errors?.['email']">Please enter a valid email
+                        <div [hidden]="!(signupForm.get('email')?.touched && signupForm.get('email')?.invalid)"
+                              class="error">
+                              <small [hidden]="!signupForm.get('email')?.errors?.['required']">Email is
+                                    required.</small>
+                              <small [hidden]="!signupForm.get('email')?.errors?.['email']">Please enter a valid email
                                     address.</small>
                         </div>
                         <br>
@@ -67,8 +69,9 @@
                         <label>Date of Birth: </label>
                         <input type="date" formControlName="dob" placeholder="Select your date of birth ">
                         <!-- Date of Birth validation errors -->
-                        <div *ngIf="signupForm.get('dob')?.touched && signupForm.get('dob')?.invalid" class="error">
-                              <small *ngIf="signupForm.get('dob')?.errors?.['required']">Date of Birth is
+                        <div [hidden]="!(signupForm.get('dob')?.touched && signupForm.get('dob')?.invalid)"
+                              class="error">
+                              <small [hidden]="!signupForm.get('dob')?.errors?.['required']">Date of Birth is
                                     required.</small>
                         </div>
                         <br>
@@ -77,21 +80,23 @@
                         <input type="tel" formControlName="contact" placeholder="Digits only" />
                         <!-- Contact Number validation errors -->
                         <div class="error"
-                              *ngIf="signupForm.get('contact')?.touched && signupForm.get('contact')?.invalid">
-                              <small *ngIf="signupForm.get('contact')?.errors?.['required']">Contact is
+                              [hidden]="!(signupForm.get('contact')?.touched && signupForm.get('contact')?.invalid)">
+                              <small [hidden]="!signupForm.get('contact')?.errors?.['required']">Contact is
                                     required.</small>
-                              <small *ngIf="signupForm.get('contact')?.errors?.['pattern']">Enter 10–15 digits.</small>
+                              <small [hidden]="!signupForm.get('contact')?.errors?.['pattern']">Enter 10–15
+                                    digits.</small>
                         </div>
                         <br>
                         <!-- Role selection -->
                         <label>Role</label>
                         <select formControlName="role">
                               <option value="student">Student</option>
-                              <option value="teacher">Teacher</option>
+                              <option value="faculty">Teacher</option>
                         </select>
                         <!-- Role validation errors -->
-                        <div *ngIf="signupForm.get('role')?.touched && signupForm.get('role')?.invalid" class="error">
-                              <small *ngIf="signupForm.get('role')?.errors?.['required']">Role is required.</small>
+                        <div [hidden]="!(signupForm.get('role')?.touched && signupForm.get('role')?.invalid)"
+                              class="error">
+                              <small [hidden]="!signupForm.get('role')?.errors?.['required']">Role is required.</small>
                         </div>
                         <br>
                         <!-- Password input -->
@@ -99,10 +104,10 @@
                         <input type="password" formControlName="password" />
                         <!-- Password validation errors -->
                         <div class="error"
-                              *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.invalid">
-                              <small *ngIf="signupForm.get('password')?.errors?.['required']">Password is
+                              [hidden]="!(signupForm.get('password')?.touched && signupForm.get('password')?.invalid)">
+                              <small [hidden]="!signupForm.get('password')?.errors?.['required']">Password is
                                     required.</small>
-                              <small *ngIf="signupForm.get('password')?.errors?.['minlength']">Minimum 6
+                              <small [hidden]="!signupForm.get('password')?.errors?.['minlength']">Minimum 6
                                     characters.</small>
                         </div>
                         <!-- Confirm password input -->
@@ -110,7 +115,7 @@
                         <input type="password" formControlName="confirmPassword" />
                         <!-- Confirm password validation errors -->
                         <div class="error"
-                              *ngIf="(signupForm.get('confirmPassword')?.touched || submitted) && signupForm.errors?.['passwordMismatch']">
+                              [hidden]="!((signupForm.get('confirmPassword')?.touched || submitted) && signupForm.errors?.['passwordMismatch'])">
                               <small>Passwords do not match.</small>
                         </div>
                         <br>
@@ -137,7 +142,7 @@
                               <p>Or upload a file:</p>
                               <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" />
                               <!-- Preview of captured or uploaded image -->
-                              <div class="preview" *ngIf="capturedImage">
+                              <div class="preview" [hidden]="!capturedImage">
                                     <p style="font-weight:400;color:#0f346c">Preview:</p>
                                     <br>
                                     <img [src]="capturedImage" alt="captured photo" />
@@ -145,7 +150,9 @@
                         </div>
                         <!-- Submit button -->
                         <button type="submit">Sign Up</button>
+                        <button (click)="login()" [class]="'mx-16'">Already Register ?</button>
                   </form>
+
                   <!-- End of form content -->
             </div>
       </div>

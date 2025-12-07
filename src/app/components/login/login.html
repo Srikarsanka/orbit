@@ -71,7 +71,7 @@
                         <label>Role</label>
                         <select formControlName="role">
                               <option value="student">Student</option>
-                              <option value="teacher">Teacher</option>
+                              <option value="faculty">Teacher</option>
                         </select>
                         <!-- Role validation errors -->
                         <div *ngIf="loginForm.get('role')?.touched &&loginForm.get('role')?.invalid" class="error">
@@ -92,7 +92,7 @@
                               <!-- Photo section heading -->
                               <p style="font-weight:400;color:#0f346c;margin-left:12%"><strong>Photo</strong> (use
                                     webcam
-                                    or upload)</p>
+                                    )</p>
                               <br>
                               <!-- Video preview and capture -->
                               <div class="video-area">
@@ -106,8 +106,8 @@
                                     <button type="button" (click)="stopCamera()">Stop Camera</button>
                               </div>
                               <!-- File upload for photo -->
-                              <p>Or upload a file:</p>
-                              <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" />
+                              <!-- <p>Or upload a file:</p>
+                              <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" /> -->
                               <!-- Preview of captured or uploaded image -->
                               <div class="preview" *ngIf="capturedImage">
                                     <p style="font-weight:400;color:#0f346c">Preview:</p>
@@ -116,6 +116,7 @@
                               </div>
                         </div>
                         <button type="submit">Join Class</button>
+                        <button onclick="window.location.href='/forgetpassword'">fogot password</button>
 
                   </form>
 

@@ -1,4 +1,7 @@
 <router-outlet />
+@if (showLayout()) {
+
+
 
 <footer>
       <div class="container">
@@ -37,7 +40,7 @@
                   <div class="footer-column">
                         <h3>Company</h3>
                         <ul class="footer-links">
-                              <li><a href="#">About Us</a></li>
+                              <li><a routerLink="/about">About Us</a></li>
                               <li><a href="#">Careers</a></li>
                               <li><a href="#">Privacy Policy</a></li>
                               <li><a href="#">Terms of Service</a></li>
@@ -50,3 +53,4 @@
             </div>
       </div>
 </footer>
+}

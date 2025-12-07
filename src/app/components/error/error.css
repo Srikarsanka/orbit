@@ -1,0 +1,14 @@
+.logo p {
+  font-size: 2rem;
+  font-weight: 500;
+  color: #000a45;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.logo-highlight {
+  font-size: 3rem;
+  color: rgb(255, 126, 79);
+  font-weight: 400;
+  animation: none;
+}
