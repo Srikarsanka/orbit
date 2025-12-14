@@ -65,8 +65,7 @@
                                           <i class="fa-solid fa-hashtag"></i> Class Code
                                     </label>
                                     <input type="text" id="classCode" [(ngModel)]="joinCode"
-                                          placeholder="Enter 6-digit class code" maxlength="6"
-                                          (keyup.enter)="joinClass()">
+                                          placeholder="Enter 6-digit class code" (keyup.enter)="joinClass()">
                                     <p class="input-hint">Codes are case-sensitive and usually 6 characters long</p>
                               </div>
 
@@ -127,293 +126,107 @@
                   </div>
             </div>
       </section>
-      <!-- MY CLASSES SECTION -->
-      <!-- MY CLASSES SECTION - UPDATED DESIGN -->
+      <!-- The below code is for the my classess section -->
       <section [hidden]="selectedSection !== 'myclasses'" class="my-classes-section">
-            <!-- HEADER WITH STATS -->
-            <div class="section-header">
-                  <div class="header-content">
-                        <div class="header-left">
-                              <h1>
-                                    <i class="fa-solid fa-layer-group"></i>
-                                    My Classes
-                                    <span class="class-count" *ngIf="myClasses.length > 0">{{ myClasses.length }}</span>
-                              </h1>
-                              <p>Your learning hub • Access all enrolled classes</p>
-                        </div>
-                        <div class="header-right">
-                              <button class="btn-join-section" (click)="select('joinclass')">
-                                    <i class="fa-solid fa-plus"></i>
-                                    Join New Class
-                              </button>
-                        </div>
-                  </div>
 
-                  <!-- STATS BAR -->
-                  <div class="stats-bar" *ngIf="myClasses.length > 0">
-                        <div class="stat-item">
-                              <div class="stat-icon">
-                                    <i class="fa-solid fa-book-open"></i>
-                              </div>
-                              <div class="stat-info">
-                                    <span class="stat-value">{{ getTotalMaterials() || 0 }}</span>
-                                    <span class="stat-label">Materials</span>
-                              </div>
-                        </div>
-                        <div class="stat-item">
-                              <div class="stat-icon">
-                                    <i class="fa-solid fa-bullhorn"></i>
-                              </div>
-                              <div class="stat-info">
-                                    <span class="stat-value">{{ getActiveAnnouncements() || 0 }}</span>
-                                    <span class="stat-label">Announcements</span>
-                              </div>
-                        </div>
-                        <div class="stat-item">
-                              <div class="stat-icon">
-                                    <i class="fa-solid fa-calendar-check"></i>
-                              </div>
-                              <div class="stat-info">
-                                    <span class="stat-value">{{ getTodayClasses() || 0 }}</span>
-                                    <span class="stat-label">Today's Classes</span>
-                              </div>
-                        </div>
-                  </div>
+            <div class="section-header">
+                  <h1><i class="fa-solid fa-layer-group"></i> My Classes</h1>
+                  <p>Your personalized hub for learning, growth, and achievement.</p>
             </div>
 
-            <!-- EMPTY STATE - ENHANCED -->
+            <!-- SHOW THIS ONLY WHEN NO CLASSES ARE JOINED -->
             <div *ngIf="myClasses.length === 0" class="empty-state-animated">
+
                   <div class="empty-container">
-                        <!-- Floating background elements -->
+
+                        <!-- FLOATING BACKGROUND SHAPES -->
                         <div class="floating-shapes">
                               <div class="shape shape-1"></div>
                               <div class="shape shape-2"></div>
                               <div class="shape shape-3"></div>
                         </div>
 
-                        <!-- Main content -->
-                        <div class="empty-content-wrapper">
-                              <div class="icon-animation">
-                                    <div class="icon-circle">
-                                          <i class="fa-solid fa-folder-open main-icon"></i>
-                                          <div class="icon-glow"></div>
-                                    </div>
-                                    <div class="orbit-dots">
-                                          <div class="dot dot-1"></div>
-                                          <div class="dot dot-2"></div>
-                                          <div class="dot dot-3"></div>
-                                    </div>
+                        <!-- ANIMATED ICON -->
+                        <div class="icon-animation">
+                              <div class="icon-circle">
+                                    <i class="fa-solid fa-layer-group main-icon"></i>
+                                    <div class="icon-glow"></div>
                               </div>
 
-                              <div class="empty-text-content">
-                                    <h2 class="empty-title">No Classes Yet</h2>
-                                    <p class="empty-subtitle">Your learning journey is about to begin</p>
-                                    <p class="empty-description">
-                                          Join your first class to access lectures, materials, and interactive sessions
-                                    </p>
-                              </div>
-
-                              <!-- Feature cards -->
-                              <div class="feature-cards">
-                                    <div class="feature-card">
-                                          <div class="feature-icon">
-                                                <i class="fa-solid fa-video"></i>
-                                          </div>
-                                          <h4>Live Sessions</h4>
-                                          <p>Interactive video lectures</p>
-                                    </div>
-                                    <div class="feature-card">
-                                          <div class="feature-icon">
-                                                <i class="fa-solid fa-file-code"></i>
-                                          </div>
-                                          <h4>Code Compiler</h4>
-                                          <p>Practice coding instantly</p>
-                                    </div>
-                                    <div class="feature-card">
-                                          <div class="feature-icon">
-                                                <i class="fa-solid fa-robot"></i>
-                                          </div>
-                                          <h4>AI Assistant</h4>
-                                          <p>24/7 learning support</p>
-                                    </div>
-                              </div>
-
-                              <!-- Action buttons -->
-                              <div class="empty-actions">
-                                    <button class="btn-primary-glow" (click)="select('joinclass')">
-                                          <span class="btn-sparkle">
-                                                <i class="fa-solid fa-sparkles"></i>
-                                          </span>
-                                          <span class="btn-text">Join Your First Class</span>
-                                          <span class="btn-arrow">
-                                                <i class="fa-solid fa-arrow-right"></i>
-                                          </span>
-                                    </button>
-                                    <button class="btn-secondary-outline" (click)="showDemo()">
-                                          <i class="fa-solid fa-play"></i>
-                                          Watch Demo
-                                    </button>
-                              </div>
-
-                              <!-- Tip -->
-                              <div class="tip-card">
-                                    <i class="fa-solid fa-lightbulb"></i>
-                                    <p>Get your class code from the instructor and enter it in "Join Class" section</p>
+                              <!-- ORBIT DOTS -->
+                              <div class="orbit-dots">
+                                    <div class="dot dot-1"></div>
+                                    <div class="dot dot-2"></div>
+                                    <div class="dot dot-3"></div>
                               </div>
                         </div>
-                  </div>
-            </div>
 
-            <!-- CLASSES GRID - UPDATED DESIGN -->
-            <div *ngIf="myClasses.length > 0" class="classes-grid-enhanced">
-                  <!-- Search and filter bar -->
-                  <div class="grid-controls">
-                        <div class="search-box">
-                              <i class="fa-solid fa-magnifying-glass"></i>
-                              <input type="text" placeholder="Search classes..." (input)="filterClasses($event)">
+                        <!-- TEXT CONTENT -->
+                        <div class="empty-text-content">
+                              <h2 class="empty-title">No Classes Joined Yet</h2>
+                              <p class="empty-subtitle">Start your learning journey today</p>
+                              <p class="empty-description">
+                                    Once you join a class, it will appear here with real-time progress,
+                                    schedules, faculty information and materials.
+                              </p>
                         </div>
-                        <div class="filter-options">
-                              <button class="filter-btn active">All</button>
-                              <button class="filter-btn">Active</button>
-                              <button class="filter-btn">Recent</button>
-                              <button class="filter-btn sort-btn">
-                                    <i class="fa-solid fa-sort"></i>
-                                    Sort
+
+                        <!-- FEATURE CARDS -->
+                        <div class="feature-cards">
+                              <div class="feature-card">
+                                    <div class="feature-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                                    <h4>Join Instantly</h4>
+                                    <p>Enter your 6-digit class code and get immediate access.</p>
+                              </div>
+
+                              <div class="feature-card">
+                                    <div class="feature-icon"><i class="fa-solid fa-book"></i></div>
+                                    <h4>Track Progress</h4>
+                                    <p>View assignments, videos, materials, and attendance.</p>
+                              </div>
+
+                              <div class="feature-card">
+                                    <div class="feature-icon"><i class="fa-solid fa-chalkboard-teacher"></i></div>
+                                    <h4>Smart Learning</h4>
+                                    <p>Interact with your faculty and stay updated effortlessly.</p>
+                              </div>
+                        </div>
+
+                        <!-- ACTION BUTTONS -->
+                        <div class="empty-actions">
+                              <button class="btn-primary-glow" (click)="select('joinclass')">
+                                    <i class="fa-solid fa-plus"></i>
+                                    Join Your First Class
+                              </button>
+
+                              <button class="btn-secondary-outline" (click)="select('dashboard')">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                    Back to Dashboard
                               </button>
                         </div>
-                  </div>
 
-                  <!-- Class cards grid -->
-                  <div class="cards-container">
-                        <div class="class-card-modern" *ngFor="let c of myClasses; let i = index"
-                              [style.animation-delay]="(i * 0.1) + 's'" [class.featured]="i === 0">
-
-                              <!-- Card top banner -->
-                              <div class="card-banner" [style.background]="getSubjectColor(c.subject)">
-                                    <div class="banner-content">
-                                          <div class="subject-icon">
-                                                <i [class]="getSubjectIcon(c.subject)"></i>
-                                          </div>
-                                          <div class="banner-text">
-                                                <span class="subject">{{ c.subject }}</span>
-                                                <span class="code">{{ c.classCode }}</span>
-                                          </div>
-                                    </div>
-                                    <div class="live-indicator" *ngIf="i === 0">
-                                          <span class="pulse-dot"></span>
-                                          Live Now
-                                    </div>
-                              </div>
-
-                              <!-- Card main content -->
-                              <div class="card-main">
-                                    <div class="card-header">
-                                          <h3 class="class-name">{{ c.className }}</h3>
-                                          <div class="faculty-info">
-                                                <div class="avatar">
-                                                      {{ getInitials(c.facultyName) }}
-                                                </div>
-                                                <div class="faculty-details">
-                                                      <span class="faculty-name">{{ c.facultyName }}</span>
-                                                      <span class="faculty-role">Instructor</span>
-                                                </div>
-                                          </div>
-                                    </div>
-
-                                    <div class="class-details">
-                                          <div class="detail-row">
-                                                <div class="detail-item">
-                                                      <i class="fa-solid fa-calendar-days"></i>
-                                                      <div>
-                                                            <span class="label">Schedule</span>
-                                                            <span class="value">{{ c.schedule || 'Mon, Wed, Fri'
-                                                                  }}</span>
-                                                      </div>
-                                                </div>
-                                                <div class="detail-item">
-                                                      <i class="fa-solid fa-users"></i>
-                                                      <div>
-                                                            <span class="label">Students</span>
-                                                            <span class="value">{{ c.studentCount || 25 }}</span>
-                                                      </div>
-                                                </div>
-                                          </div>
-
-                                          <div class="progress-section" *ngIf="i % 3 === 0">
-                                                <div class="progress-label">
-                                                      <span>Progress</span>
-                                                      <span>68%</span>
-                                                </div>
-                                                <div class="progress-bar">
-                                                      <div class="progress-fill" style="width: 68%"></div>
-                                                </div>
-                                          </div>
-                                    </div>
-
-                                    <!-- Quick stats -->
-                                    <div class="quick-stats">
-                                          <div class="stat">
-                                                <i class="fa-solid fa-file"></i>
-                                                <span>{{ getRandomNumber(5, 20) }} Files</span>
-                                          </div>
-                                          <div class="stat">
-                                                <i class="fa-solid fa-comment"></i>
-                                                <span>{{ getRandomNumber(10, 50) }} Discussions</span>
-                                          </div>
-                                          <div class="stat">
-                                                <i class="fa-solid fa-clock"></i>
-                                                <span>{{ getRandomNumber(1, 10) }}h Left</span>
-                                          </div>
-                                    </div>
-                              </div>
-
-                              <!-- Card footer with actions -->
-                              <div class="card-footer">
-                                    <button class="btn-enter-glow" (click)="enterClass(c)">
-                                          <i class="fa-solid fa-door-open"></i>
-                                          Enter Class
-                                    </button>
-                                    <div class="quick-actions">
-                                          <button class="action-btn tooltip" title="Materials">
-                                                <i class="fa-solid fa-folder"></i>
-                                          </button>
-                                          <button class="action-btn tooltip" title="Chat">
-                                                <i class="fa-solid fa-message"></i>
-                                          </button>
-                                          <button class="action-btn tooltip" title="Assignments">
-                                                <i class="fa-solid fa-tasks"></i>
-                                          </button>
-                                          <button class="action-btn tooltip" title="More">
-                                                <i class="fa-solid fa-ellipsis"></i>
-                                          </button>
-                                    </div>
-                              </div>
-
-                              <!-- Hover overlay effect -->
-                              <div class="card-hover"></div>
+                        <!-- TIP CARD -->
+                        <div class="tip-card">
+                              <i class="fa-solid fa-lightbulb"></i>
+                              <p>Tip: Your faculty will provide a 6-digit class code. Use it to join instantly.</p>
                         </div>
 
-                        <!-- Add new class card -->
-                        <div class="add-class-card" (click)="select('joinclass')">
-                              <div class="add-icon">
-                                    <i class="fa-solid fa-plus"></i>
-                              </div>
-                              <h3>Join New Class</h3>
-                              <p>Add another class to your learning journey</p>
-                              <div class="add-pulse"></div>
-                        </div>
-                  </div>
-
-                  <!-- Loading animation for more content -->
-                  <div class="loading-more" *ngIf="loadingMore">
-                        <div class="loading-dots">
-                              <div class="dot"></div>
-                              <div class="dot"></div>
-                              <div class="dot"></div>
-                        </div>
-                        <span>Loading more classes...</span>
                   </div>
             </div>
+            <div class="class-card add-new-card" (click)="select('joinclass')">
+                  <div class="add-new-content">
+                        <div class="add-icon">
+                              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2"
+                                          stroke-linecap="round" stroke-linejoin="round" />
+                              </svg>
+                        </div>
+                        <h3>Create New Class</h3>
+                        <p>Start a New Learning Chapter</p>
+                  </div>
+            </div>
+
       </section>
+
 
 </div>

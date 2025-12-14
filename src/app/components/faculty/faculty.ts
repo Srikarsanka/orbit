@@ -23,6 +23,17 @@ import { TruncatePipe } from '../../../truncatepipe';
 // INTERFACES
 // ============================================================
 
+
+
+// ====================== TOAST MODEL ======================
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'info';
+}
+
+
+
 interface UserPayload {
   fullName: string;
   email: string;
@@ -74,6 +85,11 @@ interface Material {
   standalone: true,
 })
 export class Faculty implements OnInit {
+  // ====================== TOAST STATE ======================
+  toasts: Toast[] = [];
+  private toastId = 0;
+
+
   // ============================================================
   // USER & CLASS DATA PROPERTIES
   // ============================================================
@@ -174,6 +190,26 @@ export class Faculty implements OnInit {
     this.loadUser();
     this.requestNotificationPermission();
   }
+
+
+  // ========================================================
+  // TOAST METHODS
+  // ========================================================
+  showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    const id = ++this.toastId;
+    this.toasts.push({ id, message, type });
+
+    setTimeout(() => this.removeToast(id), 3000);
+  }
+
+  removeToast(id: number) {
+    this.toasts = this.toasts.filter(t => t.id !== id);
+  }
+
+
+
+
+
 
   // ============================================================
   // USER & BASE DATA LOAD METHODS
@@ -309,13 +345,15 @@ export class Faculty implements OnInit {
         })
         .toPromise();
 
-      this.successMessage = res?.message || 'Class created successfully';
+      this.successMessage = res?.message || 'Class created successfully  🎉';
+      this.showToast(this.successMessage,'success');
       this.createdClass = res?.class || null;
       this.form.reset();
       await this.loadclass();
     } catch (err: any) {
       console.error('Create class error:', err);
       this.errorMessage = err?.error?.message || 'Failed to create class';
+      this.showToast(this.errorMessage,'error');
     } finally {
       this.submitting = false;
     }
@@ -492,9 +530,9 @@ export class Faculty implements OnInit {
       copyCodeBtn.onclick = async () => {
         try {
           await navigator.clipboard.writeText(room.classCode);
-          alert('Class code copied to clipboard');
+          this.showToast('Class code copied to clipboard','success');
         } catch {
-          alert(`Class code: ${room.classCode}`);
+          this.showToast(`Class code: ${room.classCode}`,'success');
         }
       };
 
@@ -508,9 +546,9 @@ export class Faculty implements OnInit {
         const joinUrl = `${window.location.origin}/join/${room.classCode}`;
         try {
           await navigator.clipboard.writeText(joinUrl);
-          alert('Join link copied to clipboard');
+          this.showToast('Join link copied to clipboard','success');
         } catch {
-          alert(`Join link: ${joinUrl}`);
+          this.showToast(`Join link: ${joinUrl}`,'error');
         }
       };
 
@@ -567,13 +605,13 @@ export class Faculty implements OnInit {
     withCredentials: true,
   }).subscribe({
     next: () => {
-      alert('Class deleted');
+      this.showToast('Class deleted','success');
       overlay.remove();
       this.loadclass()
     },
     error: (err) => {
       console.error(err);
-      alert('Failed to delete class');
+      this.showToast('Failed to delete class','success');
     }
   });
 };
@@ -611,14 +649,14 @@ export class Faculty implements OnInit {
           )
           .toPromise()
           .then(() => {
-            alert('Class updated');
+            this.showToast('Class updated','success');
             headerLeft.querySelector('h2')!.textContent = name;
             const ps = headerLeft.getElementsByTagName('p');
             if (ps.length > 0) {
               ps[0].textContent = desc;
             }
           })
-          .catch((e) => alert(JSON.stringify(e)));
+          .catch((e) => this.showToast(JSON.stringify(e),'error'));
       };
 
       headerRight.appendChild(topActions);
@@ -869,7 +907,7 @@ export class Faculty implements OnInit {
           const attachmentUrl = attachInput.value.trim();
 
           if (!title || !message) {
-            alert('Title and message are required');
+            this.showToast('Title and message are required','error');
             return;
           }
 
@@ -890,11 +928,11 @@ export class Faculty implements OnInit {
             titleInput.value = '';
             msgInput.value = '';
             attachInput.value = '';
-            alert('Announcement posted');
+            this.showToast('Announcement posted Successfully 📢','success');
             this.loadAnnouncementsForPopup(room._id);
           } catch (err) {
             console.error('Create announcement error:', err);
-            alert('Failed to create announcement');
+            this.showToast('Failed to create announcement','error');
           }
         };
 
@@ -979,7 +1017,7 @@ export class Faculty implements OnInit {
         '#0045AA'
       );
       startBtn.onclick = () => {
-        alert('Live class feature coming soon!');
+        this.showToast('Live class feature coming soon!','info');
       };
 
       const scheduleBtn = makeFooterBtn(
@@ -987,7 +1025,7 @@ export class Faculty implements OnInit {
         '#FFA500'
       );
       scheduleBtn.onclick = () => {
-        alert('Scheduling feature coming soon!');
+        this.showToast('Scheduling feature coming soon!','info');
       };
 
       footer.appendChild(startBtn);
@@ -1311,7 +1349,7 @@ export class Faculty implements OnInit {
   }
 
   viewAnnouncement(announcement: Announcement) {
-    alert(`Title: ${announcement.title}\n\nMessage: ${announcement.message}`);
+    this.showToast(`Title: ${announcement.title}\n\nMessage: ${announcement.message}`);
   }
 
   resendAnnouncement(announcement: Announcement) {
@@ -1360,9 +1398,9 @@ export class Faculty implements OnInit {
         document.execCommand('copy');
         document.body.removeChild(input);
       }
-      this.showNotification('Class code copied!');
+       this.showToast('Class code copied to clipboard', 'success');
     } catch (err) {
-      this.showNotification('Failed to copy', 'error');
+      this.showToast('Failed to copy', 'error');
     }
   }
 
@@ -1542,12 +1580,12 @@ export class Faculty implements OnInit {
     const title = this.materialTitle?.nativeElement?.value?.trim();
 
     if (!classId) {
-      alert('Please select a class');
+      this.showToast('Please select a class','error');
       return;
     }
 
     if (!title) {
-      alert('Enter material title');
+      this.showToast('Enter material title','error');
       return;
     }
 
@@ -1584,7 +1622,7 @@ export class Faculty implements OnInit {
         error: (err) => {
           console.error('Upload error:', err);
           this.uploading = false;
-          alert(`Failed to upload ${uploadFile.name}: ${err.error?.message || 'Unknown error'}`);
+          this.showToast(`Failed to upload ${uploadFile.name}: ${err.error?.message || 'Unknown error'}`,'error');
         },
       });
     });
@@ -1605,7 +1643,7 @@ export class Faculty implements OnInit {
       this.materialTitle.nativeElement.value = '';
     }
 
-    alert('Materials uploaded successfully!');
+    this.showToast('Materials uploaded successfully 🧾!','success');
   }
 
   cancelUpload(): void {
@@ -1693,7 +1731,7 @@ export class Faculty implements OnInit {
     } else if (material.externalLink) {
       window.open(material.externalLink, '_blank');
     } else {
-      alert('No file or link found for this material');
+      this.showToast('No file or link found for this material');
     }
   }
 
@@ -1705,13 +1743,13 @@ export class Faculty implements OnInit {
     } else if (material.fileUrl) {
       shareUrl = 'http://localhost:5000' + material.fileUrl;
     } else {
-      alert('No sharable link available');
+      this.showToast('No sharable link available');
       return;
     }
 
     navigator.clipboard.writeText(shareUrl)
-      .then(() => alert('Shareable link copied to clipboard!'))
-      .catch(() => alert('Failed to copy link'));
+      .then(() => this.showToast('Shareable link copied to clipboard!'))
+      .catch(() => this.showToast('Failed to copy link'));
   }
 
   deleteMaterial(material: Material): void {
@@ -1726,7 +1764,7 @@ export class Faculty implements OnInit {
       },
       error: (err) => {
         console.error('Delete material error:', err);
-        alert('Failed to delete material');
+        this.showToast('Failed to delete material');
       },
     });
   }

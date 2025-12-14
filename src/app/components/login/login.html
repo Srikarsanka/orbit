@@ -124,3 +124,8 @@
       </div>
 
 </div>
+<div class="toast-container">
+      <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" (click)="removeToast(toast.id)">
+            {{ toast.message }}
+      </div>
+</div>

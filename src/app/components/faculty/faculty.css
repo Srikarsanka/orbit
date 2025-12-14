@@ -2630,3 +2630,53 @@
     display: none;
   }
 }
+
+/* ================= TOAST ================= */
+
+.toast-container {
+  position: fixed;
+  bottom: 60px;
+  right: 24px;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  min-width: 260px;
+  max-width: 360px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  animation: slideIn 0.35s ease;
+  cursor: pointer;
+}
+
+/* Types */
+.toast.success {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.toast.info {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+/* Animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

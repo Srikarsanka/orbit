@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
-import { NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-forgetpassword',
   templateUrl: './forgetpassword.html',
   styleUrls: ['./forgetpassword.css'],
-  imports: [FormsModule, NgIf]
+  imports: [FormsModule, CommonModule]
 })
 export class Forgetpassword {
   

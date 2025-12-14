@@ -10,6 +10,16 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 
+
+// ====================== TOAST MODEL ======================
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'info';
+}
+
+
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
@@ -44,6 +54,10 @@ export class LoginComponent implements OnInit, OnDestroy{
     });
   }
 
+ // ====================== TOAST STATE ======================
+  toasts: Toast[] = [];
+  private toastId = 0;
+
 
 
   // -------------------------
@@ -55,7 +69,7 @@ export class LoginComponent implements OnInit, OnDestroy{
       this.videoRef.nativeElement.srcObject = this.stream;
     } catch (err) {
       console.error('Camera error:', err);
-      alert('Camera access failed.');
+      this.showToast('Camera access failed.','error');
     }
   }
 
@@ -103,12 +117,12 @@ export class LoginComponent implements OnInit, OnDestroy{
   onSubmit() {
       console.log("🔥 onSubmit() called");
     if (this.loginForm.invalid) {
-      alert('Please fill all fields correctly.');
+      this.showToast('Please fill all fields correctly.','error');
       return;
     }
 
     if (!this.capturedImage) {
-      alert('Please capture or upload your face image.');
+      this.showToast('Please capture or upload your face image.','error');
       return;
     }
 
@@ -127,18 +141,42 @@ export class LoginComponent implements OnInit, OnDestroy{
     })
     .subscribe(
       (res: any) => {
-        alert(res.message || 'Login successful');
+        this.showToast(res.message || 'Login successful 🎉','success');
+        this.showToast(res.user?.role,'info')
+        localStorage.setItem("user", JSON.stringify(res.user));
+        console.log("SAVED TOKEN:", localStorage.getItem("token"));
+
+
 
         if (res.user.role === 'student') {
-          window.location.href = '/studentdashboard';
+          setTimeout(()=>
+          {
+                 window.location.href = '/studentdashboard';
+          },2000);
+          
         } else {
-          window.location.href = '/teacherdashboard';
+          setTimeout(()=>
+          {
+                 window.location.href = '/teacherdashboard';
+          },2000);
         }
       },
       (err) => {
         console.error('Login error:', err);
-        alert(err.error.message || 'Login failed');
+        this.showToast(err.error.message || 'Login failed','error');
       }
     );
+  }
+
+
+showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    const id = ++this.toastId;
+    this.toasts.push({ id, message, type });
+
+    setTimeout(() => this.removeToast(id), 3000);
+  }
+
+  removeToast(id: number) {
+    this.toasts = this.toasts.filter(t => t.id !== id);
   }
 }
