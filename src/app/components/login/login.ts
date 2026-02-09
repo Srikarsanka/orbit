@@ -142,6 +142,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
         // 🔥 SAVE USER TO LOCAL STORAGE FOR ROLE GUARD
         const userData = res.user || {};
+
+        if (res.token) {
+          localStorage.setItem('orbit_token', res.token);
+        }
+
         localStorage.setItem('user', JSON.stringify({
           email: userData.email || this.loginForm.value.email,
           role: userData.role || this.loginForm.value.role,
