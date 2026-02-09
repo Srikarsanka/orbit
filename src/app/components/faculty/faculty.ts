@@ -229,8 +229,17 @@ export class Faculty implements OnInit {
   // USER & BASE DATA LOAD METHODS
   // ============================================================
   loadUser() {
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('orbit_user') : null;
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
     this.http
-      .get('https://orbitbackend-0i66.onrender.com/auth/redirect', { withCredentials: true })
+      .get('https://orbitbackend-0i66.onrender.com/auth/redirect', {
+        withCredentials: true,
+        headers: headers  // 🔥 FIX: Send token in Authorization header (matches student dashboard)
+      })
       .subscribe((res: any) => {
         if (!res.user) {
           window.location.href = '/login';
