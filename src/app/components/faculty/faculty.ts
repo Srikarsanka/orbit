@@ -14,6 +14,7 @@ import {
   HttpClient,
   HttpClientModule,
   HttpEventType,
+  HttpHeaders,
 } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
