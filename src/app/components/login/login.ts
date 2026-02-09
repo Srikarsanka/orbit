@@ -31,7 +31,7 @@ interface Toast {
     HttpClientModule
   ]
 })
-export class LoginComponent implements OnInit, OnDestroy{
+export class LoginComponent implements OnInit, OnDestroy {
 
 
   loginForm!: FormGroup;
@@ -42,19 +42,18 @@ export class LoginComponent implements OnInit, OnDestroy{
   @ViewChild('canvas') canvasRef!: ElementRef;
   @ViewChild('fileInput') fileInputRef!: ElementRef;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {  console.log("🔥 LoginComponent Loaded!");}
-  
-  
+  constructor(private fb: FormBuilder, private http: HttpClient) { console.log("🔥 LoginComponent Loaded!"); }
+
+
   ngOnInit() {
     this.loginForm = this.fb.group({
-      fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       role: ['', Validators.required],
       password: ['', Validators.required],
     });
   }
 
- // ====================== TOAST STATE ======================
+  // ====================== TOAST STATE ======================
   toasts: Toast[] = [];
   private toastId = 0;
 
@@ -69,7 +68,7 @@ export class LoginComponent implements OnInit, OnDestroy{
       this.videoRef.nativeElement.srcObject = this.stream;
     } catch (err) {
       console.error('Camera error:', err);
-      this.showToast('Camera access failed.','error');
+      this.showToast('Camera access failed.', 'error');
     }
   }
 
@@ -115,19 +114,18 @@ export class LoginComponent implements OnInit, OnDestroy{
   // FORM SUBMIT
   // -------------------------
   onSubmit() {
-      console.log("🔥 onSubmit() called");
+    console.log("🔥 onSubmit() called");
     if (this.loginForm.invalid) {
-      this.showToast('Please fill all fields correctly.','error');
+      this.showToast('Please fill all fields correctly.', 'error');
       return;
     }
 
     if (!this.capturedImage) {
-      this.showToast('Please capture or upload your face image.','error');
+      this.showToast('Please capture or upload your face image.', 'error');
       return;
     }
 
     const body = {
-      fullName: this.loginForm.value.fullName,
       email: this.loginForm.value.email,
       password: this.loginForm.value.password,
       role: this.loginForm.value.role,
@@ -139,37 +137,35 @@ export class LoginComponent implements OnInit, OnDestroy{
     this.http.post('http://localhost:5000/auth/login', body, {
       withCredentials: true
     })
-    .subscribe(
-      (res: any) => {
-        this.showToast(res.message || 'Login successful 🎉','success');
-        this.showToast(res.user?.role,'info')
-        localStorage.setItem("user", JSON.stringify(res.user));
-        console.log("SAVED TOKEN:", localStorage.getItem("token"));
+      .subscribe(
+        (res: any) => {
+          this.showToast('Login successful 🎉', 'success');
+          this.showToast(res.user?.role, 'info')
+          localStorage.setItem("user", JSON.stringify(res.user));
+          console.log("SAVED TOKEN:", localStorage.getItem("token"));
 
 
 
-        if (res.user.role === 'student') {
-          setTimeout(()=>
-          {
-                 window.location.href = '/studentdashboard';
-          },2000);
-          
-        } else {
-          setTimeout(()=>
-          {
-                 window.location.href = '/teacherdashboard';
-          },2000);
+          if (res.user.role === 'student') {
+            setTimeout(() => {
+              window.location.href = '/studentdashboard';
+            }, 2000);
+
+          } else {
+            setTimeout(() => {
+              window.location.href = '/teacherdashboard';
+            }, 2000);
+          }
+        },
+        (err) => {
+          console.error('Login error:', err);
+          this.showToast(err.error.message || 'Login failed', 'error');
         }
-      },
-      (err) => {
-        console.error('Login error:', err);
-        this.showToast(err.error.message || 'Login failed','error');
-      }
-    );
+      );
   }
 
 
-showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
+  showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
     const id = ++this.toastId;
     this.toasts.push({ id, message, type });
 

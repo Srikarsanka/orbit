@@ -44,18 +44,6 @@
             <!-- This div is for login container and authentication from user -->
             <div id="authcon1">
                   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                        <label>Full Name: </label>
-                        <br>
-                        <input type="text" formControlName="fullName" placeholder="Enter Your Full Name: ">
-                        <br>
-                        <div *ngIf="loginForm.get('fullName')?.touched && loginForm.get('fullName')?.invalid"
-                              class="error">
-                              <small *ngIf="loginForm.get('fullName')?.errors?.['required']">Full Name is
-                                    Required</small>
-                              <small *ngIf="loginForm.get('fullName')?.errors?.['minlength']">Full Name is invalid.
-                                    Please enter a valid name.</small>
-                        </div>
-                        <br>
                         <label>Email-id: </label>
                         <br>
                         <input type="email" formControlName="email">
