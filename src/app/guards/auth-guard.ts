@@ -10,6 +10,7 @@ export class AuthGuard implements CanActivate {
   canActivate() {
     return this.auth.checkRedirect().pipe(
       map((res: any) => {
+        console.log("AuthGuard Check:", res); // 🔥 Debug Log
         const redirectTo = res.redirectTo;
         const current = window.location.pathname;
 
@@ -26,14 +27,17 @@ export class AuthGuard implements CanActivate {
         }
 
         if (redirectTo === '/login') {
+          console.log("AuthGuard: Redirecting to /login");
           this.router.navigateByUrl('/login');
           return false;
         }
 
         if (current === redirectTo) {
+          console.log("AuthGuard: Allowed on current route");
           return true;
         }
 
+        console.log(`AuthGuard: Redirecting to ${redirectTo}`);
         this.router.navigateByUrl(redirectTo); // ⭐ fix
         return false;
       })
