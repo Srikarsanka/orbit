@@ -1,0 +1,97 @@
+/* ============================================================
+   SYNTAX HIGHLIGHTING - WORKING VERSION
+   ============================================================ */
+
+/* Make sure editor container is positioned */
+.editor-container {
+      position: relative !important;
+}
+
+/* Syntax highlighting overlay - BEHIND the textarea */
+.code-highlight {
+      position: absolute !important;
+      top: 0 !important;
+      left: 55px !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      margin: 0 !important;
+      padding: 1rem 1.2rem !important;
+      font-family: 'Fira Code', 'Consolas', 'Monaco', monospace !important;
+      font-size: 15px !important;
+      line-height: 1.8 !important;
+      white-space: pre-wrap !important;
+      word-wrap: break-word !important;
+      overflow: hidden !important;
+      pointer-events: none !important;
+      z-index: 1 !important;
+      background: transparent !important;
+}
+
+.code-highlight code {
+      font-family: inherit !important;
+      font-size: inherit !important;
+      line-height: inherit !important;
+}
+
+/* Transparent textarea - ABOVE the highlighting */
+.code-textarea {
+      position: relative !important;
+      background: transparent !important;
+      color: transparent !important;
+      caret-color: #000 !important;
+      z-index: 2 !important;
+      font-size: 15px !important;
+      line-height: 1.8 !important;
+}
+
+/* BRIGHT SYNTAX COLORS - Maximum visibility */
+.code-highlight .token.keyword {
+      color: #ff0066 !important;
+      font-weight: 900 !important;
+}
+
+.code-highlight .token.string {
+      color: #00cc00 !important;
+      font-weight: 700 !important;
+}
+
+.code-highlight .token.number {
+      color: #0099ff !important;
+      font-weight: 800 !important;
+}
+
+.code-highlight .token.function {
+      color: #9933ff !important;
+      font-weight: 800 !important;
+}
+
+.code-highlight .token.class-name {
+      color: #9933ff !important;
+      font-weight: 800 !important;
+}
+
+.code-highlight .token.comment {
+      color: #00aa00 !important;
+      font-weight: 600 !important;
+      font-style: italic !important;
+}
+
+.code-highlight .token.operator {
+      color: #ff3300 !important;
+      font-weight: 800 !important;
+}
+
+.code-highlight .token.punctuation {
+      color: #000000 !important;
+      font-weight: 600 !important;
+}
+
+.code-highlight .token.boolean {
+      color: #0099ff !important;
+      font-weight: 800 !important;
+}
+
+.code-highlight .token.builtin {
+      color: #ff6600 !important;
+      font-weight: 700 !important;
+}

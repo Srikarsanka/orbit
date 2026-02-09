@@ -1,0 +1,156 @@
+<div class="compiler-container">
+      <!-- Header -->
+      <header class="compiler-header">
+            <div class="header-left">
+                  <h1>
+                        <i class="fas fa-code"></i>
+                        Code Lab
+                  </h1>
+                  <p>Write, run, and debug code in multiple languages</p>
+            </div>
+            <div class="header-right">
+                  <button class="btn-secondary" (click)="downloadCode()" title="Download Code">
+                        <i class="fas fa-download"></i>
+                        Code
+                  </button>
+                  <button class="btn-secondary" (click)="downloadOutput()" title="Download Output">
+                        <i class="fas fa-file-download"></i>
+                        Output
+                  </button>
+            </div>
+      </header>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+            <div class="toolbar-left">
+                  <select class="language-selector" [(ngModel)]="selectedLanguage" (change)="onLanguageChange()">
+                        <option *ngFor="let lang of languages" [value]="lang.id">
+                              {{ lang.icon }} {{ lang.name }}
+                        </option>
+                  </select>
+
+                  <button class="btn-run" (click)="runCode()" [disabled]="isExecuting">
+                        <i class="fas" [class.fa-play]="!isExecuting" [class.fa-spinner]="isExecuting"
+                              [class.fa-spin]="isExecuting"></i>
+                        {{ isExecuting ? 'Running...' : 'Run Code' }}
+                  </button>
+
+                  <button class="btn-stop" (click)="stopExecution()" [disabled]="!isExecuting">
+                        <i class="fas fa-stop"></i>
+                        Stop
+                  </button>
+            </div>
+
+            <div class="toolbar-right">
+                  <span class="execution-time" *ngIf="lastExecutionTime">
+                        <i class="fas fa-clock"></i>
+                        {{ lastExecutionTime }}s
+                  </span>
+            </div>
+      </div>
+
+      <!-- Main Content: Split Pane -->
+      <div class="split-container">
+            <!-- Left: Code Editor -->
+            <div class="editor-pane">
+                  <div class="pane-header">
+                        <h3>
+                              <i class="fas fa-file-code"></i>
+                              Editor
+                        </h3>
+                        <button class="btn-icon" (click)="clearCode()" title="Clear Code">
+                              <i class="fas fa-trash"></i>
+                        </button>
+                  </div>
+                  <div class="editor-wrapper">
+                        <textarea class="code-editor" [(ngModel)]="code" [placeholder]="getPlaceholder()"
+                              spellcheck="false"></textarea>
+                  </div>
+            </div>
+
+            <!-- Resize Handle -->
+            <div class="resize-handle"></div>
+
+            <!-- Right: Output & AI Suggestions -->
+            <div class="output-pane">
+                  <!-- Output Console -->
+                  <div class="output-section">
+                        <div class="pane-header">
+                              <h3>
+                                    <i class="fas fa-terminal"></i>
+                                    Output
+                              </h3>
+                              <button class="btn-icon" (click)="clearOutput()" title="Clear Output">
+                                    <i class="fas fa-eraser"></i>
+                              </button>
+                        </div>
+                        <div class="output-console" [class.has-error]="hasError">
+                              <div *ngIf="!output && !error && !isExecuting" class="output-placeholder">
+                                    <i class="fas fa-play-circle"></i>
+                                    <p>Run your code to see output here</p>
+                              </div>
+
+                              <div *ngIf="isExecuting" class="output-loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Executing code...</p>
+                              </div>
+
+                              <pre *ngIf="output" class="output-text">{{ output }}</pre>
+                              <pre *ngIf="error" class="error-text">{{ error }}</pre>
+                        </div>
+                  </div>
+
+                  <!-- AI Suggestions (shown only when there's an error) -->
+                  <div class="ai-section" *ngIf="error && aiSuggestion">
+                        <div class="ai-header">
+                              <i class="fas fa-robot"></i>
+                              <h4>AI Assistant</h4>
+                        </div>
+                        <div class="ai-content">
+                              <div class="suggestion-card">
+                                    <div class="suggestion-icon">
+                                          <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                          <p>{{ aiSuggestion }}</p>
+                                    </div>
+                              </div>
+                              <button class="btn-apply" (click)="applySuggestion()" *ngIf="suggestedCode">
+                                    <i class="fas fa-magic"></i>
+                                    Apply Suggestion
+                              </button>
+                        </div>
+                  </div>
+            </div>
+      </div>
+
+      <!-- Execution History (Bottom Panel - Optional) -->
+      <div class="history-panel" *ngIf="showHistory && executionHistory.length > 0">
+            <div class="history-header">
+                  <h3>
+                        <i class="fas fa-history"></i>
+                        Recent Executions
+                  </h3>
+                  <button class="btn-icon" (click)="toggleHistory()">
+                        <i class="fas fa-times"></i>
+                  </button>
+            </div>
+            <div class="history-list">
+                  <div *ngFor="let item of executionHistory.slice(0, 5)" class="history-item"
+                        (click)="loadHistoryItem(item)">
+                        <div class="history-lang">{{ item.language }}</div>
+                        <div class="history-time">{{ item.timestamp | date:'short' }}</div>
+                        <div class="history-status" [class.success]="item.success" [class.error]="!item.success">
+                              <i class="fas" [class.fa-check-circle]="item.success"
+                                    [class.fa-times-circle]="!item.success"></i>
+                        </div>
+                  </div>
+            </div>
+      </div>
+
+      <!-- History Toggle Button -->
+      <button class="btn-history-toggle" (click)="toggleHistory()" *ngIf="executionHistory.length > 0">
+            <i class="fas fa-history"></i>
+            History ({{ executionHistory.length }})
+      </button>
+</div>
