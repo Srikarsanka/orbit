@@ -137,38 +137,50 @@ export class LoginComponent implements OnInit, OnDestroy {
     // Call API
     this.http.post('https://orbitbackend-0i66.onrender.com/api/auth/login', body).subscribe({
       next: (res: any) => {
-        console.log('Login success:', res);
+        console.log('🔍 [LOGIN] Backend response:', res);
         this.showToast('Login successful!', 'success');
 
         // 🔥 SAVE USER TO LOCAL STORAGE FOR ROLE GUARD
         const userData = res.user || {};
+        console.log('🔍 [LOGIN] User data from response:', userData);
 
         if (res.token) {
-          console.log('Saving token as orbit_user');
+          console.log('✅ [LOGIN] Saving token to localStorage as orbit_user');
           localStorage.setItem('orbit_user', res.token);
+          console.log('✅ [LOGIN] Token saved, length:', res.token.length);
+        } else {
+          console.error('❌ [LOGIN] No token in response!');
         }
 
-        localStorage.setItem('user', JSON.stringify({
+        const userToSave = {
           email: userData.email || this.loginForm.value.email,
           role: userData.role || this.loginForm.value.role,
-          name: userData.fullName || userData.name || 'User'
-        }));
+          name: userData.fullName || userData.name || 'User',
+          photo: userData.photo
+        };
+
+        console.log('✅ [LOGIN] Saving user data to localStorage:', userToSave);
+        localStorage.setItem('user', JSON.stringify(userToSave));
+
+        // Verify storage
+        console.log('🔍 [LOGIN] Verification - orbit_user in localStorage:', !!localStorage.getItem('orbit_user'));
+        console.log('🔍 [LOGIN] Verification - user in localStorage:', localStorage.getItem('user'));
 
         setTimeout(() => {
           const role = userData.role || this.loginForm.value.role;
-          console.log('Redirecting... Role:', role);
+          console.log('🔍 [LOGIN] Redirecting... Role:', role);
 
           if (role === 'student') {
-            console.log('Going to /studentdashboard');
+            console.log('➡️ [LOGIN] Going to /studentdashboard');
             window.location.href = '/studentdashboard';
           } else {
-            console.log('Going to /teacherdashboard');
+            console.log('➡️ [LOGIN] Going to /teacherdashboard');
             window.location.href = '/teacherdashboard';
           }
         }, 1000);
       },
       error: (err) => {
-        console.error('Login error:', err);
+        console.error('❌ [LOGIN] Login error:', err);
         this.showToast(err.error?.message || 'Login failed', 'error');
       }
     });
