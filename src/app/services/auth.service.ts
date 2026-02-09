@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -7,9 +7,10 @@ export class AuthService {
 
   checkRedirect() {
     const token = typeof localStorage !== 'undefined' ? localStorage.getItem('orbit_token') : null;
-    const headers: any = {};
+    let headers = new HttpHeaders();
+
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers = headers.set('Authorization', `Bearer ${token}`);
     }
 
     return this.http.get<any>(
