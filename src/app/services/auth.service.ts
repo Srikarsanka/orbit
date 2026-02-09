@@ -6,7 +6,7 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   checkRedirect() {
-    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('orbit_token') : null;
+    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('orbit_user') : null;
     let headers = new HttpHeaders();
 
     if (token) {

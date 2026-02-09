@@ -144,7 +144,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         const userData = res.user || {};
 
         if (res.token) {
-          localStorage.setItem('orbit_token', res.token);
+          console.log('Saving token as orbit_user');
+          localStorage.setItem('orbit_user', res.token);
         }
 
         localStorage.setItem('user', JSON.stringify({
