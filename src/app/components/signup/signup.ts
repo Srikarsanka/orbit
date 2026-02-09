@@ -27,7 +27,7 @@ export class Signup implements OnInit, OnDestroy {
 
   submitted = false;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {}
+  constructor(private fb: FormBuilder, private http: HttpClient) { }
 
   ngOnInit(): void {
     this.signupForm = this.fb.group({
@@ -80,8 +80,8 @@ export class Signup implements OnInit, OnDestroy {
       this.videoStream = null;
     }
     if (this.videoRef?.nativeElement) {
-      try { this.videoRef.nativeElement.pause(); } catch {}
-      try { this.videoRef.nativeElement.srcObject = null; } catch {}
+      try { this.videoRef.nativeElement.pause(); } catch { }
+      try { this.videoRef.nativeElement.srcObject = null; } catch { }
     }
   }
 
@@ -125,7 +125,7 @@ export class Signup implements OnInit, OnDestroy {
       photoBase64: this.capturedImage
     };
 
-    this.http.post('http://localhost:5000/auth/signup', payload, {
+    this.http.post('https://orbitbackend-0i66.onrender.com/auth/signup', payload, {
       withCredentials: true
     }).subscribe({
       next: () => {
@@ -141,10 +141,9 @@ export class Signup implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.stopCamera();
   }
-  login()
-{
-  window.location.href='/login'
-}
+  login() {
+    window.location.href = '/login'
+  }
 
 
 }

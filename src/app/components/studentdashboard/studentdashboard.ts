@@ -302,7 +302,7 @@ export class Studentdashboard implements OnInit {
      ============================================================ */
   loadUser() {
     this.http.get<any>(
-      "http://localhost:5000/auth/redirect",
+      "https://orbitbackend-0i66.onrender.com/auth/redirect",
       { withCredentials: true }
     ).subscribe(res => {
       if (!res.user) {
@@ -328,7 +328,7 @@ export class Studentdashboard implements OnInit {
 
     try {
       const res: any = await lastValueFrom(this.http.post(
-        "http://localhost:5000/api/student/classes",
+        "https://orbitbackend-0i66.onrender.com/api/student/classes",
         { studentEmail: this.user.email },
         { withCredentials: true }
       ));
@@ -375,7 +375,7 @@ export class Studentdashboard implements OnInit {
     this.loadingAnnouncements = true;
     try {
       const response: any = await lastValueFrom(this.http.post(
-        'http://localhost:5000/api/announcements/student',
+        'https://orbitbackend-0i66.onrender.com/api/announcements/student',
         { studentEmail: this.user.email },
         { withCredentials: true }
       ));
@@ -397,7 +397,7 @@ export class Studentdashboard implements OnInit {
   async fetchAttendanceData() {
     this.loadingAttendance = true;
     try {
-      const response: any = await lastValueFrom(this.http.get('http://localhost:5000/api/sessions/attendance/student', { withCredentials: true }));
+      const response: any = await lastValueFrom(this.http.get('https://orbitbackend-0i66.onrender.com/api/sessions/attendance/student', { withCredentials: true }));
       if (response && response.success) {
         this.attendanceData = response;
         console.log('Attendance Data:', this.attendanceData);
@@ -456,7 +456,7 @@ export class Studentdashboard implements OnInit {
     };
 
     this.http.post<any>(
-      "http://localhost:5000/api/student/join",
+      "https://orbitbackend-0i66.onrender.com/api/student/join",
       payload,
       { withCredentials: true }
     ).subscribe({
@@ -575,7 +575,7 @@ export class Studentdashboard implements OnInit {
     formData.append('studentEmail', this.user?.email || '');
 
     this.http.post<any>(
-      "http://localhost:5000/api/student/update-photo",
+      "https://orbitbackend-0i66.onrender.com/api/student/update-photo",
       formData,
       { withCredentials: true }
     ).subscribe({
@@ -634,7 +634,7 @@ export class Studentdashboard implements OnInit {
     };
 
     this.http.post<any>(
-      "http://localhost:5000/api/student/change-password",
+      "https://orbitbackend-0i66.onrender.com/api/student/change-password",
       payload,
       { withCredentials: true }
     ).subscribe({
@@ -672,7 +672,7 @@ export class Studentdashboard implements OnInit {
     try {
       const res: any = await this.http
         .post(
-          `http://localhost:5000/api/openclass/${classCode}`,
+          `https://orbitbackend-0i66.onrender.com/api/openclass/${classCode}`,
           {},
           { withCredentials: true }
         )
@@ -783,7 +783,7 @@ export class Studentdashboard implements OnInit {
       const renderAnnouncements = async () => {
         content.innerHTML = '<p style="text-align:center; padding:20px; color:#666;">Loading announcements...</p>';
         try {
-          const res: any = await this.http.get(`http://localhost:5000/api/announcements/class/${room._id}`, { withCredentials: true }).toPromise();
+          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/announcements/class/${room._id}`, { withCredentials: true }).toPromise();
           const list = res.announcements || [];
 
           if (!list.length) {
@@ -810,7 +810,7 @@ export class Studentdashboard implements OnInit {
       const renderMaterials = async () => {
         content.innerHTML = '<p style="text-align:center; padding:20px; color:#666;">Loading materials...</p>';
         try {
-          const res: any = await this.http.get(`http://localhost:5000/api/material/${room._id}`, { withCredentials: true }).toPromise();
+          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/material/${room._id}`, { withCredentials: true }).toPromise();
           const list = res.materials || [];
 
           if (!list.length) {
@@ -819,7 +819,7 @@ export class Studentdashboard implements OnInit {
           }
           content.innerHTML = '';
           list.forEach((m: any) => {
-            const fileUrl = m.fileUrl ? 'http://localhost:5000' + m.fileUrl : m.externalLink;
+            const fileUrl = m.fileUrl ? 'https://orbitbackend-0i66.onrender.com' + m.fileUrl : m.externalLink;
             const card = document.createElement('div');
             card.style.cssText = `background:white; padding:16px; margin-bottom:12px; border-radius:12px; border:1px solid #E4E7EB; display:flex; justify-content:space-between; align-items:center;`;
             card.innerHTML = `
@@ -846,7 +846,7 @@ export class Studentdashboard implements OnInit {
 
         try {
           const sessionRes: any = await this.http.get(
-            `http://localhost:5000/api/sessions/active/${room._id}`,
+            `https://orbitbackend-0i66.onrender.com/api/sessions/active/${room._id}`,
             { withCredentials: true }
           ).toPromise();
 
@@ -887,7 +887,7 @@ export class Studentdashboard implements OnInit {
           const joinBtn = document.getElementById('joinBtn');
           if (joinBtn) {
             joinBtn.onclick = () => {
-              const url = `http://localhost:5000/video/room.html?session=${sessionRes.sessionId}&role=student&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
+              const url = `https://orbitbackend-0i66.onrender.com/video/room.html?session=${sessionRes.sessionId}&role=student&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
               window.open(url, '_blank');
             };
           }
@@ -988,7 +988,7 @@ export class Studentdashboard implements OnInit {
   logout() {
     // Call logout API
     this.http.post<any>(
-      "http://localhost:5000/auth/logout",
+      "https://orbitbackend-0i66.onrender.com/auth/logout",
       {},
       { withCredentials: true }
     ).subscribe({
@@ -1464,7 +1464,7 @@ Explain what caused this error and how to fix it. Be clear and concise. Do not u
       this.hubLoading = true;
       const query = this.searchHubQuery.trim() || 'computer science';
       try {
-        const url = `http://localhost:5000/api/books/search?q=${encodeURIComponent(query)}`;
+        const url = `https://orbitbackend-0i66.onrender.com/api/books/search?q=${encodeURIComponent(query)}`;
         const response: any = await lastValueFrom(this.http.get(url));
         if (response && response.success) {
           this.hubBooks = response.books;
@@ -1483,7 +1483,7 @@ Explain what caused this error and how to fix it. Be clear and concise. Do not u
   async getEducationNews(topic?: string) {
     this.hubLoading = true;
     try {
-      let url = 'http://localhost:5000/api/news';
+      let url = 'https://orbitbackend-0i66.onrender.com/api/news';
       if (topic) {
         url += `?topics=${topic}`;
       }

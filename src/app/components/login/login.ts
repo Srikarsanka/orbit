@@ -134,34 +134,38 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     console.log('Sending login details:', body);
 
-    this.http.post('http://localhost:5000/auth/login', body, {
-      withCredentials: true
-    })
-      .subscribe(
-        (res: any) => {
-          this.showToast('Login successful 🎉', 'success');
-          this.showToast(res.user?.role, 'info')
-          localStorage.setItem("user", JSON.stringify(res.user));
-          console.log("SAVED TOKEN:", localStorage.getItem("token"));
+    // Call API
+    this.http.post('https://orbitbackend-0i66.onrender.com/api/auth/login', body).subscribe({
+      next: (res: any) => {
+        console.log('Login success:', res);
+        this.showToast('Login successful!', 'success');
 
+        // 🔥 SAVE USER TO LOCAL STORAGE FOR ROLE GUARD
+        const userData = res.user || {};
+        localStorage.setItem('user', JSON.stringify({
+          email: userData.email || this.loginForm.value.email,
+          role: userData.role || this.loginForm.value.role,
+          name: userData.fullName || userData.name || 'User'
+        }));
 
+        setTimeout(() => {
+          const role = userData.role || this.loginForm.value.role;
+          console.log('Redirecting... Role:', role);
 
-          if (res.user.role === 'student') {
-            setTimeout(() => {
-              window.location.href = '/studentdashboard';
-            }, 2000);
-
+          if (role === 'student') {
+            console.log('Going to /studentdashboard');
+            window.location.href = '/studentdashboard';
           } else {
-            setTimeout(() => {
-              window.location.href = '/teacherdashboard';
-            }, 2000);
+            console.log('Going to /teacherdashboard');
+            window.location.href = '/teacherdashboard';
           }
-        },
-        (err) => {
-          console.error('Login error:', err);
-          this.showToast(err.error.message || 'Login failed', 'error');
-        }
-      );
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Login error:', err);
+        this.showToast(err.error?.message || 'Login failed', 'error');
+      }
+    });
   }
 
 

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-forgetpassword',
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   imports: [FormsModule, CommonModule]
 })
 export class Forgetpassword {
-  
+
   email = "";
   otp = "";
   newPassword = "";
@@ -26,13 +26,13 @@ export class Forgetpassword {
   success = "";
   error = "";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // 🔹 Step 1 — Send OTP
   sendOtp() {
     this.error = this.success = "";
 
-    this.http.post<any>('http://localhost:5000/otp/forgot-password', { email: this.email })
+    this.http.post<any>('https://orbitbackend-0i66.onrender.com/otp/forgot-password', { email: this.email })
       .subscribe({
         next: () => {
           this.success = "OTP sent to your email";
@@ -67,7 +67,7 @@ export class Forgetpassword {
 
     const email = localStorage.getItem("forgotEmail");
 
-    this.http.post<any>('http://localhost:5000/otp/forgot-password', { email })
+    this.http.post<any>('https://orbitbackend-0i66.onrender.com/otp/forgot-password', { email })
       .subscribe({
         next: () => {
           this.success = "New OTP sent to your email";
@@ -83,7 +83,7 @@ export class Forgetpassword {
 
     const email = localStorage.getItem("forgotEmail");
 
-    this.http.post<any>('http://localhost:5000/otp/verify-otp', { email, otp: this.otp })
+    this.http.post<any>('https://orbitbackend-0i66.onrender.com/otp/verify-otp', { email, otp: this.otp })
       .subscribe({
         next: (res) => {
           this.success = "OTP verified";
@@ -107,7 +107,7 @@ export class Forgetpassword {
 
     const resetToken = localStorage.getItem("resetToken");
 
-    this.http.post<any>('http://localhost:5000/otp/reset-password', {
+    this.http.post<any>('https://orbitbackend-0i66.onrender.com/otp/reset-password', {
       resetToken,
       newPassword: this.newPassword
     }).subscribe({
