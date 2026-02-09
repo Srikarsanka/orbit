@@ -21,6 +21,11 @@
                         <i class="fa-solid fa-bullhorn"></i> Announcements
                   </a>
 
+                  <a class="menu-item" [ngClass]="{active: selectedSection=='attendance'}"
+                        (click)="select('attendance')">
+                        <i class="fa-solid fa-clipboard-check"></i> My Attendance
+                  </a>
+
                   <a class="menu-item" [ngClass]="{active: selectedSection=='materials'}" (click)="select('materials')">
                         <i class="fa-solid fa-folder-open"></i> Materials
                   </a>
@@ -30,7 +35,7 @@
                   </a>
 
                   <a class="menu-item" [ngClass]="{active: selectedSection=='ai'}" (click)="select('ai')">
-                        <i class="fa-solid fa-robot"></i> AI Suggestions
+                        <i class="fa-solid fa-atom"></i> Learning Hub
                   </a>
 
                   <a class="menu-item" [ngClass]="{active: selectedSection=='compiler'}" (click)="select('compiler')">
@@ -43,8 +48,331 @@
             </nav>
       </aside>
 
+      <!-- DASHBOARD SECTION -->
+      <section *ngIf="selectedSection === 'dashboard'" class="dashboard-section">
+            <!-- Header with Welcome Message -->
+            <div class="dashboard-header">
+                  <div class="welcome-content">
+                        <h1 class="dashboard-title">Welcome back, <span class="user-name">{{ name }}</span>! 👋</h1>
+                        <p class="dashboard-subtitle">Here's your learning overview for today</p>
+                  </div>
+
+            </div>
+
+            <!-- Enhanced Stats Grid -->
+            <div class="stats-grid">
+                  <!-- Total Classes Card -->
+                  <div class="metric-card card-primary">
+                        <div class="metric-header">
+                              <div class="metric-icon-wrapper">
+                                    <i class="fa-solid fa-layer-group"></i>
+                              </div>
+                        </div>
+                        <div class="metric-body">
+                              <h3 class="metric-value">{{ totalClasses }}</h3>
+                              <p class="metric-label">Total Classes</p>
+                              <div class="metric-progress" *ngIf="totalClasses > 0">
+                                    <div class="progress-bar">
+                                          <div class="progress-fill" [style.width.%]="totalClasses * 10"></div>
+                                    </div>
+                                    <span class="progress-text">{{ totalClasses }} enrolled</span>
+                              </div>
+                        </div>
+                  </div>
+
+                  <!-- Active Classes Card -->
+                  <div class="metric-card card-success">
+                        <div class="metric-header">
+                              <div class="metric-icon-wrapper">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                              </div>
+                        </div>
+                        <div class="metric-body">
+                              <h3 class="metric-value">{{ activeClasses }}</h3>
+                              <p class="metric-label">Active Classes</p>
+                              <div class="metric-progress" *ngIf="totalClasses > 0">
+                                    <div class="progress-bar">
+                                          <div class="progress-fill"
+                                                [style.width.%]="(activeClasses / totalClasses) * 100"></div>
+                                    </div>
+                                    <span class="progress-text">{{ activeClasses }} of {{ totalClasses }} active</span>
+                              </div>
+                        </div>
+                  </div>
+
+
+
+                  <!-- Fellow Students Card -->
+                  <div class="metric-card card-info">
+                        <div class="metric-header">
+                              <div class="metric-icon-wrapper">
+                                    <i class="fa-solid fa-users"></i>
+                              </div>
+                              <div class="metric-trend neutral">
+                                    <i class="fa-solid fa-minus"></i>
+                                    <span>0%</span>
+                              </div>
+                        </div>
+                        <div class="metric-body">
+                              <h3 class="metric-value">{{ totalStudents }}</h3>
+                              <p class="metric-label">Fellow Students</p>
+                              <div class="metric-progress">
+                                    <div class="progress-bar">
+                                          <div class="progress-fill" [style.width]="'100%'"></div>
+                                    </div>
+                                    <span class="progress-text">Across all classes</span>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+
+            <!-- Quick Actions & Activity Grid -->
+            <div class="dashboard-content-grid">
+                  <!-- Quick Actions Panel -->
+                  <div class="quick-actions-panel">
+                        <div class="panel-header">
+                              <h2 class="panel-title">
+                                    <i class="fa-solid fa-bolt"></i>
+                                    Quick Actions
+                              </h2>
+                        </div>
+                        <div class="quick-actions-grid">
+                              <button class="action-btn" (click)="select('joinclass')">
+                                    <div class="action-icon">
+                                          <i class="fa-solid fa-plus"></i>
+                                    </div>
+                                    <span class="action-label">Join Class</span>
+                              </button>
+                              <button class="action-btn" (click)="select('myclasses')">
+                                    <div class="action-icon">
+                                          <i class="fa-solid fa-book-open"></i>
+                                    </div>
+                                    <span class="action-label">My Classes</span>
+                              </button>
+                              <button class="action-btn" (click)="select('materials')">
+                                    <div class="action-icon">
+                                          <i class="fa-solid fa-folder-open"></i>
+                                    </div>
+                                    <span class="action-label">Materials</span>
+                              </button>
+                              <button class="action-btn" (click)="select('announcements')">
+                                    <div class="action-icon">
+                                          <i class="fa-solid fa-bullhorn"></i>
+                                    </div>
+                                    <span class="action-label">Announcements</span>
+                              </button>
+                              <button class="action-btn" (click)="select('attendance')">
+                                    <div class="action-icon">
+                                          <i class="fa-solid fa-clipboard-check"></i>
+                                    </div>
+                                    <span class="action-label">Attendance</span>
+                              </button>
+                              <button class="action-btn" (click)="select('compiler')">
+                                    <div class="action-icon">
+                                          <i class="fa-solid fa-code"></i>
+                                    </div>
+                                    <span class="action-label">Compiler</span>
+                              </button>
+                        </div>
+                  </div>
+
+                  <!-- Recent Activity Feed -->
+                  <div class="activity-panel">
+                        <div class="panel-header">
+                              <h2 class="panel-title">
+                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                    Recent Activity
+                              </h2>
+                        </div>
+                        <div class="activity-feed" *ngIf="myClasses.length > 0">
+                              <div class="activity-item" *ngFor="let cls of myClasses.slice(0, 4)">
+                                    <div class="activity-icon success">
+                                          <i class="fa-solid fa-check"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                          <p class="activity-text">Enrolled in <strong>{{ cls.className }}</strong></p>
+                                          <span class="activity-time">{{ cls.facultyName }}</span>
+                                    </div>
+                              </div>
+                        </div>
+                        <div *ngIf="myClasses.length === 0" style="text-align: center; padding: 2rem; color: #94a3b8;">
+                              <i class="fa-solid fa-inbox"
+                                    style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                              <p>No recent activity</p>
+                        </div>
+                  </div>
+
+                  <!-- Upcoming Sessions Widget -->
+                  <div class="upcoming-sessions-panel">
+                        <div class="panel-header">
+                              <h2 class="panel-title">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                    My Classes
+                              </h2>
+                        </div>
+                        <div class="sessions-list" *ngIf="myClasses.length > 0">
+                              <div class="session-card" *ngFor="let cls of myClasses.slice(0, 3)">
+                                    <div class="session-time">
+                                          <span class="session-date">{{ cls.subject || 'Class' }}</span>
+                                          <span class="session-hour">{{ cls.totalStudents || 0 }} students</span>
+                                    </div>
+                                    <div class="session-details">
+                                          <h4 class="session-title">{{ cls.className }}</h4>
+                                          <p class="session-faculty">
+                                                <i class="fa-solid fa-user"></i>
+                                                {{ cls.facultyName }}
+                                          </p>
+                                    </div>
+                                    <div class="session-action">
+                                          <button class="btn-join-session"
+                                                (click)="openClass(cls.classCode)">Open</button>
+                                    </div>
+                              </div>
+                        </div>
+                        <div *ngIf="myClasses.length === 0" style="text-align: center; padding: 2rem; color: #94a3b8;">
+                              <i class="fa-solid fa-inbox"
+                                    style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                              <p>No classes enrolled yet</p>
+                        </div>
+                  </div>
+            </div>
+      </section>
+
+      <!-- ATTENDANCE SECTION -->
+      <section *ngIf="selectedSection === 'attendance'" class="attendance-section">
+            <!-- Loading State -->
+            <div *ngIf="loadingAttendance" class="attendance-loading">
+                  <i class="fa-solid fa-spinner"></i>
+                  <p>Loading attendance data...</p>
+            </div>
+
+            <!-- Attendance Data -->
+            <div *ngIf="!loadingAttendance && attendanceData">
+                  <!-- Overall Stats -->
+                  <div class="attendance-overall-stats">
+                        <h2 class="attendance-overall-title">
+                              <i class="fa-solid fa-chart-pie"></i>
+                              Overall Attendance
+                        </h2>
+                        <div class="attendance-stats-grid">
+                              <div class="attendance-stat-card">
+                                    <h3 class="attendance-stat-value">{{ attendanceData.overallStats.totalSessions }}
+                                    </h3>
+                                    <p class="attendance-stat-label">Total Sessions</p>
+                              </div>
+                              <div class="attendance-stat-card">
+                                    <h3 class="attendance-stat-value">{{ attendanceData.overallStats.attendedSessions }}
+                                    </h3>
+                                    <p class="attendance-stat-label">Attended</p>
+                              </div>
+                              <div class="attendance-stat-card">
+                                    <h3 class="attendance-stat-value" [ngClass]="{
+                                                'good': attendanceData.overallStats.attendanceRate >= 75,
+                                                'average': attendanceData.overallStats.attendanceRate >= 50 && attendanceData.overallStats.attendanceRate < 75,
+                                                'poor': attendanceData.overallStats.attendanceRate < 50
+                                          }">
+                                          {{ attendanceData.overallStats.attendanceRate }}%
+                                    </h3>
+                                    <p class="attendance-stat-label">Attendance Rate</p>
+                              </div>
+                        </div>
+                  </div>
+
+                  <!-- Class-wise Attendance -->
+                  <div class="attendance-classwise">
+                        <div *ngFor="let classData of attendanceData.classwiseAttendance" class="attendance-class-card">
+                              <!-- Class Header -->
+                              <div class="attendance-class-header" (click)="toggleClassDetails(classData.classId)">
+                                    <div class="attendance-class-info">
+                                          <h3 class="attendance-class-name">{{ classData.className }}</h3>
+                                          <div class="attendance-class-meta">
+                                                <span><i class="fa-solid fa-code"></i> {{ classData.classCode }}</span>
+                                                <span><i class="fa-solid fa-book"></i> {{ classData.subject }}</span>
+                                                <span><i class="fa-solid fa-user"></i> {{ classData.facultyName
+                                                      }}</span>
+                                          </div>
+                                    </div>
+                                    <div class="attendance-class-stats">
+                                          <div class="attendance-class-stat">
+                                                <span class="attendance-class-stat-value">{{ classData.totalSessions
+                                                      }}</span>
+                                                <span class="attendance-class-stat-label">Sessions</span>
+                                          </div>
+                                          <div class="attendance-class-stat">
+                                                <span class="attendance-class-stat-value">{{ classData.attendedSessions
+                                                      }}</span>
+                                                <span class="attendance-class-stat-label">Attended</span>
+                                          </div>
+                                          <div class="attendance-rate-badge" [ngClass]="{
+                                                      'good': classData.attendanceRate >= 75,
+                                                      'average': classData.attendanceRate >= 50 && classData.attendanceRate < 75,
+                                                      'poor': classData.attendanceRate < 50
+                                                }">
+                                                {{ classData.attendanceRate }}%
+                                          </div>
+                                          <i class="fa-solid fa-chevron-down attendance-expand-icon"
+                                                [ngClass]="{'expanded': expandedClassId === classData.classId}"></i>
+                                    </div>
+                              </div>
+
+                              <!-- Session Details (Expandable) -->
+                              <div *ngIf="expandedClassId === classData.classId && classData.sessions.length > 0"
+                                    class="attendance-sessions">
+                                    <h4 class="attendance-sessions-title">Session Details</h4>
+                                    <div class="attendance-session-list">
+                                          <div *ngFor="let session of classData.sessions"
+                                                class="attendance-session-item">
+                                                <div class="attendance-session-info">
+                                                      <p class="attendance-session-title">{{ session.sessionTitle }}</p>
+                                                      <p class="attendance-session-date">{{ formatDate(session.date) }}
+                                                      </p>
+                                                </div>
+                                                <div class="attendance-session-time">
+                                                      <span class="attendance-session-duration">
+                                                            <i class="fa-solid fa-clock"></i>
+                                                            {{ formatTime(session.timeSpent) }} / {{
+                                                            formatTime(session.duration) }}
+                                                      </span>
+                                                      <span class="attendance-session-percentage" [ngClass]="{
+                                                                  'good': session.timeSpentPercentage >= 75,
+                                                                  'average': session.timeSpentPercentage >= 50 && session.timeSpentPercentage < 75,
+                                                                  'poor': session.timeSpentPercentage < 50
+                                                            }">
+                                                            {{ session.timeSpentPercentage }}%
+                                                      </span>
+                                                </div>
+                                                <span class="attendance-session-status"
+                                                      [ngClass]="{'present': session.attended, 'absent': !session.attended}">
+                                                      {{ session.attended ? 'Present' : 'Absent' }}
+                                                </span>
+                                          </div>
+                                    </div>
+                              </div>
+
+                              <!-- No Sessions Message -->
+                              <div *ngIf="expandedClassId === classData.classId && classData.sessions.length === 0"
+                                    class="attendance-sessions">
+                                    <div class="attendance-empty">
+                                          <i class="fa-solid fa-calendar-xmark"></i>
+                                          <p class="attendance-empty-title">No sessions yet</p>
+                                          <p class="attendance-empty-text">Sessions will appear here once they are
+                                                conducted</p>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="!loadingAttendance && !attendanceData" class="attendance-empty">
+                  <i class="fa-solid fa-clipboard-question"></i>
+                  <p class="attendance-empty-title">No attendance data available</p>
+                  <p class="attendance-empty-text">Attend some classes to see your attendance records</p>
+            </div>
+      </section>
+
       <!-- JOIN CLASS SECTION -->
-      <section [hidden]="selectedSection !== 'joinclass'" class="join-class-section">
+      <section *ngIf="selectedSection === 'joinclass'" class="join-class-section">
             <!-- TITLE -->
             <div class="section-header">
                   <h1><i class="fa-solid fa-right-to-bracket"></i> Join New Class</h1>
@@ -126,8 +454,8 @@
                   </div>
             </div>
       </section>
-      <!-- The below code is for the my classess section -->
-      <section [hidden]="selectedSection !== 'myclasses'" class="my-classes-section">
+      <!-- The below code is for the my classes section -->
+      <section *ngIf="selectedSection === 'myclasses'" class="my-classes-section">
 
             <div class="section-header">
                   <h1><i class="fa-solid fa-layer-group"></i> My Classes</h1>
@@ -213,20 +541,617 @@
 
                   </div>
             </div>
-            <div class="class-card add-new-card" (click)="select('joinclass')">
-                  <div class="add-new-content">
-                        <div class="add-icon">
-                              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2"
-                                          stroke-linecap="round" stroke-linejoin="round" />
-                              </svg>
+
+            <!-- CLASSES LIST CONTENT -->
+            <div *ngIf="myClasses.length > 0" class="classes-wrapper">
+
+                  <!-- Search Bar & Filter -->
+                  <div class="search-section">
+                        <div class="search-box">
+                              <i class="fa-solid fa-search search-icon"></i>
+                              <input type="text" [(ngModel)]="searchText"
+                                    placeholder="Search your classes by name, code, or faculty...">
                         </div>
-                        <h3>Create New Class</h3>
-                        <p>Start a New Learning Chapter</p>
+                        <div class="class-count" *ngIf="searchText">
+                              Found {{filteredClasses.length}} class{{filteredClasses.length !== 1 ? 'es' : ''}}
+                        </div>
+                  </div>
+
+                  <!-- No Search Results State -->
+                  <div *ngIf="filteredClasses.length === 0 && searchText" class="no-search-results">
+                        <div class="no-results-icon">
+                              <i class="fa-solid fa-magnifying-glass-minus"></i>
+                        </div>
+                        <h3>No classes found</h3>
+                        <p>We couldn't find any class matching "<b>{{searchText}}</b>"</p>
+                        <button class="btn-clear-search" (click)="searchText = ''">
+                              Clear Search
+                        </button>
+                  </div>
+
+                  <!-- Modern Grid -->
+                  <div class="modern-grid" *ngIf="filteredClasses.length > 0">
+
+                        <div *ngFor="let cls of filteredClasses; let i = index" class="modern-class-card"
+                              (click)="enterClass(cls)">
+                              <!-- Header with Dynamic Color -->
+                              <div class="modern-card-header" [ngClass]="getHeaderStyle(i)">
+                                    <div class="subject-badge-pill">
+                                          {{ cls.subject }}
+                                    </div>
+                                    <div class="class-code-pill">
+                                          <i class="fa-solid fa-hashtag"></i> {{ cls.classCode }}
+                                    </div>
+                              </div>
+
+                              <div class="modern-card-body">
+                                    <h3 class="class-title">{{ cls.className }}</h3>
+
+                                    <div class="faculty-row">
+                                          <img *ngIf="cls.facultyPhoto" [src]="cls.facultyPhoto" class="faculty-img">
+                                          <div class="faculty-placeholder" *ngIf="!cls.facultyPhoto">
+                                                {{ cls.facultyName.charAt(0) }}
+                                          </div>
+                                          <div class="faculty-info-compact">
+                                                <div class="f-role-badge">Instructor</div>
+                                                <div class="f-name-bold">{{ getFacultyNameWithTitle(cls.facultyName) }}
+                                                </div>
+                                          </div>
+                                    </div>
+
+                                    <div class="card-stats">
+                                          <div class="stat-item">
+                                                <i class="fa-solid fa-users"></i>
+                                                <span>{{ cls.totalStudents }} Students</span>
+                                          </div>
+                                          <div class="stat-item">
+                                                <i class="fa-regular fa-calendar"></i>
+                                                <span>{{ cls.createdAt | date:'mediumDate' }}</span>
+                                          </div>
+                                    </div>
+                              </div>
+
+                              <div class="modern-card-footer">
+                                    <button class="btn-enter-modern"
+                                          (click)="enterClass(cls); $event.stopPropagation()">
+                                          Enter Class
+                                    </button>
+                              </div>
+                        </div>
+
+                        <!-- Add Class Card -->
+                        <div class="add-class-modern" (click)="select('joinclass')">
+                              <div class="add-icon-circle">
+                                    <i class="fa-solid fa-plus"></i>
+                              </div>
+                              <span>Join New Class</span>
+                        </div>
+
                   </div>
             </div>
 
       </section>
+
+      <!-- PROFILE SECTION -->
+      <section *ngIf="selectedSection === 'profile'" class="profile-section">
+            <div class="profile-header">
+                  <h1><i class="fa-solid fa-user"></i> Profile</h1>
+                  <p>Manage your account settings and preferences.</p>
+            </div>
+
+            <div class="profile-container">
+                  <div class="profile-card">
+                        <div class="card-header">
+                              <h3>Profile Information</h3>
+                              <p>Your account details and settings</p>
+                        </div>
+                        <div class="profile-content">
+                              <div class="profile-avatar-section">
+                                    <div class="avatar-wrapper">
+                                          <img [src]="photourl" alt="Profile Photo" class="profile-avatar">
+                                          <div class="avatar-overlay" (click)="setEditMode('photo')"
+                                                *ngIf="editMode !== 'photo'">
+                                                <i class="fa-solid fa-camera"></i>
+                                          </div>
+                                    </div>
+                                    <h2 class="profile-name">{{ name }}</h2>
+                                    <p class="profile-role">Student</p>
+                              </div>
+                              <div class="profile-details">
+                                    <div class="detail-item">
+                                          <div class="detail-icon"><i class="fa-solid fa-envelope"></i></div>
+                                          <div class="detail-content">
+                                                <label>Email</label>
+                                                <p>{{ user?.email }}</p>
+                                          </div>
+                                    </div>
+                                    <div class="detail-item">
+                                          <div class="detail-icon"><i class="fa-solid fa-user"></i></div>
+                                          <div class="detail-content">
+                                                <label>Role</label>
+                                                <p>{{ role }}</p>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+
+                  <div class="profile-card" *ngIf="!editMode">
+                        <div class="card-header">
+                              <h3>Account Actions</h3>
+                              <p>Manage your account settings</p>
+                        </div>
+                        <div class="profile-content">
+                              <div class="profile-actions">
+                                    <button class="btn-secondary" (click)="setEditMode('password')">
+                                          <i class="fa-solid fa-lock"></i> Change Password
+                                    </button>
+                              </div>
+                        </div>
+                  </div>
+
+                  <div class="edit-panel" *ngIf="editMode === 'photo'">
+                        <div class="panel-header">
+                              <h3>Change Profile Photo</h3>
+                              <p>Upload a new profile picture</p>
+                        </div>
+                        <div class="edit-content">
+                              <div class="form-group">
+                                    <label>Select New Photo:</label>
+                                    <div class="file-upload-wrapper">
+                                          <input type="file" class="file-input" (change)="onFileSelect($event)"
+                                                accept="image/*">
+                                          <div class="file-upload-area">
+                                                <i class="fa-solid fa-cloud-upload"></i>
+                                                <p>Click to upload or drag and drop</p>
+                                                <span>PNG, JPG up to 5MB</span>
+                                          </div>
+                                    </div>
+                              </div>
+                              <div class="form-actions">
+                                    <button class="btn-primary" (click)="updatePhoto()" [disabled]="!selectedFile">
+                                          <span *ngIf="!submitting">Update Photo</span>
+                                          <span *ngIf="submitting" class="loading">
+                                                <i class="fa-solid fa-spinner"></i> Updating...
+                                          </span>
+                                    </button>
+                                    <button class="btn-secondary" (click)="setEditMode('')">Cancel</button>
+                              </div>
+                              <div class="form-messages">
+                                    <p class="success" *ngIf="successMsg">{{ successMsg }}</p>
+                                    <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+                              </div>
+                        </div>
+                  </div>
+
+                  <div class="edit-panel" *ngIf="editMode === 'password'">
+                        <div class="panel-header">
+                              <h3>Change Password</h3>
+                              <p>Update your account password</p>
+                        </div>
+                        <div class="edit-content">
+                              <div class="form-group">
+                                    <label for="currentPass">Current Password</label>
+                                    <div class="input-wrapper">
+                                          <div class="input-icon"><i class="fa-solid fa-lock"></i></div>
+                                          <input type="password" id="currentPass" [(ngModel)]="currentPass"
+                                                placeholder="Enter current password">
+                                    </div>
+                              </div>
+                              <div class="form-group">
+                                    <label for="newPass">New Password</label>
+                                    <div class="input-wrapper">
+                                          <div class="input-icon"><i class="fa-solid fa-lock"></i></div>
+                                          <input type="password" id="newPass" [(ngModel)]="newPass"
+                                                placeholder="Enter new password">
+                                    </div>
+                              </div>
+                              <div class="form-group">
+                                    <label for="confirmPass">Confirm New Password</label>
+                                    <div class="input-wrapper">
+                                          <div class="input-icon"><i class="fa-solid fa-lock"></i></div>
+                                          <input type="password" id="confirmPass" [(ngModel)]="confirmPass"
+                                                placeholder="Confirm new password">
+                                    </div>
+                              </div>
+                              <div class="form-actions">
+                                    <button class="btn-secondary" (click)="setEditMode('')">Cancel</button>
+                                    <button class="btn-primary" (click)="updatePassword()">
+                                          Change Password
+                                    </button>
+                              </div>
+                              <div class="form-messages">
+                                    <p class="success" *ngIf="successMsg">{{ successMsg }}</p>
+                                    <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </section>
+
+      <!-- ANNOUNCEMENTS SECTION -->
+      <section *ngIf="selectedSection === 'announcements'" class="announcements-section">
+            <div class="section-header">
+                  <h1><i class="fa-solid fa-bullhorn"></i> Announcements</h1>
+                  <p>Stay updated with the latest news from your instructors.</p>
+            </div>
+
+            <div class="announcements-container">
+                  <div *ngIf="loadingAnnouncements" class="announcements-loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <p>Fetching announcements...</p>
+                  </div>
+
+                  <div class="announcements-list" *ngIf="!loadingAnnouncements && announcements.length > 0">
+                        <div class="announcement-card" *ngFor="let item of announcements">
+                              <div class="announcement-badge">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                    {{ item.className }}
+                              </div>
+                              <div class="announcement-content">
+                                    <h3 class="announcement-title">{{ item.title }}</h3>
+                                    <p class="announcement-message">{{ item.message }}</p>
+                              </div>
+                              <div class="announcement-footer">
+                                    <div class="announcement-faculty">
+                                          <div class="faculty-avatar">
+                                                <i class="fa-solid fa-user-tie"></i>
+                                          </div>
+                                          <span>{{ item.facultyName }}</span>
+                                    </div>
+                                    <div class="announcement-date">
+                                          <i class="fa-solid fa-calendar-day"></i>
+                                          {{ formatDate(item.createdAt) }}
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+
+                  <div class="announcements-empty" *ngIf="!loadingAnnouncements && announcements.length === 0">
+                        <i class="fa-solid fa-bell-slash"></i>
+                        <h3>No announcements yet</h3>
+                        <p>When your instructors post announcements, they will appear here.</p>
+                  </div>
+            </div>
+      </section>
+
+
+
+
+
+
+      <!-- MATERIALS SECTION -->
+      <section *ngIf="selectedSection === 'materials'" class="materials-section">
+            <div class="section-header">
+                  <h1><i class="fa-solid fa-folder-open"></i> Materials</h1>
+                  <p>Access study materials and resources.</p>
+            </div>
+            <p>Feature coming soon...</p>
+      </section>
+
+      <!-- LEARNING HUB SECTION -->
+      <section *ngIf="selectedSection === 'ai'" class="hub-section">
+            <div class="section-header">
+                  <h1><i class="fa-solid fa-atom"></i> Learning Hub</h1>
+                  <p>Explore trending educational content and resources.</p>
+            </div>
+
+            <!-- Hub Tabs -->
+            <div class="hub-tabs">
+                  <button class="hub-tab" [class.active]="activeHubTab === 'videos'" (click)="setHubTab('videos')">
+                        <i class="fa-brands fa-youtube"></i> Trending Videos
+                  </button>
+                  <button class="hub-tab" [class.active]="activeHubTab === 'docs'" (click)="setHubTab('docs')">
+                        <i class="fa-solid fa-book"></i> Recommended Books
+                  </button>
+                  <button class="hub-tab" [class.active]="activeHubTab === 'news'" (click)="setHubTab('news')">
+                        <i class="fa-solid fa-newspaper"></i> Latest News
+                  </button>
+            </div>
+
+            <!-- News Tab -->
+            <div class="hub-content" *ngIf="activeHubTab === 'news'">
+                  <div class="news-filters">
+                        <button class="filter-btn" (click)="filterNews('')">All</button>
+                        <button class="filter-btn" (click)="filterNews('ai')">AI & Tech</button>
+                        <button class="filter-btn" (click)="filterNews('quantum')">Quantum</button>
+                        <button class="filter-btn" (click)="filterNews('exam')">Exams</button>
+                  </div>
+
+                  <div class="hub-loading" *ngIf="hubLoading">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Fetching latest education news...
+                  </div>
+
+                  <div class="hub-grid news-grid" *ngIf="!hubLoading">
+                        <div class="hub-card news-card" *ngFor="let item of hubNews" (click)="readNews(item)">
+                              <div class="news-thumbnail" *ngIf="item.thumbnail">
+                                    <img [src]="item.thumbnail" alt="news">
+                              </div>
+                              <div class="card-info">
+                                    <span class="news-source">{{ item.source }} • {{ item.pubDate }}</span>
+                                    <h4>{{ item.title }}</h4>
+                                    <p class="news-desc">{{ item.description }}</p>
+                                    <span class="btn-read-news">Read Article <i
+                                                class="fa-solid fa-book-open"></i></span>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+
+            <!-- Videos Tab -->
+            <div class="hub-content" *ngIf="activeHubTab === 'videos'">
+                  <div class="hub-search">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" [(ngModel)]="searchHubQuery" (input)="searchHub()"
+                              placeholder="Search educational videos...">
+                  </div>
+
+                  <div class="hub-grid videos-grid">
+                        <div class="hub-card video-card" *ngFor="let video of hubVideos" (click)="playVideo(video)">
+                              <div class="video-thumbnail">
+                                    <img [src]="video.thumbnail" alt="thumbnail">
+                                    <div class="play-overlay"><i class="fa-solid fa-play"></i></div>
+                              </div>
+                              <div class="card-info">
+                                    <h4>{{ video.title }}</h4>
+                                    <p class="channel-name">{{ video.channel }}</p>
+                                    <span class="category-badge {{video.category}}">{{ video.category }}</span>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+
+            <!-- Docs Tab -->
+            <div class="hub-content" *ngIf="activeHubTab === 'docs'">
+                  <div class="hub-search">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" [(ngModel)]="searchHubQuery" (keyup.enter)="searchHub()"
+                              placeholder="Search for books, papers, or topics...">
+                        <button class="btn-search-hub" (click)="searchHub()">Search</button>
+                  </div>
+
+                  <div class="hub-loading" *ngIf="hubLoading">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Finding resources...
+                  </div>
+
+                  <div class="hub-grid books-grid" *ngIf="!hubLoading">
+                        <div class="hub-card book-card" *ngFor="let book of hubBooks" (click)="readBook(book)">
+                              <div class="book-cover">
+                                    <img *ngIf="book.cover_url" [src]="book.cover_url" alt="cover">
+                                    <div class="no-cover" *ngIf="!book.cover_url"><i class="fa-solid fa-book"></i></div>
+                                    <div class="book-badge" *ngIf="book.has_full_text">
+                                          <i class="fa-solid fa-check-circle"></i> Full Text
+                                    </div>
+                              </div>
+                              <div class="card-info">
+                                    <span class="book-source">{{ book.source }}</span>
+                                    <h4>{{ book.title }}</h4>
+                                    <p class="author-name" *ngIf="book.author_name && book.author_name.length">{{
+                                          book.author_name[0] }}</p>
+                                    <span class="btn-read-book">
+                                          {{ book.has_full_text ? 'Read Now' : 'Preview' }}
+                                          <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                              </div>
+                        </div>
+
+                        <div *ngIf="hubBooks.length === 0" class="empty-hub">
+                              <i class="fa-solid fa-book-open"></i>
+                              <p>Search for a specific topic to find books.</p>
+                        </div>
+                  </div>
+            </div>
+
+
+            <!-- Video/Content Modal -->
+            <div class="video-modal-overlay" *ngIf="isVideoModalOpen" (click)="closeVideo()">
+                  <div class="video-modal-content" [class.document-modal]="isDocumentMode"
+                        (click)="$event.stopPropagation()">
+                        <!-- Modal Header for Documents -->
+                        <div class="modal-header" *ngIf="isDocumentMode">
+                              <div class="header-main">
+                                    <h3>{{ iframeTitle }}</h3>
+                                    <span class="source-tag" *ngIf="selectedArticle">{{ selectedArticle.source }}</span>
+                              </div>
+                              <div class="header-actions">
+                                    <a [href]="selectedVideo" target="_blank" class="btn-open-original">
+                                          Open in New Tab <i class="fa-solid fa-external-link-alt"></i>
+                                    </a>
+                                    <button class="btn-close-modal" (click)="closeVideo()"><i
+                                                class="fa-solid fa-times"></i></button>
+                              </div>
+                        </div>
+
+                        <!-- Highlights Section (NEW) -->
+                        <div class="highlights-panel" *ngIf="isReaderMode && selectedArticle?.highlights?.length">
+                              <div class="highlights-title">
+                                    <i class="fa-solid fa-bolt"></i> Key Highlights
+                              </div>
+                              <ul class="highlights-list">
+                                    <li *ngFor="let point of selectedArticle?.highlights">{{ point }}</li>
+                              </ul>
+                        </div>
+
+                        <button class="btn-close-modal" *ngIf="!isDocumentMode" (click)="closeVideo()"><i
+                                    class="fa-solid fa-times"></i></button>
+
+                        <div class="reader-mode-controls" *ngIf="isReaderMode">
+                              <span class="view-label"><i class="fa-solid fa-book-open"></i> Full Document</span>
+                        </div>
+                        <div class="video-wrapper" [class.document-wrapper]="isDocumentMode">
+                              <div *ngIf="isReaderMode" class="reader-content-body" [innerHTML]="readerContent"></div>
+                              <iframe *ngIf="!isReaderMode" [src]="selectedVideo" frameborder="0"
+                                    allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                  </div>
+            </div>
+
+      </section>
+
+      <!-- COMPILER SECTION -->
+      <section *ngIf="selectedSection === 'compiler'" class="compiler-section">
+            <div class="compiler-wrapper">
+                  <!-- Top Control Bar -->
+                  <div class="compiler-control-bar">
+                        <div class="control-left">
+                              <div class="language-dropdown">
+                                    <label>Language:</label>
+                                    <select [(ngModel)]="compilerLanguage" (change)="onCompilerLanguageChange()">
+                                          <option *ngFor="let lang of compilerLanguages" [value]="lang.id">
+                                                {{ lang.name }}
+                                          </option>
+                                    </select>
+                              </div>
+                        </div>
+
+                        <div class="control-center">
+                              <button class="btn-run-code" (click)="runCode()" [disabled]="isExecutingCode">
+                                    <i class="fas" [class.fa-play]="!isExecutingCode"
+                                          [class.fa-spinner]="isExecutingCode" [class.fa-spin]="isExecutingCode"></i>
+                                    <span>{{ isExecutingCode ? 'Running...' : 'Run Code' }}</span>
+                              </button>
+
+                              <button class="btn-clear-code" (click)="clearCode()">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Clear</span>
+                              </button>
+                        </div>
+
+                        <div class="control-right">
+                              <button class="btn-download" (click)="downloadCode()">
+                                    <i class="fas fa-download"></i>
+                                    <span>Download</span>
+                              </button>
+
+                              <span class="execution-badge" *ngIf="compilerExecutionTime">
+                                    <i class="fas fa-clock"></i> {{ compilerExecutionTime }}s
+                              </span>
+                        </div>
+                  </div>
+
+                  <!-- Editor and Output Container -->
+                  <div class="compiler-main-container">
+                        <!-- Code Editor Panel -->
+                        <div class="editor-panel">
+                              <div class="panel-header">
+                                    <h3><i class="fas fa-code"></i> Code Editor</h3>
+                                    <div class="header-actions">
+                                          <span class="language-badge">
+                                                <i [class]="getLanguageIcon()"></i>
+                                                {{ compilerLanguage.toUpperCase() }}
+                                          </span>
+                                    </div>
+                              </div>
+
+                              <div class="editor-container">
+                                    <div class="line-numbers">
+                                          <div *ngFor="let num of getLineNumbers()" class="line-number">{{ num }}
+                                          </div>
+                                    </div>
+
+                                    <!-- Syntax Highlighting Overlay -->
+                                    <pre
+                                          class="code-highlight"><code [class]="'language-' + compilerLanguage" [innerHTML]="getHighlightedCode()"></code></pre>
+
+                                    <!-- Transparent Textarea for Input -->
+                                    <textarea class="code-textarea" [(ngModel)]="compilerCode"
+                                          [placeholder]="getCompilerPlaceholder()"
+                                          (input)="updateLineNumbers(); updateHighlight()" (scroll)="syncScroll($event)"
+                                          (keydown)="handleTabKey($event)" spellcheck="false"></textarea>
+                              </div>
+                        </div>
+
+                        <!-- Output Panel -->
+                        <div class="output-panel">
+                              <div class="panel-header">
+                                    <h3><i class="fas fa-terminal"></i> Output</h3>
+                                    <div class="header-actions">
+                                          <button class="btn-clear-output" (click)="clearOutput()"
+                                                *ngIf="compilerOutput || compilerError">
+                                                <i class="fas fa-trash"></i> Clear
+                                          </button>
+                                    </div>
+                              </div>
+
+                              <!-- User Input Section (for stdin) -->
+                              <div class="input-section" *ngIf="!isExecutingCode && !compilerOutput && !compilerError">
+                                    <div class="input-header">
+                                          <i class="fas fa-keyboard"></i>
+                                          <span>User Input (Optional)</span>
+                                    </div>
+                                    <textarea class="input-textarea" [(ngModel)]="compilerInput"
+                                          placeholder="Enter input data here (if your code uses input())...&#10;Example: 1 2 3 4 5"></textarea>
+                                    <p class="input-hint">
+                                          <i class="fas fa-info-circle"></i>
+                                          Provide input if your code uses input(), map(), or reads from stdin
+                                    </p>
+                              </div>
+
+                              <div class="output-container">
+                                    <!-- Empty State -->
+                                    <div class="output-empty"
+                                          *ngIf="!isExecutingCode && !compilerOutput && !compilerError">
+                                          <i class="fas fa-play-circle"></i>
+                                          <p>Run your code to see output here</p>
+                                    </div>
+
+                                    <!-- Loading State -->
+                                    <div class="output-loading" *ngIf="isExecutingCode">
+                                          <div class="spinner"></div>
+                                          <p>Executing code...</p>
+                                    </div>
+
+                                    <!-- Success Output -->
+                                    <div class="output-success"
+                                          *ngIf="!isExecutingCode && compilerOutput && !compilerHasError">
+                                          <div class="output-header">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span>Success</span>
+                                          </div>
+                                          <pre class="output-text">{{ compilerOutput }}</pre>
+
+                                          <!-- AI Suggestion Button -->
+                                          <button class="btn-ai-suggest" (click)="getAiOptimization()"
+                                                [disabled]="isGeneratingAi">
+                                                <i class="fas fa-magic"></i>
+                                                {{ isGeneratingAi ? 'Generating...' : 'Get AI Suggestions' }}
+                                          </button>
+
+                                          <!-- AI Suggestion Display -->
+                                          <div class="ai-suggestion" *ngIf="compilerAiSuggestion">
+                                                <div class="ai-header">
+                                                      <i class="fas fa-lightbulb"></i>
+                                                      <span>AI Code Analysis</span>
+                                                </div>
+                                                <div class="ai-content"
+                                                      [innerHTML]="formatAiSuggestion(compilerAiSuggestion)"></div>
+                                          </div>
+                                    </div>
+
+                                    <!-- Error Output -->
+                                    <div class="output-error" *ngIf="!isExecutingCode && compilerError">
+                                          <div class="output-header">
+                                                <i class="fas fa-exclamation-circle"></i>
+                                                <span>Error</span>
+                                          </div>
+                                          <pre class="error-text">{{ compilerError }}</pre>
+
+                                          <!-- AI Suggestion -->
+                                          <div class="ai-suggestion" *ngIf="compilerAiSuggestion">
+                                                <div class="ai-header">
+                                                      <i class="fas fa-lightbulb"></i>
+                                                      <span>AI Error Analysis</span>
+                                                </div>
+                                                <div class="ai-content"
+                                                      [innerHTML]="formatAiSuggestion(compilerAiSuggestion)"></div>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </section>
+
 
 
 </div>
