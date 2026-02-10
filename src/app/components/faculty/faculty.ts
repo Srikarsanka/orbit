@@ -2168,20 +2168,28 @@ export class Faculty implements OnInit {
 
     try {
       const res: any = await this.http
-        .get(`https://orbitbackend-0i66.onrender.com/api/analytics/overview?facultyEmail=${this.user.email}`, { withCredentials: true })
+        .get(`https://orbitbackend-0i66.onrender.com/api/attendance/faculty-analytics/${this.user.email}`, { withCredentials: true })
         .toPromise();
 
-      if (res) {
+      if (res && res.success && res.analytics) {
+        const data = res.analytics;
+
+        // Update Overview Stats
+        this.totalSessions = data.totalSessions || 0;
+        this.totalHours = data.totalHours || 0;
+        this.avgAttendance = data.averageAttendance || 0;
+        this.studentsCount = data.totalStudents || 0; // approximate total engagements
+
         // Process Timeline Data
-        this.allSessions = res.charts.timeline.map((item: any, index: number) => ({
-          sessionId: item.sessionId || `session-${index}`,
-          classCode: item.className,
+        this.allSessions = (data.sessions || []).map((item: any) => ({
+          sessionId: item._id,
+          classCode: item.classCode,
           className: item.className,
-          startTime: new Date(item.date),
-          duration: 60,
+          startTime: new Date(item.startTime),
+          duration: item.duration || 60,
           totalStudents: item.totalStudents || 0,
-          studentsPresent: item.presentStudents || 0,
-          attendanceRate: item.attendance,
+          studentsPresent: item.studentsPresent || 0,
+          attendanceRate: item.attendanceRate || 0,
           status: 'Completed'
         })).sort((a: any, b: any) => b.startTime.getTime() - a.startTime.getTime());
 
@@ -2190,9 +2198,11 @@ export class Faculty implements OnInit {
       }
     } catch (e) {
       console.error('Error loading analytics', e);
-      // Fallback to mock
-      this.allSessions = this.generateMockSessionData();
-      this.filterSessions();
+      // Fallback to mock if API fails or returns empty
+      if (this.allSessions.length === 0) {
+        this.allSessions = this.generateMockSessionData();
+        this.filterSessions();
+      }
     }
   }
 
@@ -2214,7 +2224,6 @@ export class Faculty implements OnInit {
     // 1. Donut Chart - Attendance Distribution
     const donutCanvas = document.getElementById('attendanceDonutChart') as HTMLCanvasElement;
     if (donutCanvas) {
-      console.log('✅ Found Donut Chart Canvas');
       const donutCtx = donutCanvas.getContext('2d');
       if (donutCtx) {
         const donutChart = new Chart(donutCtx, {
@@ -2250,14 +2259,11 @@ export class Faculty implements OnInit {
         });
         this.analyticsChartInstances.push(donutChart);
       }
-    } else {
-      console.error('❌ Donut Chart Canvas NOT found');
     }
 
     // 2. Area Chart (Mountain Graph) - Attendance Trends
     const areaCanvas = document.getElementById('attendanceAreaChart') as HTMLCanvasElement;
     if (areaCanvas) {
-      console.log('✅ Found Area Chart Canvas');
       const areaCtx = areaCanvas.getContext('2d');
       if (areaCtx) {
         // Prepare data for Chart.js
@@ -2326,14 +2332,11 @@ export class Faculty implements OnInit {
         });
         this.analyticsChartInstances.push(areaChart);
       }
-    } else {
-      console.error('❌ Area Chart Canvas NOT found');
     }
 
     // 3. Bar Chart - Student Participation (Total vs Present)
     const barCanvas = document.getElementById('studentBarChart') as HTMLCanvasElement;
     if (barCanvas) {
-      console.log('✅ Found Student Bar Chart Canvas');
       const barCtx = barCanvas.getContext('2d');
       if (barCtx) {
         const labels = data.timeline.map((t: any) => new Date(t.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));
@@ -2432,12 +2435,16 @@ export class Faculty implements OnInit {
    */
   calculateAnalytics() {
     if (!this.filteredSessions || this.filteredSessions.length === 0) {
-      this.totalSessions = 0;
-      this.totalHours = 0;
-      this.avgAttendance = 0;
+      if (this.allSessions.length === 0) {
+        this.totalSessions = 0;
+        this.totalHours = 0;
+        this.avgAttendance = 0;
+        this.studentsCount = 0;
+      }
       return;
     }
 
+    // Re-calculate based on filtered sessions
     this.totalSessions = this.filteredSessions.length;
 
     // Calculate total hours
@@ -2447,6 +2454,9 @@ export class Faculty implements OnInit {
     // Calculate average attendance
     const totalAttendance = this.filteredSessions.reduce((sum, s) => sum + (s.attendanceRate || 0), 0);
     this.avgAttendance = Math.round(totalAttendance / this.totalSessions);
+
+    // Calculate total students (sum of present students for simplicity in filtered view)
+    this.studentsCount = this.filteredSessions.reduce((sum, s) => sum + (s.totalStudents || 0), 0);
   }
 
   /**
@@ -2558,9 +2568,22 @@ export class Faculty implements OnInit {
     if (!session.sessionId) return;
 
     try {
-      const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/analytics/session/${session.sessionId}`, { withCredentials: true }).toPromise();
-      this.selectedSessionDetails = res;
-      console.log('Session Details:', this.selectedSessionDetails);
+      const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/attendance/analytics/${session.sessionId}`, { withCredentials: true }).toPromise();
+
+      if (res && res.success && res.analytics) {
+        this.selectedSessionDetails = res.analytics;
+        // Ensure participants are sorted
+        if (this.selectedSessionDetails.participants) {
+          this.selectedSessionDetails.participants.sort((a: any, b: any) => {
+            // Sort by status (absent first?), or name? 
+            // Let's sort by name
+            return (a.name || a.participantName || '').localeCompare(b.name || b.participantName || '');
+          });
+        }
+      } else {
+        console.error("Invalid analytics response");
+      }
+
     } catch (e) {
       console.error('Error fetching session details', e);
     }
