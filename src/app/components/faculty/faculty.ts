@@ -122,6 +122,12 @@ export class Faculty implements OnInit {
   filteredSessions: any[] = [];
   selectedAnalyticsClass = '';
 
+  // Class-level analytics
+  classAnalytics: any[] = [];
+  expandedClassId: string | null = null;
+  selectedStudentDetails: any = null;
+  loadingClassAnalytics = false;
+
   // ============================================================
   // CLASS CREATION PROPERTIES
   // ============================================================
@@ -1725,6 +1731,7 @@ export class Faculty implements OnInit {
       // Use setTimeout to ensure DOM is updated (canvas elements exist)
       setTimeout(() => {
         this.loadAllSessionsAnalytics();
+        this.loadClassAnalytics(); // Load class-level analytics
       }, 0);
     }
   }
@@ -2572,13 +2579,13 @@ export class Faculty implements OnInit {
 
       if (res && res.success && res.analytics) {
         this.selectedSessionDetails = res.analytics;
-        // Ensure participants are sorted
+        // Filter out faculty and sort by name
         if (this.selectedSessionDetails.participants) {
-          this.selectedSessionDetails.participants.sort((a: any, b: any) => {
-            // Sort by status (absent first?), or name? 
-            // Let's sort by name
-            return (a.name || a.participantName || '').localeCompare(b.name || b.participantName || '');
-          });
+          this.selectedSessionDetails.participants = this.selectedSessionDetails.participants
+            .filter((p: any) => p.role !== 'faculty') // Exclude faculty
+            .sort((a: any, b: any) => {
+              return (a.name || a.participantName || '').localeCompare(b.name || b.participantName || '');
+            });
         }
       } else {
         console.error("Invalid analytics response");
@@ -2599,6 +2606,49 @@ export class Faculty implements OnInit {
     const minutes = Math.floor((seconds % 3600) / 60);
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
+  }
+
+  // ============================================================
+  // CLASS-LEVEL ANALYTICS METHODS
+  // ============================================================
+  async loadClassAnalytics() {
+    if (!this.myClasses || this.myClasses.length === 0) return;
+
+    this.loadingClassAnalytics = true;
+    this.classAnalytics = [];
+
+    try {
+      for (const cls of this.myClasses) {
+        const res: any = await this.http.get(
+          `https://orbitbackend-0i66.onrender.com/api/attendance/class-analytics/${cls._id}`,
+          { withCredentials: true }
+        ).toPromise();
+
+        if (res && res.success) {
+          this.classAnalytics.push({
+            classId: cls._id,
+            ...res.classInfo,
+            studentAttendance: res.studentAttendance
+          });
+        }
+      }
+    } catch (e) {
+      console.error('Error loading class analytics', e);
+    } finally {
+      this.loadingClassAnalytics = false;
+    }
+  }
+
+  toggleClassDetails(classId: string) {
+    this.expandedClassId = this.expandedClassId === classId ? null : classId;
+  }
+
+  viewStudentSessionHistory(student: any) {
+    this.selectedStudentDetails = student;
+  }
+
+  closeStudentDetails() {
+    this.selectedStudentDetails = null;
   }
 
 }

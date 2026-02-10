@@ -1088,7 +1088,197 @@
                                     </div>
                               </div>
                         </div>
+
+                        <!-- CLASS-LEVEL ANALYTICS -->
+                        <div class="class-analytics-section" *ngIf="classAnalytics && classAnalytics.length > 0">
+                              <div class="section-header">
+                                    <h3>📚 Class-wise Student Attendance</h3>
+                                    <p>Detailed breakdown of student attendance across all sessions</p>
+                              </div>
+
+                              <!-- Loading State -->
+                              <div class="loading-state" *ngIf="loadingClassAnalytics">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Loading class analytics...</p>
+                              </div>
+
+                              <!-- Class Cards -->
+                              <div class="class-cards-container" *ngIf="!loadingClassAnalytics">
+                                    <div class="class-analytics-card" *ngFor="let classData of classAnalytics">
+                                          <!-- Class Header (Clickable) -->
+                                          <div class="class-card-header" (click)="toggleClassDetails(classData.classId)"
+                                                [class.expanded]="expandedClassId === classData.classId">
+                                                <div class="class-info">
+                                                      <div class="class-title">
+                                                            <i class="fas fa-graduation-cap"></i>
+                                                            <h4>{{ classData.className }}</h4>
+                                                            <span class="class-code-badge">{{ classData.classCode
+                                                                  }}</span>
+                                                      </div>
+                                                      <p class="class-subject">{{ classData.subject }}</p>
+                                                </div>
+                                                <div class="class-stats-summary">
+                                                      <div class="stat-item">
+                                                            <span class="stat-label">Sessions</span>
+                                                            <span class="stat-value">{{ classData.totalSessions
+                                                                  }}</span>
+                                                      </div>
+                                                      <div class="stat-item">
+                                                            <span class="stat-label">Students</span>
+                                                            <span class="stat-value">{{ classData.totalStudents
+                                                                  }}</span>
+                                                      </div>
+                                                      <div class="stat-item">
+                                                            <span class="stat-label">Avg Attendance</span>
+                                                            <span class="stat-value"
+                                                                  [class.high]="classData.averageAttendance >= 75"
+                                                                  [class.medium]="classData.averageAttendance >= 50 && classData.averageAttendance < 75"
+                                                                  [class.low]="classData.averageAttendance < 50">
+                                                                  {{ classData.averageAttendance }}%
+                                                            </span>
+                                                      </div>
+                                                      <i class="fas fa-chevron-down expand-icon"></i>
+                                                </div>
+                                          </div>
+
+                                          <!-- Student Details Table (Expandable) -->
+                                          <div class="student-details-container"
+                                                *ngIf="expandedClassId === classData.classId">
+                                                <div class="student-table-wrapper">
+                                                      <table class="student-attendance-table">
+                                                            <thead>
+                                                                  <tr>
+                                                                        <th>Student Name</th>
+                                                                        <th>Email</th>
+                                                                        <th class="text-center">Total Sessions</th>
+                                                                        <th class="text-center">Present</th>
+                                                                        <th class="text-center">Absent</th>
+                                                                        <th class="text-center">Attendance %</th>
+                                                                        <th class="text-center">Actions</th>
+                                                                  </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                  <tr
+                                                                        *ngFor="let student of classData.studentAttendance">
+                                                                        <td>
+                                                                              <div class="student-name-cell">
+                                                                                    <div class="student-avatar">{{
+                                                                                          student.studentName?.charAt(0)
+                                                                                          || 'S' }}</div>
+                                                                                    <span>{{ student.studentName
+                                                                                          }}</span>
+                                                                              </div>
+                                                                        </td>
+                                                                        <td class="email-cell">{{ student.studentEmail
+                                                                              }}</td>
+                                                                        <td class="text-center">{{ student.totalSessions
+                                                                              }}</td>
+                                                                        <td class="text-center text-success">
+                                                                              <strong>{{ student.attendedSessions
+                                                                                    }}</strong>
+                                                                        </td>
+                                                                        <td class="text-center text-danger">
+                                                                              <strong>{{ student.absentSessions
+                                                                                    }}</strong>
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                              <span class="attendance-percentage-badge"
+                                                                                    [class.high]="student.attendanceRate >= 75"
+                                                                                    [class.medium]="student.attendanceRate >= 50 && student.attendanceRate < 75"
+                                                                                    [class.low]="student.attendanceRate < 50">
+                                                                                    {{ student.attendanceRate }}%
+                                                                              </span>
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                              <button class="btn-view-details"
+                                                                                    (click)="viewStudentSessionHistory(student)">
+                                                                                    <i class="fas fa-eye"></i>
+                                                                                    View Details
+                                                                              </button>
+                                                                        </td>
+                                                                  </tr>
+                                                                  <tr
+                                                                        *ngIf="!classData.studentAttendance || classData.studentAttendance.length === 0">
+                                                                        <td colspan="7"
+                                                                              class="text-center empty-message">
+                                                                              No students enrolled in this class
+                                                                        </td>
+                                                                  </tr>
+                                                            </tbody>
+                                                      </table>
+                                                </div>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
                   </section>
+
+                  <!-- STUDENT SESSION HISTORY MODAL -->
+                  <div class="modal-overlay" *ngIf="selectedStudentDetails" (click)="closeStudentDetails()">
+                        <div class="student-modal" (click)="$event.stopPropagation()">
+                              <div class="modal-header">
+                                    <div class="header-content">
+                                          <h2>{{ selectedStudentDetails.studentName }}'s Attendance History</h2>
+                                          <p class="student-email">{{ selectedStudentDetails.studentEmail }}</p>
+                                    </div>
+                                    <button class="btn-close" (click)="closeStudentDetails()">
+                                          <i class="fas fa-times"></i>
+                                    </button>
+                              </div>
+                              <div class="modal-body">
+                                    <div class="student-stats-summary">
+                                          <div class="stat-box">
+                                                <h4>Total Sessions</h4>
+                                                <p>{{ selectedStudentDetails.totalSessions }}</p>
+                                          </div>
+                                          <div class="stat-box success">
+                                                <h4>Present</h4>
+                                                <p>{{ selectedStudentDetails.attendedSessions }}</p>
+                                          </div>
+                                          <div class="stat-box danger">
+                                                <h4>Absent</h4>
+                                                <p>{{ selectedStudentDetails.absentSessions }}</p>
+                                          </div>
+                                          <div class="stat-box">
+                                                <h4>Attendance Rate</h4>
+                                                <p>{{ selectedStudentDetails.attendanceRate }}%</p>
+                                          </div>
+                                    </div>
+
+                                    <div class="session-history-list">
+                                          <h3>Session-by-Session Breakdown</h3>
+                                          <div class="session-item"
+                                                *ngFor="let session of selectedStudentDetails.sessionDetails">
+                                                <div class="session-item-header">
+                                                      <div class="session-title">
+                                                            <i class="fas fa-video"></i>
+                                                            <span>{{ session.sessionTitle }}</span>
+                                                      </div>
+                                                      <span class="session-date">{{ session.date | date:'MMM dd, yyyy -
+                                                            hh:mm a' }}</span>
+                                                </div>
+                                                <div class="session-item-details">
+                                                      <span class="status-badge" [class.present]="session.attended"
+                                                            [class.absent]="!session.attended">
+                                                            <i class="fas" [class.fa-check-circle]="session.attended"
+                                                                  [class.fa-times-circle]="!session.attended"></i>
+                                                            {{ session.attended ? 'Present' : 'Absent' }}
+                                                      </span>
+                                                      <span class="attendance-percentage"
+                                                            *ngIf="session.attendancePercentage > 0">
+                                                            {{ session.attendancePercentage }}% active time
+                                                      </span>
+                                                </div>
+                                          </div>
+                                          <div class="empty-message"
+                                                *ngIf="!selectedStudentDetails.sessionDetails || selectedStudentDetails.sessionDetails.length === 0">
+                                                No session history available
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+
                   <!-- SESSION DETAILS MODAL -->
                   <div class="modal-overlay" *ngIf="selectedSessionDetails" (click)="closeSessionDetails()">
                         <div class="session-modal" (click)="$event.stopPropagation()">

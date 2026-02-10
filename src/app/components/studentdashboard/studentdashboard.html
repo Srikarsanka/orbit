@@ -782,7 +782,8 @@
                         <p>Fetching announcements...</p>
                   </div>
 
-                  <div class="announcements-list" *ngIf="!loadingAnnouncements && announcements.length > 0">
+                  <div class="announcements-list" style="display:flex"
+                        *ngIf="!loadingAnnouncements && announcements.length > 0">
                         <div class="announcement-card" *ngFor="let item of announcements">
                               <div class="announcement-badge">
                                     <i class="fa-solid fa-circle-info"></i>

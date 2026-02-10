@@ -3513,3 +3513,50 @@
     opacity: 1;
   }
 }
+/* CLASS-LEVEL ANALYTICS */
+.class-analytics-section { margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #e2e8f0; }
+.class-cards-container { display: flex; flex-direction: column; gap: 1.5rem; }
+.class-analytics-card { background: white; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; overflow: hidden; transition: all 0.3s ease; }
+.class-analytics-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-2px); }
+.class-card-header { padding: 1.5rem 2rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s ease; user-select: none; }
+.class-card-header:hover { background: #f8fafc; }
+.class-card-header.expanded { background: #f0f9ff; border-bottom: 2px solid #3b82f6; }
+.class-title { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+.class-title h4 { margin: 0; font-size: 1.25rem; font-weight: 600; color: #1e293b; }
+.class-code-badge { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+.class-subject { color: #64748b; margin: 0; font-size: 0.9rem; padding-left: 2rem; }
+.class-stats-summary { display: flex; align-items: center; gap: 2rem; }
+.stat-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+.stat-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+.stat-value { font-size: 1.5rem; font-weight: 700; color: #1e293b; }
+.stat-value.high { color: #10b981; }
+.stat-value.medium { color: #f59e0b; }
+.stat-value.low { color: #ef4444; }
+.expand-icon { color: #64748b; font-size: 1.25rem; transition: transform 0.3s ease; margin-left: 1rem; }
+.class-card-header.expanded .expand-icon { transform: rotate(180deg); }
+.student-details-container { padding: 0; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+.student-table-wrapper { overflow-x: auto; padding: 1.5rem; }
+.student-attendance-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.student-attendance-table thead { background: linear-gradient(135deg, #000a45, #1e40af); }
+.student-attendance-table th { padding: 1rem; text-align: left; font-weight: 600; font-size: 0.85rem; color: white; text-transform: uppercase; letter-spacing: 0.5px; }
+.student-attendance-table tbody tr { border-bottom: 1px solid #e2e8f0; transition: background 0.2s ease; }
+.student-attendance-table tbody tr:hover { background: #f8fafc; }
+.student-attendance-table td { padding: 1rem; color: #334155; font-size: 0.9rem; }
+.student-name-cell { display: flex; align-items: center; gap: 0.75rem; }
+.student-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; }
+.attendance-percentage-badge { display: inline-block; padding: 0.4rem 0.9rem; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+.attendance-percentage-badge.high { background: linear-gradient(135deg, #d4edda, #a3d9a5); color: #155724; }
+.attendance-percentage-badge.medium { background: linear-gradient(135deg, #fff3cd, #ffe69c); color: #856404; }
+.attendance-percentage-badge.low { background: linear-gradient(135deg, #f8d7da, #f5c6cb); color: #721c24; }
+.btn-view-details { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(59,130,246,0.3); }
+.btn-view-details:hover { background: linear-gradient(135deg, #1d4ed8, #1e40af); box-shadow: 0 4px 10px rgba(59,130,246,0.4); transform: translateY(-1px); }
+.student-modal { background: white; border-radius: 20px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.student-stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.student-stats-summary .stat-box { background: linear-gradient(135deg, #f8fafc, #f0f9ff); border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; text-align: center; transition: all 0.2s ease; }
+.student-stats-summary .stat-box.success { background: linear-gradient(135deg, #d4edda, #a3d9a5); border-color: #10b981; }
+.student-stats-summary .stat-box.danger { background: linear-gradient(135deg, #f8d7da, #f5c6cb); border-color: #ef4444; }
+.session-history-list h3 { font-size: 1.25rem; font-weight: 600; color: #1e293b; margin: 0 0 1.5rem 0; padding-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; }
+.session-item { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; transition: all 0.2s ease; }
+.session-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateX(4px); }
+.session-item-details .status-badge.present { background: linear-gradient(135deg, #d4edda, #a3d9a5); color: #155724; }
+.session-item-details .status-badge.absent { background: linear-gradient(135deg, #f8d7da, #f5c6cb); color: #721c24; }
