@@ -402,1021 +402,577 @@ export class Faculty implements OnInit {
   /**
    * Opens a class in a modal popup with detailed information
    */
+  /**
+   * Opens a class in a modal popup with detailed information - REDESIGNED UI
+   */
   async openclass(classCode: string) {
-    try {
-      const res: any = await this.http
-        .post(
-          `https://orbitbackend-0i66.onrender.com/api/openclass/${classCode}`,
-          {},
-          { withCredentials: true }
-        )
-        .toPromise();
+      try {
+            const res: any = await this.http
+                  .post(
+                        `https://orbitbackend-0i66.onrender.com/api/openclass/${classCode}`,
+                        {},
+                        { withCredentials: true }
+                  )
+                  .toPromise();
 
-      const room = res.room;
-      const students = room.students || [];
+            const room = res.room;
+            const students = room.students || [];
 
-      // Create overlay
-      const overlay = document.createElement('div');
-      overlay.style.cssText = `
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
         position:fixed; inset:0;
-        background:rgba(0,0,0,0.55);
-        backdrop-filter:blur(6px);
+        background:rgba(0, 10, 69, 0.4); /* Dark blue tint */
+        backdrop-filter:blur(8px);
         display:flex; justify-content:center; align-items:center;
-        z-index:99999; animation:fadeIn .28s ease;
-        font-family:'Inter','Segoe UI',sans-serif;
+        z-index:99999; animation:fadeIn .3s ease;
+        font-family:'Inter', sans-serif;
       `;
 
-      // Add animation styles
-      const animStyle = document.createElement('style');
-      animStyle.innerHTML = `
+            // Add animation styles
+            const animStyle = document.createElement('style');
+            animStyle.innerHTML = `
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-        @keyframes scaleUp { from{transform:scale(.9); opacity:0;} to{transform:scale(1); opacity:1;} }
-        @keyframes slideFade { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
-        .tab-content-transition { animation: slideFade .22s ease; }
-        .btn-ripple {
+        @keyframes scaleUp { from{transform:scale(.95); opacity:0;} to{transform:scale(1); opacity:1;} }
+        @keyframes slideIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+        .tab-content-transition { animation: slideIn .3s ease-out; }
+        
+        /* Scrollbar styling */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #e0e6ed; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+        .btn-hover-effect { transition: all 0.2s ease; }
+        .btn-hover-effect:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 10, 69, 0.15); }
+        .btn-hover-effect:active { transform: translateY(0); }
+        
+        .nav-tab {
           position: relative;
-          overflow: hidden;
+          color: #64748b;
+          transition: all 0.2s;
         }
-        .btn-ripple span.ripple-circle {
-          position:absolute;
-          border-radius:50%;
-          transform:scale(0);
-          animation:ripple .4s linear;
-          background:rgba(255,255,255,0.6);
-        }
-        @keyframes ripple {
-          to {transform:scale(4); opacity:0;}
-        }
+        .nav-tab:hover { color: #000a45; background: rgba(0, 10, 69, 0.03); }
+        .nav-tab.active { color: #000a45; font-weight: 600; background: rgba(0, 10, 69, 0.06); }
       `;
-      document.head.appendChild(animStyle);
+            document.head.appendChild(animStyle);
 
-      // Create card container
-      const card = document.createElement('div');
-      card.style.cssText = `
-        width:780px; max-height:86vh;
-        background:rgba(255,255,255,0.96);
-        border-radius:20px;
-        box-shadow:0 20px 55px rgba(0,0,0,0.35);
-        border:1px solid rgba(255,255,255,0.8);
+            // Create card container
+            const card = document.createElement('div');
+            card.style.cssText = `
+        width:900px; max-width:95vw; height:85vh;
+        background:#ffffff;
+        border-radius:16px;
+        box-shadow:0 25px 60px rgba(0, 10, 69, 0.2);
         display:flex; flex-direction:column;
-        overflow:hidden; animation:scaleUp .25s ease;
+        overflow:hidden; animation:scaleUp .3s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1px solid rgba(0, 10, 69, 0.05);
       `;
 
-      // Header section
-      const header = document.createElement('div');
-      header.style.cssText = `
-        padding:22px 28px;
-        background:linear-gradient(135deg,#0045AA,#007BFF);
-        color:white;
-        display:flex;
-        justify-content:space-between;
-        align-items:flex-start;
+            // ================= HEADER SECTION =================
+            const header = document.createElement('div');
+            header.style.cssText = `
+        padding: 24px 32px;
+        background: #ffffff;
+        border-bottom: 1px solid rgba(0, 10, 69, 0.08);
+        display: flex; justify-content: space-between; align-items: flex-start;
       `;
 
-      // Header left content
-      const headerLeft = document.createElement('div');
-      headerLeft.innerHTML = `
-        <div style="font-size:12px;opacity:.85;letter-spacing:.08em;text-transform:uppercase;">
-          Class Overview
+            // Header Left
+            const headerLeft = document.createElement('div');
+            headerLeft.innerHTML = `
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+          <h2 style="margin:0; font-size:24px; font-weight:700; color:#000a45; letter-spacing:-0.5px;">${room.className}</h2>
+          <span style="background:rgba(0, 10, 69, 0.08); color:#000a45; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600;">${room.classCode}</span>
         </div>
-        <h2 style="margin:4px 0 0;font-size:22px;font-weight:700;">${room.className}</h2>
-        <p style="margin:4px 0 0;font-size:14px;opacity:.92;">${room.subject}</p>
-        <p style="margin:2px 0 0;font-size:13px;opacity:.85;">Faculty: ${room.facultyName}</p>
-        <div style="margin-top:10px;display:flex;gap:16px;font-size:12px;">
-          <div>
-            <div style="opacity:.75;">Students</div>
-            <div style="font-size:16px;font-weight:600;">${students.length}</div>
-          </div>
-          <div>
-            <div style="opacity:.75;">Class Code</div>
-            <div style="font-size:16px;font-weight:600;">${room.classCode}</div>
-          </div>
+        <p style="margin:0; font-size:14px; color:#64748b; font-weight:500;">${room.subject}</p>
+        <div style="display:flex; gap:20px; margin-top:16px;">
+           <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:#475569;">
+              <i class="fa-solid fa-users" style="color:#000a45;"></i>
+              <span style="font-weight:600; color:#000a45;">${students.length}</span> Students
+           </div>
+           <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:#475569;">
+              <i class="fa-solid fa-chalkboard-user" style="color:#000a45;"></i>
+              Faculty: <span style="font-weight:600; color:#000a45;">${room.facultyName}</span>
+           </div>
         </div>
       `;
 
-      // Header right content with action buttons
-      const headerRight = document.createElement('div');
-      headerRight.style.cssText = `
-        display:flex; flex-direction:column; gap:8px; align-items:flex-end;
-      `;
-
-      // Helper function to create icon buttons
-      const makeIconButton = (
-        tooltip: string,
-        iconClass: string,
-        bg: string,
-        color: string
-      ) => {
-        const btn = document.createElement('button');
-        btn.classList.add('btn-ripple');
-        btn.title = tooltip;
-        btn.style.cssText = `
-          border:none; cursor:pointer;
-          width:34px; height:34px;
-          border-radius:10px;
-          display:flex; align-items:center; justify-content:center;
-          background:${bg}; color:${color};
-          font-size:15px;
-          box-shadow:0 4px 10px rgba(0,0,0,0.18);
-          transition:transform .16s ease, box-shadow .16s ease;
-        `;
-        btn.innerHTML = `<i class="${iconClass}"></i>`;
-
-        btn.onmouseover = () => {
-          btn.style.transform = 'translateY(-1px) scale(1.03)';
-          btn.style.boxShadow = '0 6px 14px rgba(0,0,0,0.22)';
-        };
-        btn.onmouseout = () => {
-          btn.style.transform = 'translateY(0) scale(1)';
-          btn.style.boxShadow = '0 4px 10px rgba(0,0,0,0.18)';
-        };
-
-        // Ripple effect
-        btn.addEventListener('click', (e: MouseEvent) => {
-          const rect = btn.getBoundingClientRect();
-          const circle = document.createElement('span');
-          const diameter = Math.max(rect.width, rect.height);
-          const radius = diameter / 2;
-          circle.style.width = circle.style.height = `${diameter}px`;
-          circle.style.left = `${e.clientX - rect.left - radius}px`;
-          circle.style.top = `${e.clientY - rect.top - radius}px`;
-          circle.classList.add('ripple-circle');
-          const old = btn.getElementsByClassName('ripple-circle')[0];
-          if (old) old.remove();
-          btn.appendChild(circle);
-        });
-
-        return btn;
-      };
-
-      // Create action buttons
-      const changeBtn = makeIconButton(
-        'Change class',
-        'fa-solid fa-arrow-right-arrow-left',
-        'rgba(255,255,255,0.9)',
-        '#0045AA'
-      );
-      changeBtn.onclick = () => overlay.remove();
-
-      const copyCodeBtn = makeIconButton(
-        'Copy class code',
-        'fa-solid fa-copy',
-        'rgba(255,255,255,0.9)',
-        '#0045AA'
-      );
-      copyCodeBtn.onclick = async () => {
-        try {
-          await navigator.clipboard.writeText(room.classCode);
-          this.showToast('Class code copied to clipboard', 'success');
-        } catch {
-          this.showToast(`Class code: ${room.classCode}`, 'success');
-        }
-      };
-
-      const shareBtn = makeIconButton(
-        'Copy join link',
-        'fa-solid fa-link',
-        'rgba(255,255,255,0.9)',
-        '#0045AA'
-      );
-      shareBtn.onclick = async () => {
-        const joinUrl = `${window.location.origin}/join/${room.classCode}`;
-        try {
-          await navigator.clipboard.writeText(joinUrl);
-          this.showToast('Join link copied to clipboard', 'success');
-        } catch {
-          this.showToast(`Join link: ${joinUrl}`, 'error');
-        }
-      };
-
-      const qrBtn = makeIconButton(
-        'Show QR to join',
-        'fa-solid fa-qrcode',
-        'rgba(255,255,255,0.9)',
-        '#0045AA'
-      );
-      qrBtn.onclick = () => {
-        const joinUrl = `${window.location.origin}/join/${room.classCode}`;
-        const qrOverlay = document.createElement('div');
-        qrOverlay.style.cssText = `
-          position:fixed; inset:0; display:flex; justify-content:center; align-items:center;
-          background:rgba(0,0,0,0.6); z-index:100000;
-        `;
-        const qrCard = document.createElement('div');
-        qrCard.style.cssText = `
-          background:white; padding:20px 24px; border-radius:14px;
-          text-align:center; box-shadow:0 12px 32px rgba(0,0,0,0.3);
-        `;
-        qrCard.innerHTML = `
-          <h3 style="margin:0 0 10px;font-size:18px;">Join Class</h3>
-          <p style="margin:0 0 12px;font-size:13px;color:#555;">Scan this QR to join:</p>
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(
-          joinUrl
-        )}" alt="QR Code">
-          <p style="margin:12px 0 0;font-size:12px;color:#777;">${joinUrl}</p>
-        `;
-        const closeQr = document.createElement('button');
-        closeQr.textContent = 'Close';
-        closeQr.style.cssText = `
-          margin-top:12px; padding:6px 14px; border-radius:6px;
-          border:none; background:#0045AA; color:white; cursor:pointer;
-          font-size:13px;
-        `;
-        closeQr.onclick = () => qrOverlay.remove();
-        qrCard.appendChild(closeQr);
-        qrOverlay.appendChild(qrCard);
-        qrOverlay.onclick = (e) => e.target === qrOverlay && qrOverlay.remove();
-        document.body.appendChild(qrOverlay);
-      };
-
-      const deleteBtn = makeIconButton(
-        'Delete class',
-        'fa-solid fa-trash',
-        '#E63946',
-        '#fff'
-      );
-      deleteBtn.onclick = () => {
-        if (!confirm('Are you sure you want to delete this class?')) return;
-
-        this.http.delete(`https://orbitbackend-0i66.onrender.com/api/deleteclass/${room._id}`, {
-          withCredentials: true,
-        }).subscribe({
-          next: () => {
-            this.showToast('Class deleted', 'success');
-            overlay.remove();
-            this.loadclass()
-          },
-          error: (err) => {
-            console.error(err);
-            this.showToast('Failed to delete class', 'success');
-          }
-        });
-      };
-
-
-      const topActions = document.createElement('div');
-      topActions.style.cssText = `display:flex; gap:8px;`;
-      topActions.appendChild(changeBtn);
-      topActions.appendChild(copyCodeBtn);
-      topActions.appendChild(shareBtn);
-      topActions.appendChild(qrBtn);
-      topActions.appendChild(deleteBtn);
-
-      const editBtn = document.createElement('button');
-      editBtn.classList.add('btn-ripple');
-      editBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Class`;
-      editBtn.style.cssText = `
-        margin-top:6px;
-        padding:6px 12px; border-radius:999px;
-        border:none; cursor:pointer;
-        background:rgba(255,255,255,0.16);
-        color:white; font-size:12px;
-        display:flex; align-items:center; gap:6px;
-      `;
-      editBtn.onclick = () => {
-        const name = prompt('Update class name:', room.className);
-        const desc = prompt('Update subject name:', room.description);
-        if (!name || !desc) return;
-
-        this.http
-          .put(
-            `https://orbitbackend-0i66.onrender.com/api/change/updateclassname/${room._id}`,
-            { className: name, subject: desc },
-            { withCredentials: true }
-          )
-          .toPromise()
-          .then(() => {
-            this.showToast('Class updated', 'success');
-            headerLeft.querySelector('h2')!.textContent = name;
-            const ps = headerLeft.getElementsByTagName('p');
-            if (ps.length > 0) {
-              ps[0].textContent = desc;
-            }
-          })
-          .catch((e) => this.showToast(JSON.stringify(e), 'error'));
-      };
-
-      headerRight.appendChild(topActions);
-      headerRight.appendChild(editBtn);
-
-      header.appendChild(headerLeft);
-      header.appendChild(headerRight);
-
-      // Tabs section
-      const tabsBar = document.createElement('div');
-      tabsBar.style.cssText = `
-        display:flex; align-items:center;
-        gap:24px; padding:14px 24px;
-        background:#F5F7FB;
-        border-bottom:1px solid #E4E7EB;
-        font-size:14px; font-weight:600; color:#555;
-      `;
-
-      const createTab = (text: string) => {
-        const tab = document.createElement('div');
-        tab.textContent = text;
-        return tab;
-      };
-
-      const tabStudents = document.createElement('div');
-      tabStudents.textContent = 'Students';
-      const tabAnnouncements = createTab('Announcements');
-      const tabMaterials = createTab('Materials');
-      const tabLive = createTab('Live Class');
-
-      const setTabActive = (tab: HTMLElement, active: boolean) => {
-        tab.style.cursor = 'pointer';
-        tab.style.paddingBottom = '5px';
-        tab.style.borderBottom = active
-          ? '3px solid #0045AA'
-          : '3px solid transparent';
-        tab.style.color = active ? '#0045AA' : '#555';
-      };
-
-      setTabActive(tabStudents, true);
-      setTabActive(tabAnnouncements, false);
-      setTabActive(tabMaterials, false);
-
-      tabsBar.appendChild(tabStudents);
-      tabsBar.appendChild(tabAnnouncements);
-      tabsBar.appendChild(tabMaterials);
-      tabsBar.appendChild(tabLive);
-
-      const tabAnalytics = createTab('Analytics');
-      setTabActive(tabAnalytics, false);
-      tabsBar.appendChild(tabAnalytics);
-
-      // Content area
-      const content = document.createElement('div');
-      content.style.cssText = `
-        padding:18px 24px 20px;
-        background:#F9FAFC;
-        flex:1; overflow:auto;
-      `;
-
-      // Analytics Tab Rendering
-      const renderAnalyticsTab = async () => {
-        content.innerHTML = '<div style="padding:20px; text-align:center;">Loading analytics...</div>';
-        content.classList.add('tab-content-transition');
-
-        try {
-          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/sessions/${room._id}/past_sessions`, { withCredentials: true }).toPromise();
-          const sessions = res || [];
-
-          content.innerHTML = '';
-
-          const header = document.createElement('div');
-          header.innerHTML = `
-                <h3 style="margin:0 0 15px; font-size:16px;">Session History</h3>
-             `;
-          content.appendChild(header);
-
-          if (sessions.length === 0) {
-            content.innerHTML += '<div style="color:#777;">No past sessions found.</div>';
-            return;
-          }
-
-          const table = document.createElement('table');
-          table.style.cssText = 'width:100%; border-collapse:collapse; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.1);';
-
-          // Table Header
-          const thead = document.createElement('thead');
-          thead.style.background = '#f1f3f5';
-          thead.innerHTML = `
-                <tr>
-                    <th style="padding:12px; text-align:left; font-size:13px; font-weight:600; color:#555;">Title</th>
-                    <th style="padding:12px; text-align:left; font-size:13px; font-weight:600; color:#555;">Date</th>
-                    <th style="padding:12px; text-align:left; font-size:13px; font-weight:600; color:#555;">Duration</th>
-                    <th style="padding:12px; text-align:left; font-size:13px; font-weight:600; color:#555;">Attendees</th>
-                    <th style="padding:12px; text-align:left; font-size:13px; font-weight:600; color:#555;">Actions</th>
-                </tr>
-             `;
-          table.appendChild(thead);
-
-          // Table Body
-          const tbody = document.createElement('tbody');
-          sessions.forEach((s: any) => {
-            const tr = document.createElement('tr');
-            tr.style.borderBottom = '1px solid #eee';
-            const date = new Date(s.startTime).toLocaleDateString() + ' ' + new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const duration = s.duration ? Math.round(s.duration / 60) + ' min' : 'N/A';
-
-            tr.innerHTML = `
-                    <td style="padding:12px; font-size:13px; color:#333; font-weight:500;">${s.title}</td>
-                    <td style="padding:12px; font-size:13px; color:#555;">${date}</td>
-                    <td style="padding:12px; font-size:13px; color:#555;">${duration}</td>
-                    <td style="padding:12px; font-size:13px; color:#555;">${s.participantCount}</td>
-                    <td style="padding:12px;">
-                        <button class="view-stats-btn" style="padding:4px 10px; border:1px solid #0045AA; background:#fff; color:#0045AA; border-radius:4px; cursor:pointer; font-size:12px;">View Stats</button>
-                    </td>
-                 `;
-
-            // View Stats Click
-            const btn = tr.querySelector('.view-stats-btn') as HTMLButtonElement;
-            btn.onclick = () => renderSessionDetails(s);
-
-            tbody.appendChild(tr);
-          });
-          table.appendChild(tbody);
-          content.appendChild(table);
-
-        } catch (e) {
-          console.error(e);
-          content.innerHTML = '<div style="color:red;">Failed to load session history.</div>';
-        }
-      };
-
-      // Session Details Rendering
-      const renderSessionDetails = async (session: any) => {
-        content.innerHTML = '<div style="padding:20px; text-align:center;">Loading details...</div>';
-
-        try {
-          const [analyticsRes, messagesRes] = await Promise.all([
-            this.http.get(`https://orbitbackend-0i66.onrender.com/api/sessions/${session.sessionId}/analytics`, { withCredentials: true }).toPromise() as Promise<any>,
-            this.http.get(`https://orbitbackend-0i66.onrender.com/api/sessions/${session.sessionId}/messages`, { withCredentials: true }).toPromise() as Promise<any>
-          ]);
-
-          const analytics = analyticsRes || {};
-          const messages = messagesRes || [];
-          const participants = analytics.participants || [];
-
-          content.innerHTML = '';
-
-          // Header
-          const header = document.createElement('div');
-          header.style.cssText = 'display:flex; align-items:center; gap:10px; margin-bottom:15px;';
-
-          const backBtn = document.createElement('button');
-          backBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Back';
-          backBtn.style.cssText = 'border:none; background:none; color:#0045AA; cursor:pointer; font-size:14px; font-weight:600;';
-          backBtn.onclick = () => renderAnalyticsTab();
-
-          header.appendChild(backBtn);
-          header.innerHTML += `<h3 style="margin:0; font-size:16px;">${session.title} - Details</h3>`;
-          content.appendChild(header);
-
-          // Grid for Details
-          const grid = document.createElement('div');
-          grid.style.cssText = 'display:grid; grid-template-columns: 1fr 1fr; gap:20px;';
-
-          // Participants Panel
-          const pPanel = document.createElement('div');
-          pPanel.style.cssText = 'background:#fff; padding:15px; border-radius:8px; border:1px solid #eee;';
-          pPanel.innerHTML = `<h4 style="margin:0 0 10px; font-size:14px;">Participants (${participants.length})</h4>`;
-
-          const pList = document.createElement('div');
-          pList.style.cssText = 'max-height:300px; overflow-y:auto;';
-
-          if (participants.length > 0) {
-            participants.forEach((p: any) => {
-              const pItem = document.createElement('div');
-              pItem.style.cssText = 'padding:8px 0; border-bottom:1px solid #f5f5f5; font-size:13px;';
-              pItem.innerHTML = `
-                          <div style="font-weight:600;">${p.name}</div>
-                          <div style="color:#777; font-size:12px;">Joined: ${new Date(p.joinedAt).toLocaleTimeString()}</div>
-                          <div style="color:${p.status === 'Active' ? 'green' : 'red'}; font-size:11px;">${p.status}</div>
-                       `;
-              pList.appendChild(pItem);
-            });
-          } else {
-            pList.innerHTML = '<div style="color:#999;font-size:13px;">No participants recorded.</div>';
-          }
-          pPanel.appendChild(pList);
-          grid.appendChild(pPanel);
-
-          // Chat Logs Panel
-          const cPanel = document.createElement('div');
-          cPanel.style.cssText = 'background:#fff; padding:15px; border-radius:8px; border:1px solid #eee;';
-          cPanel.innerHTML = `<h4 style="margin:0 0 10px; font-size:14px;">Chat Logs (${messages.length})</h4>`;
-
-          const cList = document.createElement('div');
-          cList.style.cssText = 'max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;';
-
-          if (messages.length > 0) {
-            messages.forEach((m: any) => {
-              const mItem = document.createElement('div');
-              mItem.style.cssText = 'background:#f9f9f9; padding:8px; border-radius:6px; font-size:13px;';
-              mItem.innerHTML = `
-                          <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                             <span style="font-weight:600; color:#444;">${m.senderName}</span>
-                             <span style="color:#aaa; font-size:11px;">${new Date(m.timestamp).toLocaleTimeString()}</span>
-                          </div>
-                          <div style="color:#333;">${m.content}</div>
-                       `;
-              cList.appendChild(mItem);
-            });
-          } else {
-            cList.innerHTML = '<div style="color:#999;font-size:13px;">No messages.</div>';
-          }
-          cPanel.appendChild(cList);
-          grid.appendChild(cPanel);
-
-          content.appendChild(grid);
-
-        } catch (e) {
-          console.error(e);
-          content.innerHTML = '<div style="color:red;">Failed to load details.</div><button onclick="renderAnalyticsTab()">Back</button>';
-          const back = document.createElement('button');
-          back.innerText = 'Back';
-          back.onclick = () => renderAnalyticsTab();
-          content.appendChild(back);
-        }
-      };
-
-      tabAnalytics.onclick = () => {
-        setTabActive(tabStudents, false);
-        setTabActive(tabAnnouncements, false);
-        setTabActive(tabMaterials, false);
-        setTabActive(tabLive, false);
-        setTabActive(tabAnalytics, true);
-        renderAnalyticsTab();
-      };
-
-      // Students tab rendering
-      const renderStudentsTab = () => {
-        content.innerHTML = '';
-        content.classList.add('tab-content-transition');
-
-        const topRow = document.createElement('div');
-        topRow.style.cssText = `
-          display:flex; justify-content:space-between;
-          align-items:center; margin-bottom:14px; gap:10px; flex-wrap:wrap;
-        `;
-
-        const counts = document.createElement('div');
-        counts.innerHTML = `
-          <div style="font-size:13px;color:#555;">
-            Total students: <strong>${students.length}</strong>
-          </div>
-        `;
-
-        const controls = document.createElement('div');
-        controls.style.cssText = `display:flex; gap:10px; flex-wrap:wrap;`;
-
-        const searchInput = document.createElement('input');
-        searchInput.type = 'text';
-        searchInput.placeholder = 'Search by name or email...';
-        searchInput.style.cssText = `
-          padding:8px 10px; border-radius:8px;
-          border:1px solid #D0D7E2; font-size:13px;
-          min-width:180px;
-        `;
-
-        const sortSelect = document.createElement('select');
-        sortSelect.style.cssText = `
-          padding:8px 10px; border-radius:8px;
-          border:1px solid #D0D7E2; font-size:13px;
-        `;
-        sortSelect.innerHTML = `
-          <option value="nameAsc">Name A–Z</option>
-          <option value="nameDesc">Name Z–A</option>
-          <option value="emailAsc">Email A–Z</option>
-          <option value="emailDesc">Email Z–A</option>
-        `;
-
-        controls.appendChild(searchInput);
-        controls.appendChild(sortSelect);
-        topRow.appendChild(counts);
-        topRow.appendChild(controls);
-        content.appendChild(topRow);
-
-        const listWrap = document.createElement('div');
-        listWrap.style.cssText = `
-          background:white; border-radius:12px;
-          border:1px solid #E4E7EB; padding:6px 0;
-        `;
-        content.appendChild(listWrap);
-
-        const renderList = () => {
-          listWrap.innerHTML = '';
-          const term = searchInput.value.toLowerCase().trim();
-          let filtered = [...students];
-
-          if (term) {
-            filtered = filtered.filter(
-              (s: any) =>
-                (s.studentName || '').toLowerCase().includes(term) ||
-                (s.studentEmail || '').toLowerCase().includes(term)
-            );
-          }
-
-          const sortBy = sortSelect.value;
-          filtered.sort((a: any, b: any) => {
-            const nameA = (a.studentName || '').toLowerCase();
-            const nameB = (b.studentName || '').toLowerCase();
-            const emailA = (a.studentEmail || '').toLowerCase();
-            const emailB = (b.studentEmail || '').toLowerCase();
-
-            switch (sortBy) {
-              case 'nameAsc':
-                return nameA.localeCompare(nameB);
-              case 'nameDesc':
-                return nameB.localeCompare(nameA);
-              case 'emailAsc':
-                return emailA.localeCompare(emailB);
-              case 'emailDesc':
-                return emailB.localeCompare(emailA);
-              default:
-                return 0;
-            }
-          });
-
-          if (!filtered.length) {
-            listWrap.innerHTML = `
-              <div style="padding:18px; text-align:center; color:#777; font-size:13px;">
-                No students match your search.
-              </div>
-            `;
-            return;
-          }
-
-          filtered.forEach((s: any) => {
-            const row = document.createElement('div');
-            row.style.cssText = `
-              display:flex; align-items:center; gap:12px;
-              padding:10px 16px; border-bottom:1px solid #F1F1F5;
-            `;
-
-            const avatar = document.createElement('div');
-            avatar.style.cssText = `
-              width:36px; height:36px; border-radius:50%;
-              background:#0045AA; color:white;
-              display:flex; align-items:center; justify-content:center;
-              font-size:14px; font-weight:600;
-            `;
-            const initials = (s.studentName || '?')
-              .split(' ')
-              .map((w: string) => w[0])
-              .join('')
-              .slice(0, 2)
-              .toUpperCase();
-            avatar.textContent = initials || 'S';
-
-            const info = document.createElement('div');
-            info.innerHTML = `
-              <div style="font-size:14px;font-weight:600;color:#222;">${s.studentName}</div>
-              <div style="font-size:12px;color:#666;">${s.studentEmail}</div>
-            `;
-
-            row.appendChild(avatar);
-            row.appendChild(info);
-            listWrap.appendChild(row);
-          });
-        };
-
-        searchInput.oninput = renderList;
-        sortSelect.onchange = renderList;
-        renderList();
-      };
-
-      // Announcements tab rendering
-      const renderAnnouncementsTab = () => {
-        content.innerHTML = '';
-        content.classList.add('tab-content-transition');
-
-        const createBox = document.createElement('div');
-        createBox.style.cssText = `
-          background:white; border-radius:12px;
-          border:1px solid #E4E7EB;
-          padding:12px 14px 14px;
-          margin-bottom:12px;
-        `;
-        createBox.innerHTML = `
-          <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom:8px;">
-            <div style="font-size:14px;font-weight:600;color:#222;">
-              <i class="fa-solid fa-bullhorn"></i> Create Announcement
-            </div>
-            <div style="font-size:11px;color:#888;">Visible to all students of this class</div>
-          </div>
-        `;
-
-        const titleInput = document.createElement('input');
-        titleInput.placeholder = 'Title';
-        titleInput.style.cssText = `
-          width:100%; margin-bottom:6px;
-          padding:8px 10px; border-radius:8px;
-          border:1px solid #D0D7E2; font-size:13px;
-        `;
-
-        const msgInput = document.createElement('textarea');
-        msgInput.placeholder = 'Write announcement message...';
-        msgInput.rows = 3;
-        msgInput.style.cssText = `
-          width:100%; margin-bottom:6px;
-          padding:8px 10px; border-radius:8px;
-          border:1px solid #D0D7E2; font-size:13px;
-          resize:vertical;
-        `;
-
-        const attachInput = document.createElement('input');
-        attachInput.placeholder =
-          'Attachment URL (optional – PDF, image, etc.)';
-        attachInput.style.cssText = `
-          width:100%; margin-bottom:8px;
-          padding:6px 10px; border-radius:8px;
-          border:1px solid #D0D7E2; font-size:12px;
-        `;
-
-        const createBtn = document.createElement('button');
-        createBtn.textContent = 'Post Announcement';
-        createBtn.classList.add('btn-ripple');
-        createBtn.style.cssText = `
-          padding:8px 14px; border-radius:8px;
-          border:none; background:#0045AA; color:white;
-          font-size:13px; font-weight:600; cursor:pointer;
-        `;
-
-        createBtn.onclick = async () => {
-          const title = titleInput.value.trim();
-          const message = msgInput.value.trim();
-          const attachmentUrl = attachInput.value.trim();
-
-          if (!title || !message) {
-            this.showToast('Title and message are required', 'error');
-            return;
-          }
-
-          try {
-            await this.http
-              .post(
-                'https://orbitbackend-0i66.onrender.com/api/announcements',
-                {
-                  classId: room._id,
-                  title,
-                  message,
-                  attachmentUrl: attachmentUrl || undefined,
-                },
-                { withCredentials: true }
-              )
-              .toPromise();
-
-            titleInput.value = '';
-            msgInput.value = '';
-            attachInput.value = '';
-            this.showToast('Announcement posted Successfully 📢', 'success');
-            this.loadAnnouncementsForPopup(room._id);
-          } catch (err) {
-            console.error('Create announcement error:', err);
-            this.showToast('Failed to create announcement', 'error');
-          }
-        };
-
-        createBox.appendChild(titleInput);
-        createBox.appendChild(msgInput);
-        createBox.appendChild(attachInput);
-        createBox.appendChild(createBtn);
-
-        content.appendChild(createBox);
-
-        const listBox = document.createElement('div');
-        listBox.id = 'popupAnnouncements';
-        listBox.style.cssText = `
-          background:white; border-radius:12px;
-          border:1px solid #E4E7EB;
-          padding:12px 14px;
-          font-size:14px;
-        `;
-        listBox.innerHTML = 'Loading announcements...';
-        content.appendChild(listBox);
-
-        this.loadAnnouncementsForPopup(room._id);
-      };
-
-      // Materials tab rendering
-      const renderMaterialsTab = () => {
-        content.innerHTML = '';
-        content.classList.add('tab-content-transition');
-
-        const listBox = document.createElement('div');
-        listBox.id = 'popupMaterials';
-        listBox.style.cssText = `
-          background:white; border-radius:12px;
-          border:1px solid #E4E7EB;
-          padding:12px 14px;
-          font-size:14px;
-        `;
-        listBox.innerHTML = 'Loading materials...';
-        content.appendChild(listBox);
-
-        this.loadMaterialsForPopup(room._id);
-      };
-
-      // Live Class tab rendering
-      const renderLiveTab = () => {
-        content.innerHTML = '';
-        content.classList.add('tab-content-transition');
-
-        const container = document.createElement('div');
-        container.style.cssText = `
-          padding: 24px;
-          text-align: center;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100%;
-        `;
-
-        const icon = document.createElement('div');
-        icon.innerHTML = '<i class="fa-solid fa-video"></i>';
-        icon.style.cssText = `
-          font-size: 48px;
-          color: #0045AA;
-          margin-bottom: 16px;
-        `;
-
-        const title = document.createElement('h3');
-        title.textContent = 'Live Video Class';
-        title.style.cssText = `
-          font-size: 20px;
-          color: #222;
-          margin: 0 0 8px 0;
-        `;
-
-        const desc = document.createElement('p');
-        desc.textContent = 'Conduct a live interactive session with your students. Video, audio, and screen sharing enabled.';
-        desc.style.cssText = `
-          font-size: 14px;
-          color: #666;
-          margin: 0 0 24px 0;
-          max-width: 400px;
-          line-height: 1.5;
-        `;
-
-        const startBtn = document.createElement('button');
-        startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start Live Class';
-        startBtn.classList.add('btn-ripple');
-        startBtn.style.cssText = `
-          padding: 12px 24px;
-          border-radius: 50px;
-          border: none;
-          background: #0045AA;
-          color: white;
-          font-size: 16px;
-          font-weight: 600;
+            // Header Right (Actions)
+            const headerRight = document.createElement('div');
+            headerRight.style.cssText = `display:flex; gap:10px; align-items:center;`;
+
+            // Action Button Helper
+            const createActionBtn = (icon: string, title: string, onClick: () => void, isDestructive = false) => {
+                  const btn = document.createElement('button');
+                  btn.innerHTML = `<i class="${icon}"></i>`;
+                  btn.title = title;
+                  btn.className = 'btn-hover-effect';
+                  btn.style.cssText = `
+          width: 36px; height: 36px;
+          border-radius: 10px;
+          border: 1px solid ${isDestructive ? '#fee2e2' : '#e2e8f0'};
+          background: ${isDestructive ? '#fef2f2' : '#ffffff'};
+          color: ${isDestructive ? '#ef4444' : '#000a45'};
           cursor: pointer;
-          box-shadow: 0 4px 12px rgba(0,69,170,0.3);
-          transition: transform 0.2s, box-shadow 0.2s;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 14px;
         `;
+                  btn.onclick = onClick;
+                  return btn;
+            };
 
-        startBtn.onmouseover = () => {
-          startBtn.style.transform = 'translateY(-2px)';
-          startBtn.style.boxShadow = '0 6px 16px rgba(0,69,170,0.4)';
-        };
-        startBtn.onmouseout = () => {
-          startBtn.style.transform = 'translateY(0)';
-          startBtn.style.boxShadow = '0 4px 12px rgba(0,69,170,0.3)';
-        };
+            // Close Button (Top Right)
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            closeBtn.style.cssText = `
+        position: absolute; top: 20px; right: 20px;
+        background: transparent; border: none;
+        color: #94a3b8; font-size: 20px; cursor: pointer;
+        transition: color 0.2s;
+        z-index: 10;
+      `;
+            closeBtn.onmouseover = () => closeBtn.style.color = '#000a45';
+            closeBtn.onmouseout = () => closeBtn.style.color = '#94a3b8';
+            closeBtn.onclick = () => overlay.remove();
+            // Only append close button if we want it disjointed, but here we'll put it in headerRight or absolute
+            // Use absolute for the "Minimal close button (top-right)" requirement
+            card.style.position = 'relative';
+            card.appendChild(closeBtn);
 
-        startBtn.onclick = async () => {
-          try {
-            startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Starting...';
-            startBtn.disabled = true;
 
-            const res: any = await this.http.post(
-              'https://orbitbackend-0i66.onrender.com/api/sessions/create',
-              {
-                classId: room._id,
-                classCode: room.classCode,
-                facultyEmail: this.user?.email,
-                facultyName: this.user?.fullName,
-                sessionTitle: 'Live Class - ' + room.subject,
-                duration: 60
-              },
-              { withCredentials: true }
-            ).toPromise();
+            const actionsContainer = document.createElement('div');
+            actionsContainer.style.cssText = `display:flex; gap:8px; margin-top: 4px;`;
 
-            if (res.sessionId) {
-              const url = `https://orbitbackend-0i66.onrender.com/video/room.html?session=${res.sessionId}&role=faculty&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
-              window.open(url, '_blank');
-              this.showToast('Live class started!', 'success');
-            }
+            const copyCodeBtn = createActionBtn('fa-regular fa-copy', 'Copy Class Code', async () => {
+                  try {
+                        await navigator.clipboard.writeText(room.classCode);
+                        this.showToast('Class code copied!', 'success');
+                  } catch {
+                        this.showToast(room.classCode, 'info');
+                  }
+            });
 
-            startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start Live Class';
-            startBtn.disabled = false;
+            const qrBtn = createActionBtn('fa-solid fa-qrcode', 'Show QR Code', () => {
+                  const joinUrl = `${window.location.origin}/join/${room.classCode}`;
+                  // Simple QR overlay (could be refined too, but keeping logic same)
+                  const qrOverlay = document.createElement('div');
+                  qrOverlay.style.cssText = `
+          position:fixed; inset:0; display:flex; justify-content:center; align-items:center;
+          background:rgba(0,10,69,0.7); z-index:100002; backdrop-filter:blur(4px);
+        `;
+                  const qrCard = document.createElement('div');
+                  qrCard.style.cssText = `
+          background:white; padding:32px; border-radius:20px;
+          text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.3);
+          font-family: 'Inter', sans-serif;
+        `;
+                  qrCard.innerHTML = `
+          <h3 style="margin:0 0 16px;font-size:20px;color:#000a45;">Join Class</h3>
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(joinUrl)}" 
+               style="border-radius:12px; margin-bottom:16px;">
+          <p style="margin:0;font-size:13px;color:#64748b;">Scan to join instantly</p>
+        `;
+                  qrOverlay.onclick = () => qrOverlay.remove();
+                  document.body.appendChild(qrOverlay);
+            });
 
-          } catch (e) {
-            console.error('Error starting session', e);
-            this.showToast('Failed to start session', 'error');
-            startBtn.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i> Retry';
-            startBtn.disabled = false;
-          }
-        };
+            const editBtn = createActionBtn('fa-solid fa-pencil', 'Edit Class Details', () => {
+                  const name = prompt('Update class name:', room.className);
+                  const desc = prompt('Update subject name:', room.subject); // Assuming subject usage based on prev code
+                  if (!name || !desc) return;
 
-        container.appendChild(icon);
-        container.appendChild(title);
-        container.appendChild(desc);
-        container.appendChild(startBtn);
-        content.appendChild(container);
-      };
+                  this.http.put(`https://orbitbackend-0i66.onrender.com/api/change/updateclassname/${room._id}`,
+                        { className: name, subject: desc }, { withCredentials: true })
+                        .subscribe({
+                              next: () => {
+                                    this.showToast('Class updated', 'success');
+                                    headerLeft.querySelector('h2')!.textContent = name;
+                                    headerLeft.querySelector('p')!.textContent = desc;
+                              },
+                              error: () => this.showToast('Update failed', 'error')
+                        });
+            });
 
-      card.appendChild(header);
-      card.appendChild(tabsBar);
-      card.appendChild(content);
+            const deleteBtn = createActionBtn('fa-regular fa-trash-can', 'Delete Class', () => {
+                  if (!confirm('Are you sure you want to delete this class? This cannot be undone.')) return;
+                  this.http.delete(`https://orbitbackend-0i66.onrender.com/api/deleteclass/${room._id}`, { withCredentials: true })
+                        .subscribe({
+                              next: () => {
+                                    this.showToast('Class deleted', 'success');
+                                    overlay.remove();
+                                    this.loadclass();
+                              },
+                              error: () => this.showToast('Failed to delete class', 'error')
+                        });
+            }, true);
 
-      // Footer section
-      const footer = document.createElement('div');
-      footer.style.cssText = `
-        padding:14px 24px;
-        border-top:1px solid #E4E7EB;
-        background:#F5F7FB;
-        display:flex; justify-content:flex-end; gap:10px;
+            actionsContainer.appendChild(copyCodeBtn);
+            actionsContainer.appendChild(qrBtn);
+            actionsContainer.appendChild(editBtn);
+            actionsContainer.appendChild(deleteBtn);
+
+            headerRight.appendChild(actionsContainer);
+
+            header.appendChild(headerLeft);
+            header.appendChild(headerRight);
+
+
+            // ================= TABS SECTION =================
+            const tabsBar = document.createElement('div');
+            tabsBar.style.cssText = `
+        padding: 0 32px;
+        background: #ffffff;
+        border-bottom: 1px solid rgba(0, 10, 69, 0.08);
+        display: flex; gap: 32px;
       `;
 
-      const makeFooterBtn = (html: string, bg: string) => {
-        const btn = document.createElement('button');
-        btn.classList.add('btn-ripple');
-        btn.innerHTML = html;
-        btn.style.cssText = `
-          padding:10px 18px; border-radius:10px;
-          border:none; color:white; background:${bg};
-          cursor:pointer; font-size:14px; font-weight:600;
-          display:flex; align-items:center; gap:8px;
-          box-shadow:0 4px 12px rgba(0,0,0,0.18);
-          transition:transform .16s ease, box-shadow .16s ease;
+            const createNavTab = (text: string, isActive = false) => {
+                  const tab = document.createElement('div');
+                  tab.className = `nav-tab ${isActive ? 'active' : ''}`;
+                  tab.textContent = text;
+                  tab.style.cssText = `
+            padding: 16px 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid ${isActive ? '#000a45' : 'transparent'};
+          `;
+                  return tab;
+            };
+
+            const tabStudents = createNavTab('Students', true);
+            const tabAnnouncements = createNavTab('Announcements');
+            const tabMaterials = createNavTab('Materials');
+            const tabLive = createNavTab('Live Class');
+
+            tabsBar.appendChild(tabStudents);
+            tabsBar.appendChild(tabAnnouncements);
+            tabsBar.appendChild(tabMaterials);
+            tabsBar.appendChild(tabLive);
+
+            // NOTE: "Analytics" tab explicitly REMOVED from UI as per requirements.
+            // Logic for analytics remains in the codebase if needed elsewhere, but strictly hidden here.
+
+
+            // ================= CONTENT SECTION =================
+            const content = document.createElement('div');
+            content.className = 'custom-scroll';
+            content.style.cssText = `
+        flex: 1;
+        padding: 32px;
+        background: #f8fafc;
+        overflow-y: auto;
+      `;
+
+            // --- RENDERERS ---
+
+            const renderStudentsTab = () => {
+                  content.innerHTML = '';
+                  content.classList.remove('tab-content-transition');
+                  void content.offsetWidth; // trigger reflow
+                  content.classList.add('tab-content-transition');
+
+                  // Controls Row
+                  const controlsRow = document.createElement('div');
+                  controlsRow.style.cssText = `display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;`;
+
+                  const searchInput = document.createElement('input');
+                  searchInput.placeholder = 'Search students...';
+                  searchInput.style.cssText = `
+            padding: 10px 16px; border-radius: 8px; border: 1px solid #e2e8f0;
+            outline: none; font-size: 14px; width: 280px;
+            transition: border-color 0.2s;
         `;
-        btn.onmouseover = () => {
-          btn.style.transform = 'translateY(-1px) scale(1.03)';
-          btn.style.boxShadow = '0 6px 15px rgba(0,0,0,0.22)';
-        };
-        btn.onmouseout = () => {
-          btn.style.transform = 'translateY(0) scale(1)';
-          btn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.18)';
-        };
-        return btn;
-      };
+                  searchInput.onfocus = () => searchInput.style.borderColor = '#000a45';
+                  searchInput.onblur = () => searchInput.style.borderColor = '#e2e8f0';
 
-      const startBtn = makeFooterBtn(
-        '<i class="fa-solid fa-video"></i> Start Class',
-        '#0045AA'
-      );
-      startBtn.onclick = () => {
-        this.showToast('Live class feature coming soon!', 'info');
-      };
+                  controlsRow.appendChild(searchInput);
+                  content.appendChild(controlsRow);
 
-      const scheduleBtn = makeFooterBtn(
-        '<i class="fa-solid fa-calendar-check"></i> Schedule Class',
-        '#FFA500'
-      );
-      scheduleBtn.onclick = () => {
-        this.showToast('Scheduling feature coming soon!', 'info');
-      };
+                  // Student Grid 
+                  // Using a card/list layout instead of a simple table for "Premium" look
+                  const grid = document.createElement('div');
+                  grid.style.cssText = `display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:16px;`;
 
-      footer.appendChild(startBtn);
-      footer.appendChild(scheduleBtn);
-      card.appendChild(footer);
+                  const renderList = () => {
+                        grid.innerHTML = '';
+                        const term = searchInput.value.toLowerCase().trim();
+                        const filtered = students.filter((s: any) =>
+                              (s.studentName || '').toLowerCase().includes(term) || (s.studentEmail || '').toLowerCase().includes(term)
+                        );
 
-      overlay.appendChild(card);
-      document.body.appendChild(overlay);
+                        if (!filtered.length) {
+                              grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#94a3b8; padding:40px;">No students found.</div>`;
+                              return;
+                        }
 
-      renderStudentsTab(); // default tab content
+                        filtered.forEach((s: any) => {
+                              const card = document.createElement('div');
+                              card.style.cssText = `
+                    background: white; border: 1px solid #f1f5f9; border-radius: 12px;
+                    padding: 16px; display: flex; align-items: center; gap: 16px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+                `;
 
-      tabStudents.onclick = () => {
-        setTabActive(tabStudents, true);
-        setTabActive(tabAnnouncements, false);
-        setTabActive(tabMaterials, false);
-        setTabActive(tabLive, false);
-        renderStudentsTab();
-      };
-      tabAnnouncements.onclick = () => {
-        setTabActive(tabStudents, false);
-        setTabActive(tabAnnouncements, true);
-        setTabActive(tabMaterials, false);
-        setTabActive(tabLive, false);
-        renderAnnouncementsTab();
-      };
+                              const initials = (s.studentName || '?').substring(0, 2).toUpperCase();
+                              card.innerHTML = `
+                    <div style="
+                        width: 42px; height: 42px; border-radius: 50%; background: #e0e7ff; 
+                        color: #000a45; display: flex; align-items: center; justify-content: center;
+                        font-weight: 700; font-size: 14px; flex-shrink: 0;
+                    ">
+                        ${initials}
+                    </div>
+                    <div style="overflow:hidden;">
+                        <div style="font-weight: 600; color: #1e293b; font-size:15px; truncate;">${s.studentName}</div>
+                        <div style="color: #64748b; font-size: 13px; truncate;">${s.studentEmail}</div>
+                    </div>
+                `;
+                              grid.appendChild(card);
+                        });
+                  };
 
-      tabMaterials.onclick = () => {
-        setTabActive(tabStudents, false);
-        setTabActive(tabAnnouncements, false);
-        setTabActive(tabMaterials, true);
-        setTabActive(tabLive, false);
-        renderMaterialsTab();
-      };
+                  searchInput.oninput = renderList;
+                  renderList();
+                  content.appendChild(grid);
+            };
 
-      tabLive.onclick = () => {
-        setTabActive(tabStudents, false);
-        setTabActive(tabAnnouncements, false);
-        setTabActive(tabMaterials, false);
-        setTabActive(tabLive, true);
-        renderLiveTab();
-      };
+            const renderAnnouncementsTab = () => {
+                  content.innerHTML = '';
+                  content.classList.remove('tab-content-transition');
+                  void content.offsetWidth;
+                  content.classList.add('tab-content-transition');
 
-      overlay.onclick = (e) => {
-        if (e.target === overlay) overlay.remove();
-      };
+                  const container = document.createElement('div');
+                  container.style.cssText = `max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;`;
 
-      const escHandler = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-          overlay.remove();
-          document.removeEventListener('keydown', escHandler);
-        }
-      };
-      document.addEventListener('keydown', escHandler);
-    } catch (err) {
-      console.error('Error opening class', err);
-    }
-  }
+                  // Create Post Card
+                  const createCard = document.createElement('div');
+                  createCard.style.cssText = `
+            background: white; border-radius: 16px; padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 10, 69, 0.04); border: 1px solid rgba(0, 10, 69, 0.04);
+         `;
+                  createCard.innerHTML = `<h3 style="margin:0 0 16px; font-size:16px; color:#000a45; font-weight:600;">Create Announcement</h3>`;
+
+                  const titleInput = document.createElement('input');
+                  titleInput.placeholder = 'Announcement Title';
+                  titleInput.style.cssText = `
+             display:block; width:100%; padding: 12px; margin-bottom: 12px;
+             border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline:none;
+         `;
+
+                  const msgInput = document.createElement('textarea');
+                  msgInput.placeholder = 'What do you want to announce?';
+                  msgInput.rows = 3;
+                  msgInput.style.cssText = `
+             display:block; width:100%; padding: 12px; margin-bottom: 12px;
+             border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline:none; resize: vertical; font-family:inherit;
+         `;
+
+                  const attachInput = document.createElement('input');
+                  attachInput.placeholder = 'Attachment URL (optional)';
+                  attachInput.style.cssText = titleInput.style.cssText;
+                  attachInput.style.marginBottom = '16px';
+
+                  const postBtn = document.createElement('button');
+                  postBtn.textContent = 'Post Announcement';
+                  postBtn.className = 'btn-hover-effect';
+                  postBtn.style.cssText = `
+            background: #000a45; color: white; border: none; padding: 10px 24px;
+            border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer;
+            width: 100%;
+         `;
+
+                  postBtn.onclick = async () => {
+                        const t = titleInput.value.trim();
+                        const m = msgInput.value.trim();
+                        if (!t || !m) { this.showToast('Please enter title and message', 'error'); return; }
+
+                        try {
+                              postBtn.disabled = true;
+                              postBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Posting...';
+                              await this.http.post('https://orbitbackend-0i66.onrender.com/api/announcements', {
+                                    classId: room._id, title: t, message: m, attachmentUrl: attachInput.value.trim() || undefined
+                              }, { withCredentials: true }).toPromise();
+
+                              this.showToast('Posted successfully', 'success');
+                              titleInput.value = ''; msgInput.value = ''; attachInput.value = '';
+                              this.loadAnnouncementsForPopup(room._id);
+                        } catch (e) {
+                              this.showToast('Failed to post', 'error');
+                        } finally {
+                              postBtn.disabled = false;
+                              postBtn.textContent = 'Post Announcement';
+                        }
+                  };
+
+                  createCard.appendChild(titleInput);
+                  createCard.appendChild(msgInput);
+                  createCard.appendChild(attachInput);
+                  createCard.appendChild(postBtn);
+                  container.appendChild(createCard);
+
+                  // List Area
+                  const listContainer = document.createElement('div');
+                  listContainer.id = 'popupAnnouncements';
+                  listContainer.style.cssText = `display:flex; flex-direction:column; gap:16px;`;
+                  listContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8;">Loading feed...</div>`;
+
+                  container.appendChild(listContainer);
+                  content.appendChild(container);
+
+                  this.loadAnnouncementsForPopup(room._id);
+            };
+
+            const renderMaterialsTab = () => {
+                  content.innerHTML = '';
+                  content.classList.remove('tab-content-transition');
+                  void content.offsetWidth;
+                  content.classList.add('tab-content-transition');
+
+                  const container = document.createElement('div');
+                  container.style.cssText = `max-width: 800px; margin: 0 auto;`;
+
+                  const listContainer = document.createElement('div');
+                  listContainer.id = 'popupMaterials';
+                  listContainer.style.cssText = `display:flex; flex-direction:column; gap:12px;`;
+                  listContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8;">Loading materials...</div>`;
+
+                  container.appendChild(listContainer);
+                  content.appendChild(container);
+
+                  this.loadMaterialsForPopup(room._id);
+            };
+
+            const renderLiveTab = () => {
+                  content.innerHTML = '';
+                  content.classList.remove('tab-content-transition');
+                  void content.offsetWidth;
+                  content.classList.add('tab-content-transition');
+
+                  const container = document.createElement('div');
+                  container.style.cssText = `
+            height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; max-width: 480px; margin: 0 auto;
+         `;
+
+                  container.innerHTML = `
+            <div style="
+                width: 80px; height: 80px; background: #eff6ff; border-radius: 50%; 
+                display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
+            ">
+                <i class="fa-solid fa-video" style="font-size: 32px; color: #000a45;"></i>
+            </div>
+            <h3 style="margin: 0 0 12px; font-size: 20px; color: #000a45;">Start Live Session</h3>
+            <p style="margin: 0 0 32px; color: #64748b; line-height: 1.6;">
+                Launch an interactive video classroom with whiteboard, polls, and screen sharing. 
+                Notify students automatically.
+            </p>
+         `;
+
+                  const startBtn = document.createElement('button');
+                  startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start Now';
+                  startBtn.className = 'btn-hover-effect';
+                  startBtn.style.cssText = `
+            padding: 14px 40px; border-radius: 50px; border: none;
+            background: #000a45; color: white; font-size: 16px; font-weight: 600;
+            cursor: pointer; box-shadow: 0 10px 20px rgba(0, 10, 69, 0.2);
+         `;
+
+                  startBtn.onclick = async () => {
+                        try {
+                              startBtn.classList.add('disabled');
+                              startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Initializing...';
+
+                              const res: any = await this.http.post(
+                                    'https://orbitbackend-0i66.onrender.com/api/sessions/create',
+                                    {
+                                          classId: room._id,
+                                          classCode: room.classCode,
+                                          facultyEmail: this.user?.email,
+                                          facultyName: this.user?.fullName,
+                                          sessionTitle: 'Live Class - ' + room.subject,
+                                          duration: 60
+                                    }, { withCredentials: true }
+                              ).toPromise();
+
+                              if (res.sessionId) {
+                                    const url = `https://orbitbackend-0i66.onrender.com/video/room.html?session=${res.sessionId}&role=faculty&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
+                                    window.open(url, '_blank');
+                                    this.showToast('Live session started', 'success');
+                              }
+                              startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start Now';
+                        } catch (e) {
+                              this.showToast('Failed to start session', 'error');
+                              startBtn.innerHTML = 'Retry';
+                        }
+                  };
+
+                  container.appendChild(startBtn);
+                  content.appendChild(container);
+            };
+
+            // Tab Switching Logic
+            const switchTab = (tabName: string) => {
+                  [tabStudents, tabAnnouncements, tabMaterials, tabLive].forEach(t => {
+                        t.classList.remove('active');
+                        t.style.borderBottomColor = 'transparent';
+                        t.style.fontWeight = '500';
+                  });
+
+                  if (tabName === 'students') {
+                        tabStudents.classList.add('active');
+                        tabStudents.style.borderBottomColor = '#000a45';
+                        tabStudents.style.fontWeight = '600';
+                        renderStudentsTab();
+                  } else if (tabName === 'announcements') {
+                        tabAnnouncements.classList.add('active');
+                        tabAnnouncements.style.borderBottomColor = '#000a45';
+                        tabAnnouncements.style.fontWeight = '600';
+                        renderAnnouncementsTab();
+                  } else if (tabName === 'materials') {
+                        tabMaterials.classList.add('active');
+                        tabMaterials.style.borderBottomColor = '#000a45';
+                        tabMaterials.style.fontWeight = '600';
+                        renderMaterialsTab();
+                  } else if (tabName === 'live') {
+                        tabLive.classList.add('active');
+                        tabLive.style.borderBottomColor = '#000a45';
+                        tabLive.style.fontWeight = '600';
+                        renderLiveTab();
+                  }
+            };
+
+            tabStudents.onclick = () => switchTab('students');
+            tabAnnouncements.onclick = () => switchTab('announcements');
+            tabMaterials.onclick = () => switchTab('materials');
+            tabLive.onclick = () => switchTab('live');
+
+            // Initial Render
+            card.appendChild(header);
+            card.appendChild(tabsBar);
+            card.appendChild(content);
+            overlay.appendChild(card);
+            document.body.appendChild(overlay);
+
+            switchTab('students');
+
+            // Escape Key Close
+            const escHandler = (e: KeyboardEvent) => {
+                  if (e.key === 'Escape') {
+                        overlay.remove();
+                        document.removeEventListener('keydown', escHandler);
+                  }
+            };
+            document.addEventListener('keydown', escHandler);
+
+      } catch (err) {
+            console.error('Error opening class', err);
+            this.showToast('Could not open class details', 'error');
+      }
+}
 
   // ============================================================
   // ANNOUNCEMENTS POPUP LOADER (USED IN OPENCLASS)
