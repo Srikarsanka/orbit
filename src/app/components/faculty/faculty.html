@@ -35,6 +35,11 @@
                         <i class="fa-solid fa-folder-open"></i> Materials Upload
                   </a>
 
+                  <a class="menu-item" (click)="selectone('recordings')"
+                        [ngClass]="{ active: selectedSection === 'recordings' }">
+                        <i class="fa-solid fa-circle-play"></i> Recorded Classes
+                  </a>
+
                   <a class="menu-item" (click)="selectone('profile')"
                         [ngClass]="{ active: selectedSection === 'profile' }">
                         <i class="fa-solid fa-user"></i> Profile
@@ -1367,6 +1372,96 @@
                   </div>
 
             </div>
+
+            <!-- RECORDED CLASSES SECTION (FACULTY) -->
+            <section [hidden]="selectedSection !== 'recordings'" class="recordings-section" style="padding:24px;">
+                  <div class="section-header">
+                        <h1 class="section-title">Recorded Classes</h1>
+                        <p>Manage and review your recorded class sessions</p>
+                  </div>
+
+                  <div *ngIf="myClasses.length === 0" style="text-align:center; padding:60px 20px;">
+                        <i class="fa-solid fa-video-slash"
+                              style="font-size:48px; color:#ccc; margin-bottom:16px; display:block;"></i>
+                        <h3 style="color:#444; margin-bottom:8px;">No Classes Created</h3>
+                        <p style="color:#888;">Create a class and start recording sessions</p>
+                        <button
+                              style="margin-top:16px; padding:10px 24px; background:#000a45; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600;"
+                              (click)="selectone('createclass')">Create Class</button>
+                  </div>
+
+                  <div *ngIf="myClasses.length > 0" style="display:flex; flex-direction:column; gap:20px;">
+                        <div *ngFor="let c of myClasses"
+                              style="background:white; border-radius:16px; border:1px solid #eee; overflow:hidden;">
+                              <div style="padding:20px 24px; background:linear-gradient(135deg, #f8fafc, #f0f4ff); border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; cursor:pointer;"
+                                    (click)="toggleFacultyRecordingsClass(c._id)">
+                                    <div style="display:flex; align-items:center; gap:16px;">
+                                          <div
+                                                style="width:48px; height:48px; background:#000a45; border-radius:12px; display:flex; align-items:center; justify-content:center;">
+                                                <i class="fa-solid fa-video" style="color:white; font-size:18px;"></i>
+                                          </div>
+                                          <div>
+                                                <h3 style="margin:0; font-size:16px; color:#111; font-weight:600;">{{
+                                                      c.className }}</h3>
+                                                <p style="margin:4px 0 0; font-size:13px; color:#666;">{{ c.subject }}
+                                                      &middot; {{ c.classCode }}</p>
+                                          </div>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-down"
+                                          [style.transform]="expandedFacultyRecClassId === c._id ? 'rotate(180deg)' : 'rotate(0)'"
+                                          style="color:#999; transition:transform 0.3s;"></i>
+                              </div>
+
+                              <div *ngIf="expandedFacultyRecClassId === c._id" style="padding:20px 24px;">
+                                    <div *ngIf="loadingFacultyRecordings"
+                                          style="text-align:center; padding:20px; color:#999;">
+                                          <i class="fa-solid fa-spinner fa-spin"></i> Loading recordings...
+                                    </div>
+                                    <div *ngIf="!loadingFacultyRecordings && facultyClassRecordings.length === 0"
+                                          style="text-align:center; padding:30px; color:#999;">
+                                          <i class="fa-solid fa-video-slash"
+                                                style="font-size:32px; color:#ddd; display:block; margin-bottom:12px;"></i>
+                                          <p>No recordings for this class yet</p>
+                                          <p style="font-size:12px; color:#bbb; margin-top:4px;">Start a live session
+                                                and hit Record to create one</p>
+                                    </div>
+                                    <div *ngIf="!loadingFacultyRecordings && facultyClassRecordings.length > 0"
+                                          style="display:flex; flex-direction:column; gap:12px;">
+                                          <div *ngFor="let rec of facultyClassRecordings"
+                                                style="background:#fafafa; border:1px solid #eee; border-radius:12px; padding:16px;">
+                                                <div style="display:flex; align-items:center; gap:14px;">
+                                                      <div
+                                                            style="width:42px; height:42px; background:#e0e7ff; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                                            <i class="fa-solid fa-play"
+                                                                  style="color:#000a45; font-size:14px;"></i>
+                                                      </div>
+                                                      <div style="flex:1; min-width:0;">
+                                                            <div style="font-weight:600; color:#111; font-size:14px;">{{
+                                                                  rec.title || 'Class Recording' }}</div>
+                                                            <div style="color:#888; font-size:12px; margin-top:2px;">{{
+                                                                  rec.createdAt | date:'MMM d, y &middot; h:mm a' }}
+                                                            </div>
+                                                      </div>
+                                                      <div style="display:flex; gap:6px; flex-shrink:0;">
+                                                            <button
+                                                                  style="padding:6px 14px; border-radius:8px; border:1px solid #ddd; background:white; color:#000a45; cursor:pointer; font-size:12px; font-weight:600;"
+                                                                  (click)="playFacultyRecording(rec)">
+                                                                  <i class="fa-solid fa-play"></i> Play
+                                                            </button>
+                                                            <button
+                                                                  style="padding:6px 14px; border-radius:8px; border:1px solid #fee2e2; background:#fef2f2; color:#ef4444; cursor:pointer; font-size:12px; font-weight:600;"
+                                                                  (click)="deleteFacultyRecording(rec)">
+                                                                  <i class="fa-solid fa-trash"></i> Delete
+                                                            </button>
+                                                      </div>
+                                                </div>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+            </section>
+
       </main>
 </div>
 <!-- TOAST CONTAINER -->

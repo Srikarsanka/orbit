@@ -135,6 +135,13 @@ export class Studentdashboard implements OnInit {
      ============================================================ */
   selectedSection: string = "dashboard";
 
+  /* ============================================================
+     RECORDINGS STATE
+     ============================================================ */
+  expandedRecordingClassId: string | null = null;
+  loadingRecordings: boolean = false;
+  currentClassRecordings: any[] = [];
+
   joinCode: string = "";
   joinSuccess: string = "";
   joinError: string = "";
@@ -511,6 +518,45 @@ export class Studentdashboard implements OnInit {
   }
 
   /* ============================================================
+     RECORDINGS SIDEBAR METHODS
+     ============================================================ */
+  toggleRecordingsClass(classId: string) {
+    if (this.expandedRecordingClassId === classId) {
+      this.expandedRecordingClassId = null;
+      this.currentClassRecordings = [];
+    } else {
+      this.expandedRecordingClassId = classId;
+      this.loadClassRecordings(classId);
+    }
+  }
+
+  async loadClassRecordings(classId: string) {
+    this.loadingRecordings = true;
+    this.currentClassRecordings = [];
+    try {
+      const res: any = await this.http.get(
+        `https://orbitbackend-0i66.onrender.com/api/recordings/class/${classId}`,
+        { withCredentials: true }
+      ).toPromise();
+      this.currentClassRecordings = res.recordings || [];
+    } catch (e) {
+      console.error('Failed to load recordings:', e);
+      this.currentClassRecordings = [];
+    } finally {
+      this.loadingRecordings = false;
+    }
+  }
+
+  playRecording(rec: any) {
+    window.open(`https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+  }
+
+  openTranslatePanel(rec: any) {
+    const playerUrl = `https://orbitbackend-0i66.onrender.com/video/recording_player.html?file=${rec.filename}&lang=te&title=${encodeURIComponent(rec.title || 'Recording')}`;
+    window.open(playerUrl, '_blank');
+  }
+
+  /* ============================================================
      CLEAR JOIN FORM
      ============================================================ */
   clearForm() {
@@ -774,15 +820,17 @@ export class Studentdashboard implements OnInit {
       const tabAnnouncements = createTab('Announcements');
       const tabMaterials = createTab('Materials');
       const tabLive = createTab('Live Class');
+      const tabRecordings = createTab('Recordings');
 
       const setTabActive = (tab: HTMLElement, active: boolean) => {
         tab.style.color = active ? '#0045AA' : '#555';
         tab.style.borderBottomColor = active ? '#0045AA' : 'transparent';
       };
 
-      tabsBar.appendChild(tabLive); // Default first for visibility check? Or Announcements?
+      tabsBar.appendChild(tabLive);
       tabsBar.appendChild(tabAnnouncements);
       tabsBar.appendChild(tabMaterials);
+      tabsBar.appendChild(tabRecordings);
 
       // Content Area
       const content = document.createElement('div');
@@ -909,26 +957,157 @@ export class Studentdashboard implements OnInit {
         }
       };
 
+      // [NEW] RENDER RECORDINGS TAB (STUDENT - with translation)
+      const renderRecordingsTab = async () => {
+        content.innerHTML = '';
+        const container = document.createElement('div');
+        container.style.cssText = `max-width: 800px; margin: 0 auto; display:flex; flex-direction:column; gap:20px;`;
+
+        container.innerHTML = `
+          <div>
+            <h3 style="margin:0; color:#0045AA; font-size:18px;">Class Recordings</h3>
+            <p style="margin:4px 0 0; color:#666; font-size:13px;">Watch recorded lectures with audio translation</p>
+          </div>
+        `;
+
+        const listArea = document.createElement('div');
+        listArea.style.cssText = `display:flex; flex-direction:column; gap:12px;`;
+        listArea.innerHTML = `<div style="text-align:center; padding:40px; color:#999;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>`;
+        container.appendChild(listArea);
+        content.appendChild(container);
+
+        try {
+          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/recordings/class/${room._id}`, { withCredentials: true }).toPromise();
+          const recordings = res.recordings || [];
+
+          if (!recordings.length) {
+            listArea.innerHTML = `
+              <div style="text-align:center; padding:60px 20px;">
+                <i class="fa-solid fa-video-slash" style="font-size:48px; color:#ccc; margin-bottom:16px;"></i>
+                <p style="color:#666; font-size:15px; margin:0;">No recordings available yet</p>
+                <p style="color:#999; font-size:13px; margin:8px 0 0;">Faculty will upload recordings after live classes</p>
+              </div>`;
+            return;
+          }
+
+          listArea.innerHTML = '';
+          recordings.forEach((rec: any) => {
+            const card = document.createElement('div');
+            const date = new Date(rec.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const time = new Date(rec.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const mins = Math.floor((rec.duration || 0) / 60);
+            const secs = (rec.duration || 0) % 60;
+            const size = ((rec.fileSize || 0) / (1024 * 1024)).toFixed(1);
+
+            card.style.cssText = `
+              background:white; border:1px solid #eee; border-radius:12px;
+              padding:20px; transition:all 0.2s;
+            `;
+            card.onmouseover = () => card.style.boxShadow = '0 4px 12px rgba(0,69,170,0.08)';
+            card.onmouseout = () => card.style.boxShadow = 'none';
+
+            card.innerHTML = `
+              <div style="display:flex; align-items:center; gap:16px;">
+                <div style="width:48px; height:48px; background:#e0f2fe; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                  <i class="fa-solid fa-video" style="color:#0045AA; font-size:18px;"></i>
+                </div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-weight:600; color:#111; font-size:15px;">${rec.title || 'Class Recording'}</div>
+                  <div style="color:#666; font-size:13px; margin-top:4px;">
+                    ${date} at ${time} \u00b7 ${mins}m ${secs}s \u00b7 ${size}MB
+                  </div>
+                </div>
+                <div style="display:flex; gap:8px; flex-shrink:0;">
+                  <button class="play-btn" style="padding:8px 16px; border-radius:8px; border:1px solid #ddd; background:white; color:#0045AA; cursor:pointer; font-weight:600; font-size:13px; transition:all 0.2s;">
+                    <i class="fa-solid fa-play"></i> Play
+                  </button>
+                  <button class="translate-btn" style="padding:8px 16px; border-radius:8px; border:none; background:#0045AA; color:white; cursor:pointer; font-weight:600; font-size:13px; transition:all 0.2s;">
+                    <i class="fa-solid fa-language"></i> Translate
+                  </button>
+                </div>
+              </div>
+              <div class="lang-selector" style="display:none; margin-top:16px; padding-top:16px; border-top:1px solid #eee;">
+                <p style="margin:0 0 10px; font-size:13px; font-weight:600; color:#444;">Select language for audio translation:</p>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button class="lang-btn" data-lang="en" style="padding:8px 16px; border-radius:8px; border:2px solid #0045AA; background:#e0f2fe; color:#0045AA; cursor:pointer; font-weight:600; font-size:13px;">English</button>
+                  <button class="lang-btn" data-lang="te" style="padding:8px 16px; border-radius:8px; border:2px solid #ddd; background:white; color:#444; cursor:pointer; font-weight:600; font-size:13px;">Telugu</button>
+                  <button class="lang-btn" data-lang="hi" style="padding:8px 16px; border-radius:8px; border:2px solid #ddd; background:white; color:#444; cursor:pointer; font-weight:600; font-size:13px;">Hindi</button>
+                  <button class="lang-btn" data-lang="ta" style="padding:8px 16px; border-radius:8px; border:2px solid #ddd; background:white; color:#444; cursor:pointer; font-weight:600; font-size:13px;">Tamil</button>
+                </div>
+                <button class="play-translated-btn" style="margin-top:12px; padding:10px 24px; border-radius:8px; border:none; background:linear-gradient(135deg, #0045AA, #0066FF); color:white; cursor:pointer; font-weight:600; font-size:14px; width:100%; transition:all 0.2s;">
+                  <i class="fa-solid fa-play"></i> Play with Translation
+                </button>
+              </div>
+            `;
+
+            // Play original
+            card.querySelector('.play-btn')!.addEventListener('click', () => {
+              window.open(`https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+            });
+
+            // Toggle translate panel
+            const langSelector = card.querySelector('.lang-selector') as HTMLElement;
+            card.querySelector('.translate-btn')!.addEventListener('click', () => {
+              langSelector.style.display = langSelector.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Language selection
+            let selectedLang = 'en';
+            card.querySelectorAll('.lang-btn').forEach((btn: any) => {
+              btn.addEventListener('click', () => {
+                card.querySelectorAll('.lang-btn').forEach((b: any) => {
+                  b.style.borderColor = '#ddd';
+                  b.style.background = 'white';
+                  b.style.color = '#444';
+                });
+                btn.style.borderColor = '#0045AA';
+                btn.style.background = '#e0f2fe';
+                btn.style.color = '#0045AA';
+                selectedLang = btn.dataset.lang;
+              });
+            });
+
+            // Play with translation
+            card.querySelector('.play-translated-btn')!.addEventListener('click', () => {
+              const playerUrl = `https://orbitbackend-0i66.onrender.com/video/recording_player.html?file=${rec.filename}&lang=${selectedLang}&title=${encodeURIComponent(rec.title || 'Recording')}`;
+              window.open(playerUrl, '_blank');
+            });
+
+            listArea.appendChild(card);
+          });
+        } catch (e) {
+          console.error('Error loading recordings:', e);
+          listArea.innerHTML = `<div style="text-align:center; padding:40px; color:red;">Failed to load recordings</div>`;
+        }
+      };
+
       // Click Handlers
+      const setAllTabsInactive = () => {
+        [tabAnnouncements, tabMaterials, tabLive, tabRecordings].forEach(t => setTabActive(t, false));
+      };
+
       tabAnnouncements.onclick = () => {
+        setAllTabsInactive();
         setTabActive(tabAnnouncements, true);
-        setTabActive(tabMaterials, false);
-        setTabActive(tabLive, false);
         renderAnnouncements();
       };
 
       tabMaterials.onclick = () => {
-        setTabActive(tabAnnouncements, false);
+        setAllTabsInactive();
         setTabActive(tabMaterials, true);
-        setTabActive(tabLive, false);
         renderMaterials();
       };
 
       tabLive.onclick = () => {
-        setTabActive(tabAnnouncements, false);
-        setTabActive(tabMaterials, false);
+        setAllTabsInactive();
         setTabActive(tabLive, true);
         renderLiveTab();
+      };
+
+      tabRecordings.onclick = () => {
+        setAllTabsInactive();
+        setTabActive(tabRecordings, true);
+        renderRecordingsTab();
       };
 
       // Default Tab
@@ -1080,7 +1259,7 @@ export class Studentdashboard implements OnInit {
     this.clearOutput();
 
     try {
-      const res: any = await this.http.post('http://localhost:8000/api/compiler/execute', {
+      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/compiler/execute', {
         language: this.compilerLanguage,
         code: this.compilerCode,
         input: this.compilerInput // Send user input
@@ -1191,7 +1370,7 @@ Provide:
 
 Keep it conversational and easy to read.`;
 
-      const res: any = await this.http.post('http://localhost:8000/api/ai/generate', {
+      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/ai/generate', {
         prompt: prompt
       }).toPromise();
 
@@ -1220,7 +1399,7 @@ ${this.compilerCode}
 
 Explain what caused this error and how to fix it. Be clear and concise. Do not use markdown formatting like asterisks or bold text. Keep it conversational.`;
 
-      const res: any = await this.http.post('http://localhost:8000/api/ai/generate', {
+      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/ai/generate', {
         prompt: prompt
       }).toPromise();
 

@@ -163,6 +163,12 @@ export class Faculty implements OnInit {
   // UI SECTIONS PROPERTIES
   // ============================================================
   selectedSection: string = 'dashboard';
+
+  // Recordings sidebar state
+  expandedFacultyRecClassId: string | null = null;
+  loadingFacultyRecordings: boolean = false;
+  facultyClassRecordings: any[] = [];
+
   materials: Material[] = [];
   filteredMaterials: Material[] = [];
   selectedFiles: UploadFile[] = [];
@@ -657,12 +663,14 @@ export class Faculty implements OnInit {
       const tabScheduled = createNavTab('Scheduled Classes'); // [NEW]
       const tabAnnouncements = createNavTab('Announcements');
       const tabMaterials = createNavTab('Materials');
+      const tabRecordings = createNavTab('Recordings');
       const tabLive = createNavTab('Live Class');
 
       tabsBar.appendChild(tabStudents);
       tabsBar.appendChild(tabScheduled);
       tabsBar.appendChild(tabAnnouncements);
       tabsBar.appendChild(tabMaterials);
+      tabsBar.appendChild(tabRecordings);
       tabsBar.appendChild(tabLive);
 
       // ================= CONTENT SECTION =================
@@ -950,6 +958,102 @@ export class Faculty implements OnInit {
         this.loadMaterialsForPopup(room._id);
       };
 
+      // [NEW] RENDER RECORDINGS TAB
+      const renderRecordingsTab = async () => {
+        content.innerHTML = '';
+        const container = document.createElement('div');
+        container.style.cssText = `max-width: 800px; margin: 0 auto; display:flex; flex-direction:column; gap:24px;`;
+
+        const topRow = document.createElement('div');
+        topRow.style.cssText = `display:flex; justify-content:space-between; align-items:center;`;
+        topRow.innerHTML = `
+          <div>
+            <h3 style="margin:0; color:#000a45; font-size:18px;">Class Recordings</h3>
+            <p style="margin:4px 0 0; color:#64748b; font-size:13px;">Recorded lectures from live sessions</p>
+          </div>
+        `;
+        container.appendChild(topRow);
+
+        const listArea = document.createElement('div');
+        listArea.style.cssText = `display:flex; flex-direction:column; gap:12px;`;
+        listArea.innerHTML = `<div style="text-align:center; padding:40px; color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin"></i> Loading recordings...</div>`;
+        container.appendChild(listArea);
+        content.appendChild(container);
+
+        try {
+          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/recordings/class/${room._id}`, { withCredentials: true }).toPromise();
+          const recordings = res.recordings || [];
+
+          if (!recordings.length) {
+            listArea.innerHTML = `
+              <div style="text-align:center; padding:60px 20px;">
+                <i class="fa-solid fa-video-slash" style="font-size:48px; color:#cbd5e1; margin-bottom:16px;"></i>
+                <p style="color:#64748b; font-size:15px; margin:0;">No recordings yet</p>
+                <p style="color:#94a3b8; font-size:13px; margin:8px 0 0;">Start recording during a live class to save lectures here</p>
+              </div>`;
+            return;
+          }
+
+          listArea.innerHTML = '';
+          recordings.forEach((rec: any) => {
+            const card = document.createElement('div');
+            const date = new Date(rec.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const time = new Date(rec.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const mins = Math.floor((rec.duration || 0) / 60);
+            const secs = (rec.duration || 0) % 60;
+            const size = ((rec.fileSize || 0) / (1024 * 1024)).toFixed(1);
+
+            card.style.cssText = `
+              background:white; border:1px solid #f1f5f9; border-radius:12px;
+              padding:20px; display:flex; align-items:center; gap:16px;
+              box-shadow:0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s;
+            `;
+            card.onmouseover = () => card.style.boxShadow = '0 4px 12px rgba(0,10,69,0.08)';
+            card.onmouseout = () => card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
+
+            card.innerHTML = `
+              <div style="width:48px; height:48px; background:#eff6ff; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i class="fa-solid fa-video" style="color:#000a45; font-size:18px;"></i>
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div style="font-weight:600; color:#1e293b; font-size:15px;">${rec.title || 'Class Recording'}</div>
+                <div style="color:#64748b; font-size:13px; margin-top:4px;">
+                  ${date} at ${time} · ${mins}m ${secs}s · ${size}MB
+                </div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="play-rec-btn btn-hover-effect" style="padding:8px 16px; border-radius:8px; border:1px solid #e2e8f0; background:white; color:#000a45; cursor:pointer; font-weight:600; font-size:13px;">
+                  <i class="fa-solid fa-play"></i> Play
+                </button>
+                <button class="del-rec-btn btn-hover-effect" style="padding:8px 12px; border-radius:8px; border:1px solid #fee2e2; background:#fef2f2; color:#ef4444; cursor:pointer; font-size:13px;">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            `;
+
+            card.querySelector('.play-rec-btn')!.addEventListener('click', () => {
+              window.open(`https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+            });
+
+            card.querySelector('.del-rec-btn')!.addEventListener('click', async () => {
+              if (!confirm('Delete this recording? This cannot be undone.')) return;
+              try {
+                await this.http.delete(`https://orbitbackend-0i66.onrender.com/api/recordings/${rec._id}`, { withCredentials: true }).toPromise();
+                card.remove();
+                this.showToast('Recording deleted', 'success');
+              } catch (e) {
+                this.showToast('Failed to delete recording', 'error');
+              }
+            });
+
+            listArea.appendChild(card);
+          });
+        } catch (e) {
+          console.error('Error loading recordings:', e);
+          listArea.innerHTML = `<div style="text-align:center; padding:40px; color:#ef4444;">Failed to load recordings</div>`;
+        }
+      };
+
       const renderLiveTab = () => {
         content.innerHTML = '';
         const container = document.createElement('div');
@@ -1016,7 +1120,7 @@ export class Faculty implements OnInit {
 
       // Tab Switching Logic
       const switchTab = (tabName: string) => {
-        [tabStudents, tabScheduled, tabAnnouncements, tabMaterials, tabLive].forEach(t => {
+        [tabStudents, tabScheduled, tabAnnouncements, tabMaterials, tabRecordings, tabLive].forEach(t => {
           t.classList.remove('active');
           t.style.borderBottomColor = 'transparent';
           t.style.fontWeight = '500';
@@ -1042,6 +1146,11 @@ export class Faculty implements OnInit {
           tabMaterials.style.borderBottomColor = '#000a45';
           tabMaterials.style.fontWeight = '600';
           renderMaterialsTab();
+        } else if (tabName === 'recordings') {
+          tabRecordings.classList.add('active');
+          tabRecordings.style.borderBottomColor = '#000a45';
+          tabRecordings.style.fontWeight = '600';
+          renderRecordingsTab();
         } else if (tabName === 'live') {
           tabLive.classList.add('active');
           tabLive.style.borderBottomColor = '#000a45';
@@ -1054,6 +1163,7 @@ export class Faculty implements OnInit {
       tabScheduled.onclick = () => switchTab('scheduled');
       tabAnnouncements.onclick = () => switchTab('announcements');
       tabMaterials.onclick = () => switchTab('materials');
+      tabRecordings.onclick = () => switchTab('recordings');
       tabLive.onclick = () => switchTab('live');
 
       // Initial Render
@@ -1475,6 +1585,54 @@ export class Faculty implements OnInit {
         this.loadAllSessionsAnalytics();
         this.loadClassAnalytics(); // Load class-level analytics
       }, 0);
+    }
+  }
+
+  // ============================================================
+  // RECORDINGS SIDEBAR METHODS
+  // ============================================================
+  toggleFacultyRecordingsClass(classId: string) {
+    if (this.expandedFacultyRecClassId === classId) {
+      this.expandedFacultyRecClassId = null;
+      this.facultyClassRecordings = [];
+    } else {
+      this.expandedFacultyRecClassId = classId;
+      this.loadFacultyClassRecordings(classId);
+    }
+  }
+
+  async loadFacultyClassRecordings(classId: string) {
+    this.loadingFacultyRecordings = true;
+    this.facultyClassRecordings = [];
+    try {
+      const res: any = await this.http.get(
+        `https://orbitbackend-0i66.onrender.com/api/recordings/class/${classId}`,
+        { withCredentials: true }
+      ).toPromise();
+      this.facultyClassRecordings = res.recordings || [];
+    } catch (e) {
+      console.error('Failed to load recordings:', e);
+      this.facultyClassRecordings = [];
+    } finally {
+      this.loadingFacultyRecordings = false;
+    }
+  }
+
+  playFacultyRecording(rec: any) {
+    window.open(`https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+  }
+
+  async deleteFacultyRecording(rec: any) {
+    if (!confirm('Delete this recording permanently?')) return;
+    try {
+      await this.http.delete(
+        `https://orbitbackend-0i66.onrender.com/api/recordings/${rec._id}`,
+        { withCredentials: true }
+      ).toPromise();
+      this.facultyClassRecordings = this.facultyClassRecordings.filter((r: any) => r._id !== rec._id);
+    } catch (e) {
+      console.error('Failed to delete recording:', e);
+      alert('Failed to delete recording');
     }
   }
 
