@@ -1032,7 +1032,7 @@ export class Faculty implements OnInit {
             `;
 
             card.querySelector('.play-rec-btn')!.addEventListener('click', () => {
-              window.open(`https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+              window.open(rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
             });
 
             card.querySelector('.del-rec-btn')!.addEventListener('click', async () => {
@@ -1619,7 +1619,7 @@ export class Faculty implements OnInit {
   }
 
   playFacultyRecording(rec: any) {
-    window.open(`https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+    window.open(rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
   }
 
   async deleteFacultyRecording(rec: any) {

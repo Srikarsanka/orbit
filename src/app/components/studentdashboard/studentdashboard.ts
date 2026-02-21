@@ -548,11 +548,12 @@ export class Studentdashboard implements OnInit {
   }
 
   playRecording(rec: any) {
-    window.open(`https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+    window.open(rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
   }
 
   openTranslatePanel(rec: any) {
-    const playerUrl = `https://orbitbackend-0i66.onrender.com/video/recording_player.html?file=${rec.filename}&lang=te&title=${encodeURIComponent(rec.title || 'Recording')}`;
+    const videoSrc = rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`;
+    const playerUrl = `https://orbitbackend-0i66.onrender.com/video/recording_player.html?src=${encodeURIComponent(videoSrc)}&lang=te&title=${encodeURIComponent(rec.title || 'Recording')}`;
     window.open(playerUrl, '_blank');
   }
 
@@ -1042,7 +1043,7 @@ export class Studentdashboard implements OnInit {
 
             // Play original
             card.querySelector('.play-btn')!.addEventListener('click', () => {
-              window.open(`https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+              window.open(rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
             });
 
             // Toggle translate panel
