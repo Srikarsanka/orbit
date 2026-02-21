@@ -1080,7 +1080,7 @@ export class Studentdashboard implements OnInit {
     this.clearOutput();
 
     try {
-      const res: any = await this.http.post('http://localhost:8000/api/compiler/execute', {
+      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/compiler/execute', {
         language: this.compilerLanguage,
         code: this.compilerCode,
         input: this.compilerInput // Send user input
@@ -1191,7 +1191,7 @@ Provide:
 
 Keep it conversational and easy to read.`;
 
-      const res: any = await this.http.post('http://localhost:8000/api/ai/generate', {
+      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/ai/generate', {
         prompt: prompt
       }).toPromise();
 
@@ -1220,7 +1220,7 @@ ${this.compilerCode}
 
 Explain what caused this error and how to fix it. Be clear and concise. Do not use markdown formatting like asterisks or bold text. Keep it conversational.`;
 
-      const res: any = await this.http.post('http://localhost:8000/api/ai/generate', {
+      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/ai/generate', {
         prompt: prompt
       }).toPromise();
 

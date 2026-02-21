@@ -113,7 +113,7 @@ int main() {
 
       async loadLanguages() {
             try {
-                  const res: any = await this.http.get('http://localhost:8000/api/compiler/languages').toPromise();
+                  const res: any = await this.http.get('https://orbitbackend-0i66.onrender.com/api/compiler/languages').toPromise();
                   this.languages = res.languages;
             } catch (error) {
                   console.error('Failed to load languages:', error);
@@ -146,7 +146,7 @@ int main() {
             this.clearOutput();
 
             try {
-                  const res: any = await this.http.post('http://localhost:8000/api/compiler/execute', {
+                  const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/compiler/execute', {
                         language: this.selectedLanguage,
                         code: this.code,
                         input: ''
