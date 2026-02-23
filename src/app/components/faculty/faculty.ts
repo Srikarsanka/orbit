@@ -1058,7 +1058,8 @@ export class Faculty implements OnInit {
                 + '&title=' + encodeURIComponent(rec.title || 'Class Recording')
                 + '&faculty=' + encodeURIComponent(rec.facultyName || 'Faculty')
                 + '&date=' + encodeURIComponent(date)
-                + '&duration=' + (rec.duration || 0);
+                + '&duration=' + (rec.duration || 0)
+                + '&id=' + (rec._id || '');
               window.open(playerUrl, '_blank');
             };
 
