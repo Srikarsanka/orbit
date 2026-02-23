@@ -962,18 +962,20 @@ export class Studentdashboard implements OnInit {
       const renderRecordingsTab = async () => {
         content.innerHTML = '';
         const container = document.createElement('div');
-        container.style.cssText = `max-width: 800px; margin: 0 auto; display:flex; flex-direction:column; gap:20px;`;
+        container.style.cssText = `max-width: 860px; margin: 0 auto; display:flex; flex-direction:column; gap:24px;`;
 
         container.innerHTML = `
-          <div>
-            <h3 style="margin:0; color:#0045AA; font-size:18px;">Class Recordings</h3>
-            <p style="margin:4px 0 0; color:#666; font-size:13px;">Watch recorded lectures with audio translation</p>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <h3 style="margin:0; color:#0045AA; font-size:20px; font-weight:700;">Class Recordings</h3>
+              <p style="margin:4px 0 0; color:#64748b; font-size:13px;">Watch recorded lectures with real-time subtitles & translation</p>
+            </div>
           </div>
         `;
 
         const listArea = document.createElement('div');
-        listArea.style.cssText = `display:flex; flex-direction:column; gap:12px;`;
-        listArea.innerHTML = `<div style="text-align:center; padding:40px; color:#999;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>`;
+        listArea.style.cssText = `display:grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap:16px;`;
+        listArea.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin" style="font-size:24px;"></i><p style="margin-top:12px;">Loading recordings...</p></div>`;
         container.appendChild(listArea);
         content.appendChild(container);
 
@@ -983,10 +985,12 @@ export class Studentdashboard implements OnInit {
 
           if (!recordings.length) {
             listArea.innerHTML = `
-              <div style="text-align:center; padding:60px 20px;">
-                <i class="fa-solid fa-video-slash" style="font-size:48px; color:#ccc; margin-bottom:16px;"></i>
-                <p style="color:#666; font-size:15px; margin:0;">No recordings available yet</p>
-                <p style="color:#999; font-size:13px; margin:8px 0 0;">Faculty will upload recordings after live classes</p>
+              <div style="grid-column:1/-1; text-align:center; padding:60px 20px;">
+                <div style="width:80px; height:80px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                  <i class="fa-solid fa-video-slash" style="font-size:32px; color:#94a3b8;"></i>
+                </div>
+                <p style="color:#475569; font-size:16px; font-weight:600; margin:0;">No recordings yet</p>
+                <p style="color:#94a3b8; font-size:13px; margin:8px 0 0;">Recordings will appear here after faculty records a live class</p>
               </div>`;
             return;
           }
@@ -1001,85 +1005,75 @@ export class Studentdashboard implements OnInit {
             const size = ((rec.fileSize || 0) / (1024 * 1024)).toFixed(1);
 
             card.style.cssText = `
-              background:white; border:1px solid #eee; border-radius:12px;
-              padding:20px; transition:all 0.2s;
+              background:white; border:1px solid #e2e8f0; border-radius:16px;
+              overflow:hidden; transition:all 0.25s ease; cursor:default;
             `;
-            card.onmouseover = () => card.style.boxShadow = '0 4px 12px rgba(0,69,170,0.08)';
-            card.onmouseout = () => card.style.boxShadow = 'none';
+            card.onmouseover = () => { card.style.boxShadow = '0 8px 25px rgba(0,69,170,0.1)'; card.style.transform = 'translateY(-2px)'; };
+            card.onmouseout = () => { card.style.boxShadow = 'none'; card.style.transform = 'translateY(0)'; };
 
             card.innerHTML = `
-              <div style="display:flex; align-items:center; gap:16px;">
-                <div style="width:48px; height:48px; background:#e0f2fe; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                  <i class="fa-solid fa-video" style="color:#0045AA; font-size:18px;"></i>
+              <div style="background:linear-gradient(135deg, #0045AA 0%, #0066FF 100%); padding:20px; display:flex; align-items:center; gap:14px; cursor:pointer;" class="card-play-area">
+                <div style="width:50px; height:50px; background:rgba(255,255,255,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; backdrop-filter:blur(10px);">
+                  <i class="fa-solid fa-play" style="color:white; font-size:18px; margin-left:2px;"></i>
                 </div>
                 <div style="flex:1; min-width:0;">
-                  <div style="font-weight:600; color:#111; font-size:15px;">${rec.title || 'Class Recording'}</div>
-                  <div style="color:#666; font-size:13px; margin-top:4px;">
-                    ${date} at ${time} \u00b7 ${mins}m ${secs}s \u00b7 ${size}MB
+                  <div style="font-weight:700; color:white; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${rec.title || 'Class Recording'}</div>
+                  <div style="color:rgba(255,255,255,0.75); font-size:12px; margin-top:3px;">
+                    <i class="fa-regular fa-clock"></i> ${mins}m ${secs}s &nbsp;·&nbsp; ${size}MB
                   </div>
                 </div>
-                <div style="display:flex; gap:8px; flex-shrink:0;">
-                  <button class="play-btn" style="padding:8px 16px; border-radius:8px; border:1px solid #ddd; background:white; color:#0045AA; cursor:pointer; font-weight:600; font-size:13px; transition:all 0.2s;">
-                    <i class="fa-solid fa-play"></i> Play
-                  </button>
-                  <button class="translate-btn" style="padding:8px 16px; border-radius:8px; border:none; background:#0045AA; color:white; cursor:pointer; font-weight:600; font-size:13px; transition:all 0.2s;">
-                    <i class="fa-solid fa-language"></i> Translate
-                  </button>
-                </div>
               </div>
-              <div class="lang-selector" style="display:none; margin-top:16px; padding-top:16px; border-top:1px solid #eee;">
-                <p style="margin:0 0 10px; font-size:13px; font-weight:600; color:#444;">Select language for audio translation:</p>
-                <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                  <button class="lang-btn" data-lang="en" style="padding:8px 16px; border-radius:8px; border:2px solid #0045AA; background:#e0f2fe; color:#0045AA; cursor:pointer; font-weight:600; font-size:13px;">English</button>
-                  <button class="lang-btn" data-lang="te" style="padding:8px 16px; border-radius:8px; border:2px solid #ddd; background:white; color:#444; cursor:pointer; font-weight:600; font-size:13px;">Telugu</button>
-                  <button class="lang-btn" data-lang="hi" style="padding:8px 16px; border-radius:8px; border:2px solid #ddd; background:white; color:#444; cursor:pointer; font-weight:600; font-size:13px;">Hindi</button>
-                  <button class="lang-btn" data-lang="ta" style="padding:8px 16px; border-radius:8px; border:2px solid #ddd; background:white; color:#444; cursor:pointer; font-weight:600; font-size:13px;">Tamil</button>
+              <div style="padding:16px 20px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                  <div style="display:flex; align-items:center; gap:8px; color:#64748b; font-size:12px;">
+                    <i class="fa-regular fa-calendar"></i> ${date} at ${time}
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:#0045AA; font-weight:600; background:#e0f2fe; padding:3px 10px; border-radius:20px;">
+                    <i class="fa-solid fa-closed-captioning"></i> Subtitles
+                  </div>
                 </div>
-                <button class="play-translated-btn" style="margin-top:12px; padding:10px 24px; border-radius:8px; border:none; background:linear-gradient(135deg, #0045AA, #0066FF); color:white; cursor:pointer; font-weight:600; font-size:14px; width:100%; transition:all 0.2s;">
-                  <i class="fa-solid fa-play"></i> Play with Translation
-                </button>
+                <div style="display:flex; gap:8px;">
+                  <select class="lang-picker" style="flex:1; padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; color:#334155; background:white; cursor:pointer; font-family:inherit;">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="te">🇮🇳 Telugu</option>
+                    <option value="hi">🇮🇳 Hindi</option>
+                    <option value="ta">🇮🇳 Tamil</option>
+                    <option value="ml">🇮🇳 Malayalam</option>
+                  </select>
+                  <button class="watch-btn" style="padding:8px 20px; border-radius:8px; border:none; background:linear-gradient(135deg, #0045AA, #0066FF); color:white; cursor:pointer; font-weight:600; font-size:13px; transition:all 0.2s; display:flex; align-items:center; gap:6px; white-space:nowrap;">
+                    <i class="fa-solid fa-language"></i> Watch with Subtitles
+                  </button>
+                </div>
               </div>
             `;
 
-            // Play original
-            card.querySelector('.play-btn')!.addEventListener('click', () => {
-              window.open(rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
-            });
-
-            // Toggle translate panel
-            const langSelector = card.querySelector('.lang-selector') as HTMLElement;
-            card.querySelector('.translate-btn')!.addEventListener('click', () => {
-              langSelector.style.display = langSelector.style.display === 'none' ? 'block' : 'none';
-            });
-
-            // Language selection
-            let selectedLang = 'en';
-            card.querySelectorAll('.lang-btn').forEach((btn: any) => {
-              btn.addEventListener('click', () => {
-                card.querySelectorAll('.lang-btn').forEach((b: any) => {
-                  b.style.borderColor = '#ddd';
-                  b.style.background = 'white';
-                  b.style.color = '#444';
-                });
-                btn.style.borderColor = '#0045AA';
-                btn.style.background = '#e0f2fe';
-                btn.style.color = '#0045AA';
-                selectedLang = btn.dataset.lang;
-              });
-            });
-
-            // Play with translation
-            card.querySelector('.play-translated-btn')!.addEventListener('click', () => {
-              const videoSrc = rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`;
-              const playerUrl = `https://orbitbackend-0i66.onrender.com/video/recording_player.html?src=${encodeURIComponent(videoSrc)}&lang=${selectedLang}&title=${encodeURIComponent(rec.title || 'Recording')}`;
+            const openPlayer = (lang: string) => {
+              const videoSrc = rec.fileUrl || 'https://orbitbackend-0i66.onrender.com/api/recordings/file/' + rec.filename;
+              const playerUrl = 'https://orbitbackend-0i66.onrender.com/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
+                + '&lang=' + lang
+                + '&title=' + encodeURIComponent(rec.title || 'Class Recording')
+                + '&faculty=' + encodeURIComponent(rec.facultyName || 'Faculty')
+                + '&date=' + encodeURIComponent(date)
+                + '&duration=' + (rec.duration || 0);
               window.open(playerUrl, '_blank');
+            };
+
+            // Click thumbnail area to play with default language
+            card.querySelector('.card-play-area')!.addEventListener('click', () => {
+              openPlayer('en');
+            });
+
+            // Watch with subtitles button
+            card.querySelector('.watch-btn')!.addEventListener('click', () => {
+              const selectedLang = (card.querySelector('.lang-picker') as HTMLSelectElement).value;
+              openPlayer(selectedLang);
             });
 
             listArea.appendChild(card);
           });
         } catch (e) {
           console.error('Error loading recordings:', e);
-          listArea.innerHTML = `<div style="text-align:center; padding:40px; color:red;">Failed to load recordings</div>`;
+          listArea.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#ef4444;"><i class="fa-solid fa-triangle-exclamation" style="font-size:24px; margin-bottom:8px; display:block;"></i>Failed to load recordings</div>`;
         }
       };
 

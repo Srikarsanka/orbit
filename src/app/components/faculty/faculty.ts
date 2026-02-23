@@ -962,21 +962,21 @@ export class Faculty implements OnInit {
       const renderRecordingsTab = async () => {
         content.innerHTML = '';
         const container = document.createElement('div');
-        container.style.cssText = `max-width: 800px; margin: 0 auto; display:flex; flex-direction:column; gap:24px;`;
+        container.style.cssText = `max-width: 860px; margin: 0 auto; display:flex; flex-direction:column; gap:24px;`;
 
         const topRow = document.createElement('div');
         topRow.style.cssText = `display:flex; justify-content:space-between; align-items:center;`;
         topRow.innerHTML = `
           <div>
-            <h3 style="margin:0; color:#000a45; font-size:18px;">Class Recordings</h3>
-            <p style="margin:4px 0 0; color:#64748b; font-size:13px;">Recorded lectures from live sessions</p>
+            <h3 style="margin:0; color:#000a45; font-size:20px; font-weight:700;">Class Recordings</h3>
+            <p style="margin:4px 0 0; color:#64748b; font-size:13px;">Recorded lectures with real-time subtitles & translation</p>
           </div>
         `;
         container.appendChild(topRow);
 
         const listArea = document.createElement('div');
-        listArea.style.cssText = `display:flex; flex-direction:column; gap:12px;`;
-        listArea.innerHTML = `<div style="text-align:center; padding:40px; color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin"></i> Loading recordings...</div>`;
+        listArea.style.cssText = `display:grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap:16px;`;
+        listArea.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin" style="font-size:24px;"></i><p style="margin-top:12px;">Loading recordings...</p></div>`;
         container.appendChild(listArea);
         content.appendChild(container);
 
@@ -986,9 +986,11 @@ export class Faculty implements OnInit {
 
           if (!recordings.length) {
             listArea.innerHTML = `
-              <div style="text-align:center; padding:60px 20px;">
-                <i class="fa-solid fa-video-slash" style="font-size:48px; color:#cbd5e1; margin-bottom:16px;"></i>
-                <p style="color:#64748b; font-size:15px; margin:0;">No recordings yet</p>
+              <div style="grid-column:1/-1; text-align:center; padding:60px 20px;">
+                <div style="width:80px; height:80px; background:#eff6ff; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                  <i class="fa-solid fa-video-slash" style="font-size:32px; color:#94a3b8;"></i>
+                </div>
+                <p style="color:#475569; font-size:16px; font-weight:600; margin:0;">No recordings yet</p>
                 <p style="color:#94a3b8; font-size:13px; margin:8px 0 0;">Start recording during a live class to save lectures here</p>
               </div>`;
             return;
@@ -1004,42 +1006,83 @@ export class Faculty implements OnInit {
             const size = ((rec.fileSize || 0) / (1024 * 1024)).toFixed(1);
 
             card.style.cssText = `
-              background:white; border:1px solid #f1f5f9; border-radius:12px;
-              padding:20px; display:flex; align-items:center; gap:16px;
-              box-shadow:0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s;
+              background:white; border:1px solid #e2e8f0; border-radius:16px;
+              overflow:hidden; transition:all 0.25s ease;
             `;
-            card.onmouseover = () => card.style.boxShadow = '0 4px 12px rgba(0,10,69,0.08)';
-            card.onmouseout = () => card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
+            card.onmouseover = () => { card.style.boxShadow = '0 8px 25px rgba(0,10,69,0.1)'; card.style.transform = 'translateY(-2px)'; };
+            card.onmouseout = () => { card.style.boxShadow = 'none'; card.style.transform = 'translateY(0)'; };
 
             card.innerHTML = `
-              <div style="width:48px; height:48px; background:#eff6ff; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                <i class="fa-solid fa-video" style="color:#000a45; font-size:18px;"></i>
-              </div>
-              <div style="flex:1; min-width:0;">
-                <div style="font-weight:600; color:#1e293b; font-size:15px;">${rec.title || 'Class Recording'}</div>
-                <div style="color:#64748b; font-size:13px; margin-top:4px;">
-                  ${date} at ${time} · ${mins}m ${secs}s · ${size}MB
+              <div style="background:linear-gradient(135deg, #000a45 0%, #1e3a8a 100%); padding:20px; display:flex; align-items:center; gap:14px; cursor:pointer;" class="card-play-area">
+                <div style="width:50px; height:50px; background:rgba(255,255,255,0.12); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; backdrop-filter:blur(10px);">
+                  <i class="fa-solid fa-play" style="color:white; font-size:18px; margin-left:2px;"></i>
                 </div>
-              </div>
-              <div style="display:flex; gap:8px;">
-                <button class="play-rec-btn btn-hover-effect" style="padding:8px 16px; border-radius:8px; border:1px solid #e2e8f0; background:white; color:#000a45; cursor:pointer; font-weight:600; font-size:13px;">
-                  <i class="fa-solid fa-play"></i> Play
-                </button>
-                <button class="del-rec-btn btn-hover-effect" style="padding:8px 12px; border-radius:8px; border:1px solid #fee2e2; background:#fef2f2; color:#ef4444; cursor:pointer; font-size:13px;">
+                <div style="flex:1; min-width:0;">
+                  <div style="font-weight:700; color:white; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${rec.title || 'Class Recording'}</div>
+                  <div style="color:rgba(255,255,255,0.7); font-size:12px; margin-top:3px;">
+                    <i class="fa-regular fa-clock"></i> ${mins}m ${secs}s &nbsp;·&nbsp; ${size}MB
+                  </div>
+                </div>
+                <button class="del-rec-btn" style="width:36px; height:36px; border-radius:50%; border:none; background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.6); cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; flex-shrink:0;" title="Delete recording">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
+              <div style="padding:16px 20px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                  <div style="display:flex; align-items:center; gap:8px; color:#64748b; font-size:12px;">
+                    <i class="fa-regular fa-calendar"></i> ${date} at ${time}
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:#000a45; font-weight:600; background:#eff6ff; padding:3px 10px; border-radius:20px;">
+                    <i class="fa-solid fa-closed-captioning"></i> Subtitles
+                  </div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <select class="lang-picker" style="flex:1; padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; color:#334155; background:white; cursor:pointer; font-family:inherit;">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="te">🇮🇳 Telugu</option>
+                    <option value="hi">🇮🇳 Hindi</option>
+                    <option value="ta">🇮🇳 Tamil</option>
+                    <option value="ml">🇮🇳 Malayalam</option>
+                  </select>
+                  <button class="watch-btn btn-hover-effect" style="padding:8px 20px; border-radius:8px; border:none; background:linear-gradient(135deg, #000a45, #1e3a8a); color:white; cursor:pointer; font-weight:600; font-size:13px; transition:all 0.2s; display:flex; align-items:center; gap:6px; white-space:nowrap;">
+                    <i class="fa-solid fa-language"></i> Watch with Subtitles
+                  </button>
+                </div>
+              </div>
             `;
 
-            card.querySelector('.play-rec-btn')!.addEventListener('click', () => {
-              window.open(rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+            const openPlayer = (lang: string) => {
+              const videoSrc = rec.fileUrl || 'https://orbitbackend-0i66.onrender.com/api/recordings/file/' + rec.filename;
+              const playerUrl = 'https://orbitbackend-0i66.onrender.com/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
+                + '&lang=' + lang
+                + '&title=' + encodeURIComponent(rec.title || 'Class Recording')
+                + '&faculty=' + encodeURIComponent(rec.facultyName || 'Faculty')
+                + '&date=' + encodeURIComponent(date)
+                + '&duration=' + (rec.duration || 0);
+              window.open(playerUrl, '_blank');
+            };
+
+            // Click thumbnail area to play
+            card.querySelector('.card-play-area')!.addEventListener('click', (e: any) => {
+              if (e.target.closest('.del-rec-btn')) return; // Don't trigger play on delete click
+              openPlayer('en');
             });
 
-            card.querySelector('.del-rec-btn')!.addEventListener('click', async () => {
+            // Watch with subtitles
+            card.querySelector('.watch-btn')!.addEventListener('click', () => {
+              const selectedLang = (card.querySelector('.lang-picker') as HTMLSelectElement).value;
+              openPlayer(selectedLang);
+            });
+
+            // Delete
+            card.querySelector('.del-rec-btn')!.addEventListener('click', async (e: any) => {
+              e.stopPropagation();
               if (!confirm('Delete this recording? This cannot be undone.')) return;
               try {
                 await this.http.delete(`https://orbitbackend-0i66.onrender.com/api/recordings/${rec._id}`, { withCredentials: true }).toPromise();
-                card.remove();
+                card.style.transform = 'scale(0.95)';
+                card.style.opacity = '0';
+                setTimeout(() => card.remove(), 300);
                 this.showToast('Recording deleted', 'success');
               } catch (e) {
                 this.showToast('Failed to delete recording', 'error');
@@ -1050,7 +1093,7 @@ export class Faculty implements OnInit {
           });
         } catch (e) {
           console.error('Error loading recordings:', e);
-          listArea.innerHTML = `<div style="text-align:center; padding:40px; color:#ef4444;">Failed to load recordings</div>`;
+          listArea.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#ef4444;"><i class="fa-solid fa-triangle-exclamation" style="font-size:24px; margin-bottom:8px; display:block;"></i>Failed to load recordings</div>`;
         }
       };
 
