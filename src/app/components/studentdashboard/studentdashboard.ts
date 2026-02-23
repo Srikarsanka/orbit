@@ -1070,7 +1070,8 @@ export class Studentdashboard implements OnInit {
 
             // Play with translation
             card.querySelector('.play-translated-btn')!.addEventListener('click', () => {
-              const playerUrl = `https://orbitbackend-0i66.onrender.com/video/recording_player.html?file=${rec.filename}&lang=${selectedLang}&title=${encodeURIComponent(rec.title || 'Recording')}`;
+              const videoSrc = rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`;
+              const playerUrl = `https://orbitbackend-0i66.onrender.com/video/recording_player.html?src=${encodeURIComponent(videoSrc)}&lang=${selectedLang}&title=${encodeURIComponent(rec.title || 'Recording')}`;
               window.open(playerUrl, '_blank');
             });
 
