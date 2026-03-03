@@ -248,7 +248,7 @@ export class Faculty implements OnInit {
     }
 
     this.http
-      .get('https://orbitbackend-0i66.onrender.com/auth/redirect', {
+      .get('http://localhost:5000/auth/redirect', {
         withCredentials: true,
         headers: headers  // 🔥 FIX: Send token in Authorization header (matches student dashboard)
       })
@@ -277,7 +277,7 @@ export class Faculty implements OnInit {
     try {
       const res: any = await this.http
         .post(
-          'https://orbitbackend-0i66.onrender.com/api/classes/myclass',
+          'http://localhost:5000/api/classes/myclass',
           { facultyEmail: this.user.email },
           { withCredentials: true }
         )
@@ -310,7 +310,7 @@ export class Faculty implements OnInit {
     let total = 0;
     for (const cls of this.myClasses) {
       try {
-        const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/material/${cls._id}`, { withCredentials: true }).toPromise();
+        const res: any = await this.http.get(`http://localhost:5000/api/material/${cls._id}`, { withCredentials: true }).toPromise();
         const list = res.materials || [];
         total += list.length;
       } catch (e) {
@@ -331,7 +331,7 @@ export class Faculty implements OnInit {
     let allMaterials: any[] = [];
     for (const cls of this.myClasses) {
       try {
-        const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/material/${cls._id}`, { withCredentials: true }).toPromise();
+        const res: any = await this.http.get(`http://localhost:5000/api/material/${cls._id}`, { withCredentials: true }).toPromise();
         const list = res.materials || [];
         const mappedList = list.map((m: any) => ({
           ...m,
@@ -383,7 +383,7 @@ export class Faculty implements OnInit {
 
     try {
       const res: any = await this.http
-        .post('https://orbitbackend-0i66.onrender.com/api/class/create', payload, {
+        .post('http://localhost:5000/api/class/create', payload, {
           withCredentials: true,
         })
         .toPromise();
@@ -418,7 +418,7 @@ export class Faculty implements OnInit {
     try {
       const res: any = await this.http
         .post(
-          `https://orbitbackend-0i66.onrender.com/api/openclass/${classCode}`,
+          `http://localhost:5000/api/openclass/${classCode}`,
           {},
           { withCredentials: true }
         )
@@ -599,7 +599,7 @@ export class Faculty implements OnInit {
         const desc = prompt('Update subject name:', room.subject);
         if (!name || !desc) return;
 
-        this.http.put(`https://orbitbackend-0i66.onrender.com/api/change/updateclassname/${room._id}`,
+        this.http.put(`http://localhost:5000/api/change/updateclassname/${room._id}`,
           { className: name, subject: desc }, { withCredentials: true })
           .subscribe({
             next: () => {
@@ -613,7 +613,7 @@ export class Faculty implements OnInit {
 
       const deleteBtn = createActionBtn('fa-regular fa-trash-can', 'Delete Class', () => {
         if (!confirm('Are you sure you want to delete this class? This cannot be undone.')) return;
-        this.http.delete(`https://orbitbackend-0i66.onrender.com/api/deleteclass/${room._id}`, { withCredentials: true })
+        this.http.delete(`http://localhost:5000/api/deleteclass/${room._id}`, { withCredentials: true })
           .subscribe({
             next: () => {
               this.showToast('Class deleted', 'success');
@@ -823,7 +823,7 @@ export class Faculty implements OnInit {
               btn.textContent = 'Scheduling...';
               btn.disabled = true;
 
-              await this.http.post('https://orbitbackend-0i66.onrender.com/api/schedule/schedule', {
+              await this.http.post('http://localhost:5000/api/schedule/schedule', {
                 classId: room._id,
                 scheduledTime: time,
                 duration: Number(duration)
@@ -909,7 +909,7 @@ export class Faculty implements OnInit {
           try {
             postBtn.disabled = true;
             postBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Posting...';
-            await this.http.post('https://orbitbackend-0i66.onrender.com/api/announcements', {
+            await this.http.post('http://localhost:5000/api/announcements', {
               classId: room._id, title: t, message: m, attachmentUrl: attachInput.value.trim() || undefined
             }, { withCredentials: true }).toPromise();
 
@@ -981,7 +981,7 @@ export class Faculty implements OnInit {
         content.appendChild(container);
 
         try {
-          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/recordings/class/${room._id}`, { withCredentials: true }).toPromise();
+          const res: any = await this.http.get(`http://localhost:5000/api/recordings/class/${room._id}`, { withCredentials: true }).toPromise();
           const recordings = res.recordings || [];
 
           if (!recordings.length) {
@@ -1052,8 +1052,8 @@ export class Faculty implements OnInit {
             `;
 
             const openPlayer = (lang: string) => {
-              const videoSrc = rec.fileUrl || 'https://orbitbackend-0i66.onrender.com/api/recordings/file/' + rec.filename;
-              const playerUrl = 'https://orbitbackend-0i66.onrender.com/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
+              const videoSrc = rec.fileUrl || 'http://localhost:5000/api/recordings/file/' + rec.filename;
+              const playerUrl = 'http://localhost:5000/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
                 + '&lang=' + lang
                 + '&title=' + encodeURIComponent(rec.title || 'Class Recording')
                 + '&faculty=' + encodeURIComponent(rec.facultyName || 'Faculty')
@@ -1080,7 +1080,7 @@ export class Faculty implements OnInit {
               e.stopPropagation();
               if (!confirm('Delete this recording? This cannot be undone.')) return;
               try {
-                await this.http.delete(`https://orbitbackend-0i66.onrender.com/api/recordings/${rec._id}`, { withCredentials: true }).toPromise();
+                await this.http.delete(`http://localhost:5000/api/recordings/${rec._id}`, { withCredentials: true }).toPromise();
                 card.style.transform = 'scale(0.95)';
                 card.style.opacity = '0';
                 setTimeout(() => card.remove(), 300);
@@ -1135,7 +1135,7 @@ export class Faculty implements OnInit {
             startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Initializing...';
 
             const res: any = await this.http.post(
-              'https://orbitbackend-0i66.onrender.com/api/sessions/create',
+              'http://localhost:5000/api/sessions/create',
               {
                 classId: room._id,
                 classCode: room.classCode,
@@ -1147,7 +1147,7 @@ export class Faculty implements OnInit {
             ).toPromise();
 
             if (res.sessionId) {
-              const url = `https://orbitbackend-0i66.onrender.com/video/room.html?session=${res.sessionId}&role=faculty&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
+              const url = `http://localhost:5000/video/room.html?session=${res.sessionId}&role=faculty&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
               window.open(url, '_blank');
               this.showToast('Live session started', 'success');
             }
@@ -1239,7 +1239,7 @@ export class Faculty implements OnInit {
 
   async loadScheduledClasses(classId: string, container: HTMLElement) {
     try {
-      const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/schedule/class/${classId}`).toPromise();
+      const res: any = await this.http.get(`http://localhost:5000/api/schedule/class/${classId}`).toPromise();
       container.innerHTML = '';
 
       if (!res || res.length === 0) {
@@ -1301,7 +1301,7 @@ export class Faculty implements OnInit {
         if (session.status === 'scheduled') {
           div.querySelector('.cancel-btn')?.addEventListener('click', async () => {
             if (!confirm('Cancel this class? Students will be notified.')) return;
-            await this.http.put(`https://orbitbackend-0i66.onrender.com/api/schedule/cancel/${session._id}`, {}).toPromise();
+            await this.http.put(`http://localhost:5000/api/schedule/cancel/${session._id}`, {}).toPromise();
             this.showToast('Class cancelled', 'info');
             this.loadScheduledClasses(classId, container);
           });
@@ -1320,7 +1320,7 @@ export class Faculty implements OnInit {
   async loadAnnouncementsForPopup(classId: string) {
     try {
       const res: any = await this.http
-        .get(`https://orbitbackend-0i66.onrender.com/api/announcements/class/${classId}`, {
+        .get(`http://localhost:5000/api/announcements/class/${classId}`, {
           withCredentials: true,
         })
         .toPromise();
@@ -1398,7 +1398,7 @@ export class Faculty implements OnInit {
   async loadMaterialsForPopup(classId: string) {
     try {
       const res: any = await this.http
-        .get(`https://orbitbackend-0i66.onrender.com/api/material/${classId}`, {
+        .get(`http://localhost:5000/api/material/${classId}`, {
           withCredentials: true,
         })
         .toPromise();
@@ -1421,7 +1421,7 @@ export class Faculty implements OnInit {
           const date = m.createdAt
             ? new Date(m.createdAt).toLocaleDateString()
             : '';
-          const fileUrl = m.fileUrl ? 'https://orbitbackend-0i66.onrender.com' + m.fileUrl : m.externalLink;
+          const fileUrl = m.fileUrl ? 'http://localhost:5000' + m.fileUrl : m.externalLink;
 
           return `
             <div style="
@@ -1511,7 +1511,7 @@ export class Faculty implements OnInit {
 
       const res: any = await this.http
         .post(
-          'https://orbitbackend-0i66.onrender.com/api/announcements/send',
+          'http://localhost:5000/api/announcements/send',
           announcementData,
           { withCredentials: true }
         )
@@ -1561,7 +1561,7 @@ export class Faculty implements OnInit {
     try {
       const res: any = await this.http
         .post(
-          'https://orbitbackend-0i66.onrender.com/api/announcements/recent',
+          'http://localhost:5000/api/announcements/recent',
           { facultyEmail: this.user.email },
           { withCredentials: true }
         )
@@ -1650,7 +1650,7 @@ export class Faculty implements OnInit {
     this.facultyClassRecordings = [];
     try {
       const res: any = await this.http.get(
-        `https://orbitbackend-0i66.onrender.com/api/recordings/class/${classId}`,
+        `http://localhost:5000/api/recordings/class/${classId}`,
         { withCredentials: true }
       ).toPromise();
       this.facultyClassRecordings = res.recordings || [];
@@ -1663,14 +1663,14 @@ export class Faculty implements OnInit {
   }
 
   playFacultyRecording(rec: any) {
-    window.open(rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+    window.open(rec.fileUrl || `http://localhost:5000/api/recordings/file/${rec.filename}`, '_blank');
   }
 
   async deleteFacultyRecording(rec: any) {
     if (!confirm('Delete this recording permanently?')) return;
     try {
       await this.http.delete(
-        `https://orbitbackend-0i66.onrender.com/api/recordings/${rec._id}`,
+        `http://localhost:5000/api/recordings/${rec._id}`,
         { withCredentials: true }
       ).toPromise();
       this.facultyClassRecordings = this.facultyClassRecordings.filter((r: any) => r._id !== rec._id);
@@ -1735,7 +1735,7 @@ export class Faculty implements OnInit {
     try {
       const res: any = await this.http
         .post(
-          'https://orbitbackend-0i66.onrender.com/api/faculty/updateprofilepic',
+          'http://localhost:5000/api/faculty/updateprofilepic',
           form,
           { withCredentials: true }
         )
@@ -1774,7 +1774,7 @@ export class Faculty implements OnInit {
     try {
       const res: any = await this.http
         .post(
-          'https://orbitbackend-0i66.onrender.com/api/updatepassword',
+          'http://localhost:5000/api/updatepassword',
           {
             email: this.user?.email,
             currentPassword: this.currentPass,
@@ -1897,7 +1897,7 @@ export class Faculty implements OnInit {
       formData.append('title', title);
       formData.append('uploadedBy', this.user?.email || '');
 
-      this.http.post('https://orbitbackend-0i66.onrender.com/api/material/upload', formData, {
+      this.http.post('http://localhost:5000/api/material/upload', formData, {
         observe: 'events',
         reportProgress: true,
         withCredentials: true,
@@ -1970,7 +1970,7 @@ export class Faculty implements OnInit {
   loadMaterialsForClass(classId: string): void {
     this.currentMaterialClassId = classId;
 
-    this.http.get(`https://orbitbackend-0i66.onrender.com/api/material/${classId}`, {
+    this.http.get(`http://localhost:5000/api/material/${classId}`, {
       withCredentials: true,
     }).subscribe({
       next: (res: any) => {
@@ -2024,7 +2024,7 @@ export class Faculty implements OnInit {
 
   downloadMaterial(material: Material): void {
     if (material.fileUrl) {
-      window.open('https://orbitbackend-0i66.onrender.com' + material.fileUrl, '_blank');
+      window.open('http://localhost:5000' + material.fileUrl, '_blank');
     } else if (material.externalLink) {
       window.open(material.externalLink, '_blank');
     } else {
@@ -2038,7 +2038,7 @@ export class Faculty implements OnInit {
     if (material.externalLink) {
       shareUrl = material.externalLink;
     } else if (material.fileUrl) {
-      shareUrl = 'https://orbitbackend-0i66.onrender.com' + material.fileUrl;
+      shareUrl = 'http://localhost:5000' + material.fileUrl;
     } else {
       this.showToast('No sharable link available');
       return;
@@ -2052,7 +2052,7 @@ export class Faculty implements OnInit {
   deleteMaterial(material: Material): void {
     if (!confirm('Are you sure you want to delete this material?')) return;
 
-    this.http.delete(`https://orbitbackend-0i66.onrender.com/api/material/delete/${material._id}`, {
+    this.http.delete(`http://localhost:5000/api/material/delete/${material._id}`, {
       withCredentials: true
     }).subscribe({
       next: () => {
@@ -2119,7 +2119,7 @@ export class Faculty implements OnInit {
 
     try {
       const res: any = await this.http
-        .get(`https://orbitbackend-0i66.onrender.com/api/attendance/faculty-analytics/${this.user.email}`, { withCredentials: true })
+        .get(`http://localhost:5000/api/attendance/faculty-analytics/${this.user.email}`, { withCredentials: true })
         .toPromise();
 
       if (res && res.success && res.analytics) {
@@ -2519,7 +2519,7 @@ export class Faculty implements OnInit {
     if (!session.sessionId) return;
 
     try {
-      const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/attendance/analytics/${session.sessionId}`, { withCredentials: true }).toPromise();
+      const res: any = await this.http.get(`http://localhost:5000/api/attendance/analytics/${session.sessionId}`, { withCredentials: true }).toPromise();
 
       if (res && res.success && res.analytics) {
         this.selectedSessionDetails = res.analytics;
@@ -2564,7 +2564,7 @@ export class Faculty implements OnInit {
     try {
       for (const cls of this.myClasses) {
         const res: any = await this.http.get(
-          `https://orbitbackend-0i66.onrender.com/api/attendance/class-analytics/${cls._id}`,
+          `http://localhost:5000/api/attendance/class-analytics/${cls._id}`,
           { withCredentials: true }
         ).toPromise();
 

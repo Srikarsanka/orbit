@@ -315,7 +315,7 @@ export class Studentdashboard implements OnInit {
     }
 
     this.http.get<any>(
-      "https://orbitbackend-0i66.onrender.com/auth/redirect",
+      "http://localhost:5000/auth/redirect",
       {
         withCredentials: true,
         headers: headers
@@ -347,7 +347,7 @@ export class Studentdashboard implements OnInit {
 
     try {
       const res: any = await lastValueFrom(this.http.post(
-        "https://orbitbackend-0i66.onrender.com/api/student/classes",
+        "http://localhost:5000/api/student/classes",
         { studentEmail: this.user.email },
         { withCredentials: true }
       ));
@@ -394,7 +394,7 @@ export class Studentdashboard implements OnInit {
     this.loadingAnnouncements = true;
     try {
       const response: any = await lastValueFrom(this.http.post(
-        'https://orbitbackend-0i66.onrender.com/api/announcements/student',
+        'http://localhost:5000/api/announcements/student',
         { studentEmail: this.user.email },
         { withCredentials: true }
       ));
@@ -416,7 +416,7 @@ export class Studentdashboard implements OnInit {
   async fetchAttendanceData() {
     this.loadingAttendance = true;
     try {
-      const response: any = await lastValueFrom(this.http.get('https://orbitbackend-0i66.onrender.com/api/sessions/attendance/student', { withCredentials: true }));
+      const response: any = await lastValueFrom(this.http.get('http://localhost:5000/api/sessions/attendance/student', { withCredentials: true }));
       if (response && response.success) {
         this.attendanceData = response;
         console.log('Attendance Data:', this.attendanceData);
@@ -475,7 +475,7 @@ export class Studentdashboard implements OnInit {
     };
 
     this.http.post<any>(
-      "https://orbitbackend-0i66.onrender.com/api/student/join",
+      "http://localhost:5000/api/student/join",
       payload,
       { withCredentials: true }
     ).subscribe({
@@ -535,7 +535,7 @@ export class Studentdashboard implements OnInit {
     this.currentClassRecordings = [];
     try {
       const res: any = await this.http.get(
-        `https://orbitbackend-0i66.onrender.com/api/recordings/class/${classId}`,
+        `http://localhost:5000/api/recordings/class/${classId}`,
         { withCredentials: true }
       ).toPromise();
       this.currentClassRecordings = res.recordings || [];
@@ -548,13 +548,123 @@ export class Studentdashboard implements OnInit {
   }
 
   playRecording(rec: any) {
-    window.open(rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`, '_blank');
+    const videoSrc = rec.fileUrl || `http://localhost:5000/api/recordings/file/${rec.filename}`;
+    const playerUrl = 'http://localhost:5000/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
+      + '&lang=en'
+      + '&title=' + encodeURIComponent(rec.title || 'Class Recording')
+      + '&faculty=' + encodeURIComponent(rec.facultyName || 'Faculty')
+      + '&date=' + encodeURIComponent(rec.createdAt ? new Date(rec.createdAt).toLocaleDateString() : '')
+      + '&duration=' + (rec.duration || 0)
+      + '&id=' + (rec._id || '');
+    window.open(playerUrl, '_blank');
   }
 
   openTranslatePanel(rec: any) {
-    const videoSrc = rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`;
-    const playerUrl = `https://orbitbackend-0i66.onrender.com/video/recording_player.html?src=${encodeURIComponent(videoSrc)}&lang=te&title=${encodeURIComponent(rec.title || 'Recording')}`;
-    window.open(playerUrl, '_blank');
+    const videoSrc = rec.fileUrl || `http://localhost:5000/api/recordings/file/${rec.filename}`;
+
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position:fixed; inset:0;
+        background:rgba(0,0,0,0.55);
+        backdrop-filter:blur(4px);
+        display:flex; align-items:center; justify-content:center;
+        z-index:99999;
+    `;
+
+    // Create Voice Translate Card
+    const card = document.createElement('div');
+    card.style.cssText = `
+        width:90%; max-width:400px; background:#fff;
+        border-radius:16px; overflow:hidden;
+        box-shadow:0 20px 40px rgba(0,0,0,0.2);
+    `;
+
+    const header = document.createElement('div');
+    header.style.cssText = `padding:20px; background:#f8fafc; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;`;
+    header.innerHTML = `<h3 style="margin:0; font-size:16px; color:#0f172a;"><i class="fa-solid fa-language" style="color:#6366f1;"></i> Translate Voice</h3><button class="close-btn" style="background:none; border:none; cursor:pointer; font-size:20px; color:#64748b;">&times;</button>`;
+
+    (header.querySelector('.close-btn') as HTMLElement).onclick = () => overlay.remove();
+
+    const content = document.createElement('div');
+    content.style.cssText = `padding:20px; text-align:center;`;
+
+    const selectLabel = document.createElement('label');
+    selectLabel.style.cssText = `display:block; text-align:left; font-size:14px; font-weight:600; color:#475569; margin-bottom:8px;`;
+    selectLabel.innerText = "Target Language:";
+
+    const select = document.createElement('select');
+    select.style.cssText = `width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:20px; font-size:14px;`;
+    select.innerHTML = `
+      <option value="en">English</option>
+      <option value="te">Telugu</option>
+      <option value="hi">Hindi</option>
+      <option value="ta">Tamil</option>
+      <option value="ml">Malayalam</option>
+      <option value="kn">Kannada</option>
+    `;
+
+    const btn = document.createElement('button');
+    btn.style.cssText = `width:100%; padding:12px; background:linear-gradient(135deg, #6366f1, #8b5cf6); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:8px; transition: 0.2s;`;
+    btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Translate Audio`;
+
+    const audioContainer = document.createElement('div');
+    audioContainer.style.cssText = `margin-top:20px; display:none;`;
+
+    const resultsContainer = document.createElement('div');
+    resultsContainer.style.cssText = `margin-top:15px; display:none; text-align:left; max-height: 150px; overflow-y: auto; font-size: 13px; color: #475569; line-height: 1.4; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;`;
+
+    btn.onclick = async () => {
+      btn.disabled = true;
+      btn.style.opacity = '0.7';
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing Audio...`;
+      try {
+        const formData = new FormData();
+        formData.append('target_language', select.value);
+        formData.append('video_url', videoSrc);
+
+        const res = await fetch('http://localhost:8001/api/voice-translation/translate', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) throw new Error("Translation failed");
+
+        const originalText = decodeURIComponent(res.headers.get('X-Original-Text') || '');
+        const translatedText = decodeURIComponent(res.headers.get('X-Translated-Text') || '');
+
+        const blob = await res.blob();
+        const audioUrl = URL.createObjectURL(blob);
+
+        audioContainer.innerHTML = `<label style="display:block; text-align:left; font-size:12px; font-weight:600; color:#64748b; margin-bottom:6px; text-transform:uppercase;">Translated Audio</label><audio controls src="${audioUrl}" style="width:100%"></audio>`;
+        audioContainer.style.display = 'block';
+
+        if (translatedText) {
+          resultsContainer.innerHTML = `<strong>Translated Text:</strong><br>${translatedText}`;
+          resultsContainer.style.display = 'block';
+        }
+
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> Translation Complete`;
+        select.disabled = true;
+      } catch (e) {
+        console.error(e);
+        btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Error - Try Again`;
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        this.showToast('Voice Translation Error', 'error');
+      }
+    };
+
+    content.appendChild(selectLabel);
+    content.appendChild(select);
+    content.appendChild(btn);
+    content.appendChild(audioContainer);
+    content.appendChild(resultsContainer);
+
+    card.appendChild(header);
+    card.appendChild(content);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
   }
 
   /* ============================================================
@@ -634,7 +744,7 @@ export class Studentdashboard implements OnInit {
     formData.append('studentEmail', this.user?.email || '');
 
     this.http.post<any>(
-      "https://orbitbackend-0i66.onrender.com/api/student/update-photo",
+      "http://localhost:5000/api/student/update-photo",
       formData,
       { withCredentials: true }
     ).subscribe({
@@ -693,7 +803,7 @@ export class Studentdashboard implements OnInit {
     };
 
     this.http.post<any>(
-      "https://orbitbackend-0i66.onrender.com/api/student/change-password",
+      "http://localhost:5000/api/student/change-password",
       payload,
       { withCredentials: true }
     ).subscribe({
@@ -731,7 +841,7 @@ export class Studentdashboard implements OnInit {
     try {
       const res: any = await this.http
         .post(
-          `https://orbitbackend-0i66.onrender.com/api/openclass/${classCode}`,
+          `http://localhost:5000/api/openclass/${classCode}`,
           {},
           { withCredentials: true }
         )
@@ -844,7 +954,7 @@ export class Studentdashboard implements OnInit {
       const renderAnnouncements = async () => {
         content.innerHTML = '<p style="text-align:center; padding:20px; color:#666;">Loading announcements...</p>';
         try {
-          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/announcements/class/${room._id}`, { withCredentials: true }).toPromise();
+          const res: any = await this.http.get(`http://localhost:5000/api/announcements/class/${room._id}`, { withCredentials: true }).toPromise();
           const list = res.announcements || [];
 
           if (!list.length) {
@@ -871,7 +981,7 @@ export class Studentdashboard implements OnInit {
       const renderMaterials = async () => {
         content.innerHTML = '<p style="text-align:center; padding:20px; color:#666;">Loading materials...</p>';
         try {
-          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/material/${room._id}`, { withCredentials: true }).toPromise();
+          const res: any = await this.http.get(`http://localhost:5000/api/material/${room._id}`, { withCredentials: true }).toPromise();
           const list = res.materials || [];
 
           if (!list.length) {
@@ -880,7 +990,7 @@ export class Studentdashboard implements OnInit {
           }
           content.innerHTML = '';
           list.forEach((m: any) => {
-            const fileUrl = m.fileUrl ? 'https://orbitbackend-0i66.onrender.com' + m.fileUrl : m.externalLink;
+            const fileUrl = m.fileUrl ? 'http://localhost:5000' + m.fileUrl : m.externalLink;
             const card = document.createElement('div');
             card.style.cssText = `background:white; padding:16px; margin-bottom:12px; border-radius:12px; border:1px solid #E4E7EB; display:flex; justify-content:space-between; align-items:center;`;
             card.innerHTML = `
@@ -907,7 +1017,7 @@ export class Studentdashboard implements OnInit {
 
         try {
           const sessionRes: any = await this.http.get(
-            `https://orbitbackend-0i66.onrender.com/api/sessions/active/${room._id}`,
+            `http://localhost:5000/api/sessions/active/${room._id}`,
             { withCredentials: true }
           ).toPromise();
 
@@ -948,7 +1058,7 @@ export class Studentdashboard implements OnInit {
           const joinBtn = document.getElementById('joinBtn');
           if (joinBtn) {
             joinBtn.onclick = () => {
-              const url = `https://orbitbackend-0i66.onrender.com/video/room.html?session=${sessionRes.sessionId}&role=student&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
+              const url = `http://localhost:5000/video/room.html?session=${sessionRes.sessionId}&role=student&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
               window.open(url, '_blank');
             };
           }
@@ -980,7 +1090,7 @@ export class Studentdashboard implements OnInit {
         content.appendChild(container);
 
         try {
-          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/recordings/class/${room._id}`, { withCredentials: true }).toPromise();
+          const res: any = await this.http.get(`http://localhost:5000/api/recordings/class/${room._id}`, { withCredentials: true }).toPromise();
           const recordings = res.recordings || [];
 
           if (!recordings.length) {
@@ -1048,8 +1158,8 @@ export class Studentdashboard implements OnInit {
             `;
 
             const openPlayer = (lang: string) => {
-              const videoSrc = rec.fileUrl || 'https://orbitbackend-0i66.onrender.com/api/recordings/file/' + rec.filename;
-              const playerUrl = 'https://orbitbackend-0i66.onrender.com/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
+              const videoSrc = rec.fileUrl || 'http://localhost:5000/api/recordings/file/' + rec.filename;
+              const playerUrl = 'http://localhost:5000/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
                 + '&lang=' + lang
                 + '&title=' + encodeURIComponent(rec.title || 'Class Recording')
                 + '&faculty=' + encodeURIComponent(rec.facultyName || 'Faculty')
@@ -1176,7 +1286,7 @@ export class Studentdashboard implements OnInit {
   logout() {
     // Call logout API
     this.http.post<any>(
-      "https://orbitbackend-0i66.onrender.com/auth/logout",
+      "http://localhost:5000/auth/logout",
       {},
       { withCredentials: true }
     ).subscribe({
@@ -1256,7 +1366,7 @@ export class Studentdashboard implements OnInit {
     this.clearOutput();
 
     try {
-      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/compiler/execute', {
+      const res: any = await this.http.post('http://localhost:5000/api/compiler/execute', {
         language: this.compilerLanguage,
         code: this.compilerCode,
         input: this.compilerInput // Send user input
@@ -1367,7 +1477,7 @@ Provide:
 
 Keep it conversational and easy to read.`;
 
-      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/ai/generate', {
+      const res: any = await this.http.post('http://localhost:5000/api/ai/generate', {
         prompt: prompt
       }).toPromise();
 
@@ -1396,7 +1506,7 @@ ${this.compilerCode}
 
 Explain what caused this error and how to fix it. Be clear and concise. Do not use markdown formatting like asterisks or bold text. Keep it conversational.`;
 
-      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/ai/generate', {
+      const res: any = await this.http.post('http://localhost:5000/api/ai/generate', {
         prompt: prompt
       }).toPromise();
 
@@ -1652,7 +1762,7 @@ Explain what caused this error and how to fix it. Be clear and concise. Do not u
       this.hubLoading = true;
       const query = this.searchHubQuery.trim() || 'computer science';
       try {
-        const url = `https://orbitbackend-0i66.onrender.com/api/books/search?q=${encodeURIComponent(query)}`;
+        const url = `http://localhost:5000/api/books/search?q=${encodeURIComponent(query)}`;
         const response: any = await lastValueFrom(this.http.get(url));
         if (response && response.success) {
           this.hubBooks = response.books;
@@ -1671,7 +1781,7 @@ Explain what caused this error and how to fix it. Be clear and concise. Do not u
   async getEducationNews(topic?: string) {
     this.hubLoading = true;
     try {
-      let url = 'https://orbitbackend-0i66.onrender.com/api/news';
+      let url = 'http://localhost:5000/api/news';
       if (topic) {
         url += `?topics=${topic}`;
       }

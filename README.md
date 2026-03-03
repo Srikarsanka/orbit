@@ -1,59 +1,125 @@
-# Orbit
+<div align="center">
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.3.
+# 🌌 ORBIT Frontend App
 
-## Development server
+<p>
+  <img src="https://img.shields.io/badge/Angular-18.x-DD0031?style=for-the-badge&logo=angular&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/RxJS-7.x-B7178C?style=for-the-badge&logo=reactivex&logoColor=white" />
+</p>
 
-To start a local development server, run:
+<p>
+  <strong>The interactive student and faculty portal for the ORBIT platform</strong>
+  <br />
+  <em>Modern, responsive UI for course management, live video classes, and recorded lessons</em>
+</p>
+
+</div>
+
+---
+
+## ✨ Key Features
+
+| Feature | Description |
+|---------|-------------|
+| 🎓 **Student Dashboard** | Track progress, access course materials, and view class recordings |
+| 👨‍🏫 **Faculty Portal** | Manage courses, assignments, and schedule live sessions |
+| 📹 **Live Video Classes** | Real-time interactive class environment with chat and screen sharing |
+| 🎙️ **Voice Translation** | One-click localized audio translation for recorded class videos |
+| 🌙 **Theme Support** | Modern, clean aesthetic with responsive design for all devices |
+
+---
+
+## 🏗️ Architecture & Flow
+
+```mermaid
+graph TD
+    Client[🖥️ User Browser] --> Auth[🔐 Authentication Guard]
+    Auth -->|Student| StudentDash[🎓 Student Dashboard]
+    Auth -->|Faculty| FacultyDash[👨‍🏫 Faculty Dashboard]
+    
+    StudentDash --> Classes[📹 Live Classes Component]
+    StudentDash --> Records[📼 Recordings & Translations]
+    
+    Classes <-->|WebRTC/Socket| PeerJS[📞 Peer-to-Peer Video]
+    Records -->|IFrame| Player[▶️ Static Recording Player]
+    
+    style StudentDash fill:#6366f1,color:#fff,stroke:#4f46e5
+    style Classes fill:#f59e0b,color:#fff,stroke:#d97706
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** (v18+)
+- **Angular CLI** (`npm i -g @angular/cli`)
+- **ORBIT Backend** running on port 5000
+
+### 1️⃣ Installation
 
 ```bash
+# Navigate to frontend directory
+cd frontend/orbit
+
+# Install dependencies
+npm install
+```
+
+### 2️⃣ Development Server
+
+```bash
+# Serve the app locally (Port 4200 by default)
 ng serve
+
+# Or open in browser automatically
+ng serve --open
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🛠️ Build & Deployment
 
 ```bash
-ng generate component component-name
+# Production bundle
+ng build --configuration production
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+The build artifacts will be stored in the `dist/orbit/` directory. These files can be served by any static hosting provider (Nginx, Netlify, Vercel, Firebase Hosting, etc.).
 
-```bash
-ng generate --help
+---
+
+## 📂 Project Structure
+
+```
+frontend/orbit/src/
+├── 📁 app/
+│   ├── 📁 components/       # Reusable UI elements (Nav, Modals, Cards)
+│   ├── 📁 pages/            # Main route views (Dashboard, Login)
+│   ├── 📁 services/         # API integration & state management (Auth, Courses)
+│   ├── 📁 guards/           # Route protection (AuthGuard)
+│   ├── app.routes.ts        # Application routing logic
+│   └── app.component.ts     # Root component
+├── 📁 assets/               # Images, icons, and static files
+├── 📁 environments/         # API URL configurations (Dev/Prod)
+└── 📄 index.html            # Main HTML template
 ```
 
-## Building
+---
 
-To build the project run:
+<div align="center">
 
-```bash
-ng build
-```
+### Built with ❤️ for ORBIT
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+<p>
+  <img src="https://img.shields.io/badge/Angular-DD0031?style=flat-square&logo=angular&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white" />
+</p>
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+</div>
