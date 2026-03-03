@@ -135,7 +135,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     console.log('Sending login details:', body);
 
     // Call API
-    this.http.post('http://localhost:5000/api/auth/login', body).subscribe({
+    this.http.post('https://orbitbackend-0i66.onrender.com/api/auth/login', body).subscribe({
       next: (res: any) => {
         console.log('🔍 [LOGIN] Backend response:', res);
         this.showToast('Login successful!', 'success');

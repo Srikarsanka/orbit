@@ -14,7 +14,7 @@ export class AuthService {
     }
 
     return this.http.get<any>(
-      'http://localhost:5000/auth/redirect',
+      'https://orbitbackend-0i66.onrender.com/auth/redirect',
       {
         withCredentials: true,
         headers: headers

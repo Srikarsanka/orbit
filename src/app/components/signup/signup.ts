@@ -125,7 +125,7 @@ export class Signup implements OnInit, OnDestroy {
       photoBase64: this.capturedImage
     };
 
-    this.http.post('http://localhost:5000/auth/signup', payload, {
+    this.http.post('https://orbitbackend-0i66.onrender.com/auth/signup', payload, {
       withCredentials: true
     }).subscribe({
       next: () => {
