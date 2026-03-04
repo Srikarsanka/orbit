@@ -623,7 +623,7 @@ export class Studentdashboard implements OnInit {
         formData.append('target_language', select.value);
         formData.append('video_url', videoSrc);
 
-        const res = await fetch('http://localhost:8001/api/voice-translation/translate', {
+        const res = await fetch('http://orbit-voice-translation.eastasia.azurecontainer.io:8001/api/voice-translation/translate', {
           method: 'POST',
           body: formData
         });
