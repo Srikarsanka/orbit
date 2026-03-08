@@ -7,9 +7,10 @@
 
 /* ─── Section Shell ─── */
 .attendance-section {
+      flex: 1;
       padding: 2rem 2rem 1rem 2rem;
       background: #f0f4f8;
-      min-height: 100vh;
+      overflow-y: auto;
       font-family: 'Inter', sans-serif;
 }
 
@@ -193,14 +194,10 @@
 
 /* Scrollable list */
 .attendance-classwise {
-      max-height: 520px;
-      overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 0;
       padding: 0.5rem;
-      scrollbar-width: thin;
-      scrollbar-color: #c7d2fe #f8fafc;
 }
 
 .attendance-classwise::-webkit-scrollbar {
