@@ -261,24 +261,33 @@
                         </h2>
                         <div class="attendance-stats-grid">
                               <div class="attendance-stat-card">
-                                    <h3 class="attendance-stat-value">{{ attendanceData.overallStats.totalSessions }}
-                                    </h3>
-                                    <p class="attendance-stat-label">Total Sessions</p>
+                                    <div class="attendance-stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                                    <div class="attendance-stat-text">
+                                          <h3 class="attendance-stat-value">{{ attendanceData.overallStats.totalSessions
+                                                }}</h3>
+                                          <p class="attendance-stat-label">Total Sessions</p>
+                                    </div>
                               </div>
                               <div class="attendance-stat-card">
-                                    <h3 class="attendance-stat-value">{{ attendanceData.overallStats.attendedSessions }}
-                                    </h3>
-                                    <p class="attendance-stat-label">Attended</p>
+                                    <div class="attendance-stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                                    <div class="attendance-stat-text">
+                                          <h3 class="attendance-stat-value">{{
+                                                attendanceData.overallStats.attendedSessions }}</h3>
+                                          <p class="attendance-stat-label">Attended</p>
+                                    </div>
                               </div>
                               <div class="attendance-stat-card">
-                                    <h3 class="attendance-stat-value" [ngClass]="{
-                                                'good': attendanceData.overallStats.attendanceRate >= 75,
-                                                'average': attendanceData.overallStats.attendanceRate >= 50 && attendanceData.overallStats.attendanceRate < 75,
-                                                'poor': attendanceData.overallStats.attendanceRate < 50
-                                          }">
-                                          {{ attendanceData.overallStats.attendanceRate }}%
-                                    </h3>
-                                    <p class="attendance-stat-label">Attendance Rate</p>
+                                    <div class="attendance-stat-icon"><i class="fa-solid fa-percent"></i></div>
+                                    <div class="attendance-stat-text">
+                                          <h3 class="attendance-stat-value" [ngClass]="{
+                                                      'good':    attendanceData.overallStats.attendanceRate >= 75,
+                                                      'average': attendanceData.overallStats.attendanceRate >= 50 && attendanceData.overallStats.attendanceRate < 75,
+                                                      'poor':    attendanceData.overallStats.attendanceRate < 50
+                                                }">
+                                                {{ attendanceData.overallStats.attendanceRate }}%
+                                          </h3>
+                                          <p class="attendance-stat-label">Attendance Rate</p>
+                                    </div>
                               </div>
                         </div>
                   </div>
