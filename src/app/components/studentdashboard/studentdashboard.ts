@@ -436,6 +436,27 @@ export class Studentdashboard implements OnInit {
      ============================================================ */
   toggleClassDetails(classId: string) {
     this.expandedClassId = this.expandedClassId === classId ? null : classId;
+    this.currentAttendanceFilter = 'all'; // Reset filter when toggling
+  }
+
+  /* ============================================================
+     SESSION FILTER LOGIC
+     ============================================================ */
+  currentAttendanceFilter: 'all' | 'present' | 'absent' = 'all';
+
+  setAttendanceFilter(filter: 'all' | 'present' | 'absent', event: Event) {
+    event.stopPropagation(); // prevent collapsing the class card
+    this.currentAttendanceFilter = filter;
+  }
+
+  getFilteredSessions(sessions: any[]): any[] {
+    if (!sessions) return [];
+    return sessions.filter(session => {
+      if (this.currentAttendanceFilter === 'all') return true;
+      if (this.currentAttendanceFilter === 'present') return session.attended === true;
+      if (this.currentAttendanceFilter === 'absent') return session.attended === false;
+      return true;
+    });
   }
 
   /* ============================================================

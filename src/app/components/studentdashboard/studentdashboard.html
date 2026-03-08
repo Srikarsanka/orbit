@@ -346,9 +346,22 @@
                                     <!-- Session Details (Expandable) -->
                                     <div *ngIf="expandedClassId === classData.classId && classData.sessions.length > 0"
                                           class="attendance-sessions">
-                                          <h4 class="attendance-sessions-title">Session Details</h4>
+                                          <div class="attendance-sessions-header">
+                                                <h4 class="attendance-sessions-title">Session Details</h4>
+                                                <div class="attendance-session-filters">
+                                                      <button class="filter-pill"
+                                                            [class.active]="currentAttendanceFilter === 'all'"
+                                                            (click)="setAttendanceFilter('all', $event)">All</button>
+                                                      <button class="filter-pill"
+                                                            [class.active]="currentAttendanceFilter === 'present'"
+                                                            (click)="setAttendanceFilter('present', $event)">Present</button>
+                                                      <button class="filter-pill"
+                                                            [class.active]="currentAttendanceFilter === 'absent'"
+                                                            (click)="setAttendanceFilter('absent', $event)">Absent</button>
+                                                </div>
+                                          </div>
                                           <div class="attendance-session-list">
-                                                <div *ngFor="let session of classData.sessions"
+                                                <div *ngFor="let session of getFilteredSessions(classData.sessions)"
                                                       class="attendance-session-item">
                                                       <div class="attendance-session-info">
                                                             <p class="attendance-session-title">{{ session.sessionTitle
