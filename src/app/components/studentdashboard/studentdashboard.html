@@ -284,84 +284,100 @@
                   </div>
 
                   <!-- Class-wise Attendance -->
-                  <div class="attendance-classwise">
-                        <div *ngFor="let classData of attendanceData.classwiseAttendance" class="attendance-class-card">
-                              <!-- Class Header -->
-                              <div class="attendance-class-header" (click)="toggleClassDetails(classData.classId)">
-                                    <div class="attendance-class-info">
-                                          <h3 class="attendance-class-name">{{ classData.className }}</h3>
-                                          <div class="attendance-class-meta">
-                                                <span><i class="fa-solid fa-code"></i> {{ classData.classCode }}</span>
-                                                <span><i class="fa-solid fa-book"></i> {{ classData.subject }}</span>
-                                                <span><i class="fa-solid fa-user"></i> {{ classData.facultyName
-                                                      }}</span>
-                                          </div>
-                                    </div>
-                                    <div class="attendance-class-stats">
-                                          <div class="attendance-class-stat">
-                                                <span class="attendance-class-stat-value">{{ classData.totalSessions
-                                                      }}</span>
-                                                <span class="attendance-class-stat-label">Sessions</span>
-                                          </div>
-                                          <div class="attendance-class-stat">
-                                                <span class="attendance-class-stat-value">{{ classData.attendedSessions
-                                                      }}</span>
-                                                <span class="attendance-class-stat-label">Attended</span>
-                                          </div>
-                                          <div class="attendance-rate-badge" [ngClass]="{
-                                                      'good': classData.attendanceRate >= 75,
-                                                      'average': classData.attendanceRate >= 50 && classData.attendanceRate < 75,
-                                                      'poor': classData.attendanceRate < 50
-                                                }">
-                                                {{ classData.attendanceRate }}%
-                                          </div>
-                                          <i class="fa-solid fa-chevron-down attendance-expand-icon"
-                                                [ngClass]="{'expanded': expandedClassId === classData.classId}"></i>
-                                    </div>
-                              </div>
-
-                              <!-- Session Details (Expandable) -->
-                              <div *ngIf="expandedClassId === classData.classId && classData.sessions.length > 0"
-                                    class="attendance-sessions">
-                                    <h4 class="attendance-sessions-title">Session Details</h4>
-                                    <div class="attendance-session-list">
-                                          <div *ngFor="let session of classData.sessions"
-                                                class="attendance-session-item">
-                                                <div class="attendance-session-info">
-                                                      <p class="attendance-session-title">{{ session.sessionTitle }}</p>
-                                                      <p class="attendance-session-date">{{ formatDate(session.date) }}
-                                                      </p>
+                  <div class="attendance-classwise-wrapper">
+                        <div class="attendance-classwise-header">
+                              <h3><i class="fa-solid fa-layer-group"></i> Class-wise Breakdown</h3>
+                              <span class="attendance-class-count-pill">{{ attendanceData.classwiseAttendance.length }}
+                                    Classes</span>
+                        </div>
+                        <div class="attendance-classwise">
+                              <div *ngFor="let classData of attendanceData.classwiseAttendance"
+                                    class="attendance-class-card" [ngClass]="{
+                                          'status-good':    classData.attendanceRate >= 75,
+                                          'status-average': classData.attendanceRate >= 50 && classData.attendanceRate < 75,
+                                          'status-poor':    classData.attendanceRate < 50
+                                    }">
+                                    <!-- Class Header -->
+                                    <div class="attendance-class-header"
+                                          (click)="toggleClassDetails(classData.classId)">
+                                          <div class="attendance-class-info">
+                                                <h3 class="attendance-class-name">{{ classData.className }}</h3>
+                                                <div class="attendance-class-meta">
+                                                      <span><i class="fa-solid fa-code"></i> {{ classData.classCode
+                                                            }}</span>
+                                                      <span><i class="fa-solid fa-book"></i> {{ classData.subject
+                                                            }}</span>
+                                                      <span><i class="fa-solid fa-user"></i> {{ classData.facultyName
+                                                            }}</span>
                                                 </div>
-                                                <div class="attendance-session-time">
-                                                      <span class="attendance-session-duration">
-                                                            <i class="fa-solid fa-clock"></i>
-                                                            {{ formatTime(session.timeSpent) }} / {{
-                                                            formatTime(session.duration) }}
-                                                      </span>
-                                                      <span class="attendance-session-percentage" [ngClass]="{
-                                                                  'good': session.timeSpentPercentage >= 75,
-                                                                  'average': session.timeSpentPercentage >= 50 && session.timeSpentPercentage < 75,
-                                                                  'poor': session.timeSpentPercentage < 50
-                                                            }">
-                                                            {{ session.timeSpentPercentage }}%
-                                                      </span>
+                                          </div>
+                                          <div class="attendance-class-stats">
+                                                <div class="attendance-class-stat">
+                                                      <span class="attendance-class-stat-value">{{
+                                                            classData.totalSessions }}</span>
+                                                      <span class="attendance-class-stat-label">Sessions</span>
                                                 </div>
-                                                <span class="attendance-session-status"
-                                                      [ngClass]="{'present': session.attended, 'absent': !session.attended}">
-                                                      {{ session.attended ? 'Present' : 'Absent' }}
-                                                </span>
+                                                <div class="attendance-class-stat">
+                                                      <span class="attendance-class-stat-value">{{
+                                                            classData.attendedSessions }}</span>
+                                                      <span class="attendance-class-stat-label">Attended</span>
+                                                </div>
+                                                <div class="attendance-rate-badge" [ngClass]="{
+                                                            'good':    classData.attendanceRate >= 75,
+                                                            'average': classData.attendanceRate >= 50 && classData.attendanceRate < 75,
+                                                            'poor':    classData.attendanceRate < 50
+                                                      }">
+                                                      {{ classData.attendanceRate }}%
+                                                </div>
+                                                <i class="fa-solid fa-chevron-down attendance-expand-icon"
+                                                      [ngClass]="{'expanded': expandedClassId === classData.classId}"></i>
                                           </div>
                                     </div>
-                              </div>
 
-                              <!-- No Sessions Message -->
-                              <div *ngIf="expandedClassId === classData.classId && classData.sessions.length === 0"
-                                    class="attendance-sessions">
-                                    <div class="attendance-empty">
-                                          <i class="fa-solid fa-calendar-xmark"></i>
-                                          <p class="attendance-empty-title">No sessions yet</p>
-                                          <p class="attendance-empty-text">Sessions will appear here once they are
-                                                conducted</p>
+                                    <!-- Session Details (Expandable) -->
+                                    <div *ngIf="expandedClassId === classData.classId && classData.sessions.length > 0"
+                                          class="attendance-sessions">
+                                          <h4 class="attendance-sessions-title">Session Details</h4>
+                                          <div class="attendance-session-list">
+                                                <div *ngFor="let session of classData.sessions"
+                                                      class="attendance-session-item">
+                                                      <div class="attendance-session-info">
+                                                            <p class="attendance-session-title">{{ session.sessionTitle
+                                                                  }}</p>
+                                                            <p class="attendance-session-date">{{
+                                                                  formatDate(session.date) }}</p>
+                                                      </div>
+                                                      <div class="attendance-session-time">
+                                                            <span class="attendance-session-duration">
+                                                                  <i class="fa-solid fa-clock"></i>
+                                                                  {{ formatTime(session.timeSpent) }} / {{
+                                                                  formatTime(session.duration) }}
+                                                            </span>
+                                                            <span class="attendance-session-percentage" [ngClass]="{
+                                                                        'good':    session.timeSpentPercentage >= 75,
+                                                                        'average': session.timeSpentPercentage >= 50 && session.timeSpentPercentage < 75,
+                                                                        'poor':    session.timeSpentPercentage < 50
+                                                                  }">
+                                                                  {{ session.timeSpentPercentage }}%
+                                                            </span>
+                                                      </div>
+                                                      <span class="attendance-session-status"
+                                                            [ngClass]="{'present': session.attended, 'absent': !session.attended}">
+                                                            {{ session.attended ? 'Present' : 'Absent' }}
+                                                      </span>
+                                                </div>
+                                          </div>
+                                    </div>
+
+                                    <!-- No Sessions Message -->
+                                    <div *ngIf="expandedClassId === classData.classId && classData.sessions.length === 0"
+                                          class="attendance-sessions">
+                                          <div class="attendance-empty">
+                                                <i class="fa-solid fa-calendar-xmark"></i>
+                                                <p class="attendance-empty-title">No sessions yet</p>
+                                                <p class="attendance-empty-text">Sessions will appear here once they are
+                                                      conducted</p>
+                                          </div>
                                     </div>
                               </div>
                         </div>
