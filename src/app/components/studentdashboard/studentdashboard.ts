@@ -418,7 +418,7 @@ export class Studentdashboard implements OnInit {
     try {
       const token = localStorage.getItem('token');
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-      const response: any = await lastValueFrom(this.http.get('http://localhost:5000/api/sessions/attendance/student', { headers, withCredentials: true }));
+      const response: any = await lastValueFrom(this.http.get('https://orbitbackend-0i66.onrender.com/api/sessions/attendance/student', { headers, withCredentials: true }));
       if (response && response.success) {
         this.attendanceData = response;
         console.log('Attendance Data:', this.attendanceData);
