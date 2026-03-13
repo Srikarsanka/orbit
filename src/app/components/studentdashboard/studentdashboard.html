@@ -1,7 +1,9 @@
 <div class="dashboard-container">
       <!-- SIDEBAR -->
       <aside class="sidebar">
-            <h2 class="brand"><span class="brand-highlight">O</span>rbit</h2>
+            <h2 class="brand">
+                  <span class="brand-highlight">O</span>rbit
+            </h2>
 
             <nav class="menu">
                   <a class="menu-item" [ngClass]="{active: selectedSection=='dashboard'}" (click)="select('dashboard')">
@@ -19,6 +21,7 @@
                   <a class="menu-item" [ngClass]="{active: selectedSection=='announcements'}"
                         (click)="select('announcements')">
                         <i class="fa-solid fa-bullhorn"></i> Announcements
+                        <span class="nav-badge" *ngIf="newAnnouncementsCount() > 0">{{ newAnnouncementsCount() }}</span>
                   </a>
 
                   <a class="menu-item" [ngClass]="{active: selectedSection=='attendance'}"
@@ -26,17 +29,14 @@
                         <i class="fa-solid fa-clipboard-check"></i> My Attendance
                   </a>
 
-                  <a class="menu-item" [ngClass]="{active: selectedSection=='materials'}" (click)="select('materials')">
-                        <i class="fa-solid fa-folder-open"></i> Materials
-                  </a>
-
                   <a class="menu-item" [ngClass]="{active: selectedSection=='recordings'}"
                         (click)="select('recordings')">
                         <i class="fa-solid fa-circle-play"></i> Recorded Classes
+                        <span class="nav-badge" *ngIf="newRecordingsCount() > 0">{{ newRecordingsCount() }}</span>
                   </a>
 
-                  <a class="menu-item" [ngClass]="{active: selectedSection=='profile'}" (click)="select('profile')">
-                        <i class="fa-solid fa-user"></i> Profile
+                  <a class="menu-item" [ngClass]="{active: selectedSection=='materials'}" (click)="select('materials')">
+                        <i class="fa-solid fa-folder-open"></i> Materials Upload
                   </a>
 
                   <a class="menu-item" [ngClass]="{active: selectedSection=='ai'}" (click)="select('ai')">
@@ -45,10 +45,6 @@
 
                   <a class="menu-item" [ngClass]="{active: selectedSection=='compiler'}" (click)="select('compiler')">
                         <i class="fa-solid fa-code"></i> Compiler
-                  </a>
-
-                  <a class="menu-item logout" (click)="logout()">
-                        <i class="fa-solid fa-right-from-bracket"></i> Logout
                   </a>
             </nav>
       </aside>
@@ -62,6 +58,28 @@
                         <p class="dashboard-subtitle">Here's your learning overview for today</p>
                   </div>
 
+                  <div class="header-actions">
+                        <button class="notification-bell" title="Notifications">
+                              <i class="fa-solid fa-bell"></i>
+                              <span class="bell-badge" *ngIf="totalNotifications() > 0">{{ totalNotifications()
+                                    }}</span>
+                        </button>
+
+                        <div class="header-profile-pill" (click)="select('profile')" title="View Profile">
+                              <div class="profile-avatar">
+                                    <img *ngIf="photourl" [src]="photourl" alt="Profile" />
+                                    <i *ngIf="!photourl" class="fa-solid fa-user"></i>
+                              </div>
+                              <div class="profile-info-compact">
+                                    <span class="profile-name">{{ name }}</span>
+                                    <span class="profile-role">Student</span>
+                              </div>
+                        </div>
+
+                        <button class="header-icon-btn logout-btn" (click)="logout()" title="Logout">
+                              <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                  </div>
             </div>
 
             <!-- Enhanced Stats Grid -->
@@ -820,14 +838,40 @@
             </div>
 
             <div class="announcements-container">
+                  <!-- Announcement Search & Filter -->
+                  <div class="announcement-search-section">
+                        <div class="announcement-search-box">
+                              <i class="fa-solid fa-search search-icon"></i>
+                              <input type="text" [(ngModel)]="announcementSearchText"
+                                    placeholder="Search announcements by class, title, or instructor...">
+                        </div>
+                        <div class="announcement-count" *ngIf="announcementSearchText">
+                              Found {{filteredAnnouncements.length}} announcement{{filteredAnnouncements.length !== 1 ?
+                              's' : ''}}
+                        </div>
+                  </div>
+
                   <div *ngIf="loadingAnnouncements" class="announcements-loading">
                         <i class="fa-solid fa-spinner fa-spin"></i>
                         <p>Fetching announcements...</p>
                   </div>
 
-                  <div class="announcements-list" style="display:flex"
-                        *ngIf="!loadingAnnouncements && announcements.length > 0">
-                        <div class="announcement-card" *ngFor="let item of announcements">
+                  <!-- No Search Results State -->
+                  <div *ngIf="filteredAnnouncements.length === 0 && announcementSearchText"
+                        class="announcements-no-search-results">
+                        <div class="no-results-icon">
+                              <i class="fa-solid fa-magnifying-glass-minus"></i>
+                        </div>
+                        <h3>No announcements found</h3>
+                        <p>We couldn't find anything matching "<b>{{announcementSearchText}}</b>"</p>
+                        <button class="btn-clear-search" (click)="announcementSearchText = ''">
+                              Clear Search
+                        </button>
+                  </div>
+
+                  <div class="announcements-list" *ngIf="!loadingAnnouncements && filteredAnnouncements.length > 0">
+                        <div class="announcement-card" *ngFor="let item of filteredAnnouncements"
+                              (click)="openAnnouncementModal(item)">
                               <div class="announcement-badge">
                                     <i class="fa-solid fa-circle-info"></i>
                                     {{ item.className }}
@@ -855,6 +899,48 @@
                         <i class="fa-solid fa-bell-slash"></i>
                         <h3>No announcements yet</h3>
                         <p>When your instructors post announcements, they will appear here.</p>
+                  </div>
+
+                  <!-- Announcement Modal -->
+                  <div class="announcement-modal-overlay" *ngIf="selectedAnnouncement"
+                        (click)="closeAnnouncementModal()">
+                        <div class="announcement-modal" (click)="$event.stopPropagation()">
+                              <div class="modal-header">
+                                    <div class="modal-badge">
+                                          <i class="fa-solid fa-circle-info"></i>
+                                          {{ selectedAnnouncement.className }}
+                                          <span class="modal-class-code" *ngIf="selectedAnnouncement.classCode">
+                                                • {{ selectedAnnouncement.classCode }}
+                                          </span>
+                                    </div>
+                                    <button class="close-btn" (click)="closeAnnouncementModal()">
+                                          <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                              </div>
+                              <div class="modal-body">
+                                    <h2>{{ selectedAnnouncement.title }}</h2>
+                                    <div class="modal-meta-row">
+                                          <div class="modal-faculty">
+                                                <img *ngIf="selectedAnnouncement.facultyPhoto"
+                                                      [src]="selectedAnnouncement.facultyPhoto" class="faculty-img">
+                                                <div *ngIf="!selectedAnnouncement.facultyPhoto" class="faculty-avatar">
+                                                      <i class="fa-solid fa-user-tie"></i>
+                                                </div>
+                                                <div class="faculty-text">
+                                                      <span class="f-label">Instructor</span>
+                                                      <span class="f-name">{{ selectedAnnouncement.facultyName }}</span>
+                                                </div>
+                                          </div>
+                                          <div class="modal-date">
+                                                <i class="fa-solid fa-calendar-day"></i>
+                                                {{ formatDate(selectedAnnouncement.createdAt) }}
+                                          </div>
+                                    </div>
+                                    <div class="modal-message-content">
+                                          <p>{{ selectedAnnouncement.message }}</p>
+                                    </div>
+                              </div>
+                        </div>
                   </div>
             </div>
       </section>

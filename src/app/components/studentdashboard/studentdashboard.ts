@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -129,6 +129,49 @@ export class Studentdashboard implements OnInit {
      ============================================================ */
   announcements: any[] = [];
   loadingAnnouncements: boolean = false;
+  announcementSearchText: string = '';
+
+  get filteredAnnouncements() {
+    if (!this.announcementSearchText) return this.announcements;
+
+    const lowerCaseSearch = this.announcementSearchText.toLowerCase();
+    return this.announcements.filter(item =>
+      (item.title && item.title.toLowerCase().includes(lowerCaseSearch)) ||
+      (item.className && item.className.toLowerCase().includes(lowerCaseSearch)) ||
+      (item.facultyName && item.facultyName.toLowerCase().includes(lowerCaseSearch)) ||
+      (item.message && item.message.toLowerCase().includes(lowerCaseSearch))
+    );
+  }
+
+  selectedAnnouncement: any = null;
+
+  openAnnouncementModal(announcement: any): void {
+    // Make a copy so we can enrich it without mutating the list instance unintentionally
+    this.selectedAnnouncement = { ...announcement };
+
+    // Try to find corresponding class details to fetch the photo/code if they are missing
+    const classDetails = this.myClasses.find(c => c.className === announcement.className);
+    if (classDetails) {
+      if (!this.selectedAnnouncement.facultyPhoto) {
+        this.selectedAnnouncement.facultyPhoto = classDetails.facultyPhoto;
+      }
+      if (!this.selectedAnnouncement.classCode) {
+        this.selectedAnnouncement.classCode = classDetails.classCode;
+      }
+    }
+  }
+
+  closeAnnouncementModal(): void {
+    this.selectedAnnouncement = null;
+  }
+
+  /* ============================================================
+     NOTIFICATIONS & TOAST STATE (Signals)
+     ============================================================ */
+  newAnnouncementsCount = signal<number>(3); // Initial mock data
+  newRecordingsCount = signal<number>(2); // Initial mock data
+
+  totalNotifications = computed(() => this.newAnnouncementsCount() + this.newRecordingsCount());
 
   /* ============================================================
      UI STATE
@@ -315,7 +358,7 @@ export class Studentdashboard implements OnInit {
     }
 
     this.http.get<any>(
-      "http://localhost:5000/auth/redirect",
+      "https://orbitbackend-0i66.onrender.com/auth/redirect",
       {
         withCredentials: true,
         headers: headers
@@ -347,7 +390,7 @@ export class Studentdashboard implements OnInit {
 
     try {
       const res: any = await lastValueFrom(this.http.post(
-        "http://localhost:5000/api/student/classes",
+        "https://orbitbackend-0i66.onrender.com/api/student/classes",
         { studentEmail: this.user.email },
         { withCredentials: true }
       ));
@@ -394,7 +437,7 @@ export class Studentdashboard implements OnInit {
     this.loadingAnnouncements = true;
     try {
       const response: any = await lastValueFrom(this.http.post(
-        'http://localhost:5000/api/announcements/student',
+        'https://orbitbackend-0i66.onrender.com/api/announcements/student',
         { studentEmail: this.user.email },
         { withCredentials: true }
       ));
@@ -498,7 +541,7 @@ export class Studentdashboard implements OnInit {
     };
 
     this.http.post<any>(
-      "http://localhost:5000/api/student/join",
+      "https://orbitbackend-0i66.onrender.com/api/student/join",
       payload,
       { withCredentials: true }
     ).subscribe({
@@ -531,8 +574,20 @@ export class Studentdashboard implements OnInit {
     this.editMode = ''; // Reset edit mode when switching sections
     this.clearProfileMessages();
 
+    // Clear Notification Badges and show Toast
     if (section === 'announcements') {
       this.fetchAnnouncements();
+      if (this.newAnnouncementsCount() > 0) {
+        this.newAnnouncementsCount.set(0);
+        this.showToast('Cleared Announcement Notifications');
+      }
+    }
+
+    if (section === 'recordings') {
+      if (this.newRecordingsCount() > 0) {
+        this.newRecordingsCount.set(0);
+        this.showToast('Cleared Recording Notifications');
+      }
     }
 
     if (section !== "joinclass") {
@@ -558,7 +613,7 @@ export class Studentdashboard implements OnInit {
     this.currentClassRecordings = [];
     try {
       const res: any = await this.http.get(
-        `http://localhost:5000/api/recordings/class/${classId}`,
+        `https://orbitbackend-0i66.onrender.com/api/recordings/class/${classId}`,
         { withCredentials: true }
       ).toPromise();
       this.currentClassRecordings = res.recordings || [];
@@ -571,8 +626,8 @@ export class Studentdashboard implements OnInit {
   }
 
   playRecording(rec: any) {
-    const videoSrc = rec.fileUrl || `http://localhost:5000/api/recordings/file/${rec.filename}`;
-    const playerUrl = 'http://localhost:5000/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
+    const videoSrc = rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`;
+    const playerUrl = 'https://orbitbackend-0i66.onrender.com/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
       + '&lang=en'
       + '&title=' + encodeURIComponent(rec.title || 'Class Recording')
       + '&faculty=' + encodeURIComponent(rec.facultyName || 'Faculty')
@@ -583,7 +638,7 @@ export class Studentdashboard implements OnInit {
   }
 
   openTranslatePanel(rec: any) {
-    const videoSrc = rec.fileUrl || `http://localhost:5000/api/recordings/file/${rec.filename}`;
+    const videoSrc = rec.fileUrl || `https://orbitbackend-0i66.onrender.com/api/recordings/file/${rec.filename}`;
 
     // Create overlay
     const overlay = document.createElement('div');
@@ -767,7 +822,7 @@ export class Studentdashboard implements OnInit {
     formData.append('studentEmail', this.user?.email || '');
 
     this.http.post<any>(
-      "http://localhost:5000/api/student/update-photo",
+      "https://orbitbackend-0i66.onrender.com/api/student/update-photo",
       formData,
       { withCredentials: true }
     ).subscribe({
@@ -826,7 +881,7 @@ export class Studentdashboard implements OnInit {
     };
 
     this.http.post<any>(
-      "http://localhost:5000/api/student/change-password",
+      "https://orbitbackend-0i66.onrender.com/api/student/change-password",
       payload,
       { withCredentials: true }
     ).subscribe({
@@ -864,7 +919,7 @@ export class Studentdashboard implements OnInit {
     try {
       const res: any = await this.http
         .post(
-          `http://localhost:5000/api/openclass/${classCode}`,
+          `https://orbitbackend-0i66.onrender.com/api/openclass/${classCode}`,
           {},
           { withCredentials: true }
         )
@@ -977,7 +1032,7 @@ export class Studentdashboard implements OnInit {
       const renderAnnouncements = async () => {
         content.innerHTML = '<p style="text-align:center; padding:20px; color:#666;">Loading announcements...</p>';
         try {
-          const res: any = await this.http.get(`http://localhost:5000/api/announcements/class/${room._id}`, { withCredentials: true }).toPromise();
+          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/announcements/class/${room._id}`, { withCredentials: true }).toPromise();
           const list = res.announcements || [];
 
           if (!list.length) {
@@ -1004,7 +1059,7 @@ export class Studentdashboard implements OnInit {
       const renderMaterials = async () => {
         content.innerHTML = '<p style="text-align:center; padding:20px; color:#666;">Loading materials...</p>';
         try {
-          const res: any = await this.http.get(`http://localhost:5000/api/material/${room._id}`, { withCredentials: true }).toPromise();
+          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/material/${room._id}`, { withCredentials: true }).toPromise();
           const list = res.materials || [];
 
           if (!list.length) {
@@ -1013,7 +1068,7 @@ export class Studentdashboard implements OnInit {
           }
           content.innerHTML = '';
           list.forEach((m: any) => {
-            const fileUrl = m.fileUrl ? 'http://localhost:5000' + m.fileUrl : m.externalLink;
+            const fileUrl = m.fileUrl ? 'https://orbitbackend-0i66.onrender.com' + m.fileUrl : m.externalLink;
             const card = document.createElement('div');
             card.style.cssText = `background:white; padding:16px; margin-bottom:12px; border-radius:12px; border:1px solid #E4E7EB; display:flex; justify-content:space-between; align-items:center;`;
             card.innerHTML = `
@@ -1040,7 +1095,7 @@ export class Studentdashboard implements OnInit {
 
         try {
           const sessionRes: any = await this.http.get(
-            `http://localhost:5000/api/sessions/active/${room._id}`,
+            `https://orbitbackend-0i66.onrender.com/api/sessions/active/${room._id}`,
             { withCredentials: true }
           ).toPromise();
 
@@ -1081,7 +1136,7 @@ export class Studentdashboard implements OnInit {
           const joinBtn = document.getElementById('joinBtn');
           if (joinBtn) {
             joinBtn.onclick = () => {
-              const url = `http://localhost:5000/video/room.html?session=${sessionRes.sessionId}&role=student&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
+              const url = `https://orbitbackend-0i66.onrender.com/video/room.html?session=${sessionRes.sessionId}&role=student&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
               window.open(url, '_blank');
             };
           }
@@ -1113,7 +1168,7 @@ export class Studentdashboard implements OnInit {
         content.appendChild(container);
 
         try {
-          const res: any = await this.http.get(`http://localhost:5000/api/recordings/class/${room._id}`, { withCredentials: true }).toPromise();
+          const res: any = await this.http.get(`https://orbitbackend-0i66.onrender.com/api/recordings/class/${room._id}`, { withCredentials: true }).toPromise();
           const recordings = res.recordings || [];
 
           if (!recordings.length) {
@@ -1181,8 +1236,8 @@ export class Studentdashboard implements OnInit {
             `;
 
             const openPlayer = (lang: string) => {
-              const videoSrc = rec.fileUrl || 'http://localhost:5000/api/recordings/file/' + rec.filename;
-              const playerUrl = 'http://localhost:5000/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
+              const videoSrc = rec.fileUrl || 'https://orbitbackend-0i66.onrender.com/api/recordings/file/' + rec.filename;
+              const playerUrl = 'https://orbitbackend-0i66.onrender.com/video/recording_player.html?src=' + encodeURIComponent(videoSrc)
                 + '&lang=' + lang
                 + '&title=' + encodeURIComponent(rec.title || 'Class Recording')
                 + '&faculty=' + encodeURIComponent(rec.facultyName || 'Faculty')
@@ -1309,7 +1364,7 @@ export class Studentdashboard implements OnInit {
   logout() {
     // Call logout API
     this.http.post<any>(
-      "http://localhost:5000/auth/logout",
+      "https://orbitbackend-0i66.onrender.com/auth/logout",
       {},
       { withCredentials: true }
     ).subscribe({
@@ -1389,7 +1444,7 @@ export class Studentdashboard implements OnInit {
     this.clearOutput();
 
     try {
-      const res: any = await this.http.post('http://localhost:5000/api/compiler/execute', {
+      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/compiler/execute', {
         language: this.compilerLanguage,
         code: this.compilerCode,
         input: this.compilerInput // Send user input
@@ -1500,7 +1555,7 @@ Provide:
 
 Keep it conversational and easy to read.`;
 
-      const res: any = await this.http.post('http://localhost:5000/api/ai/generate', {
+      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/ai/generate', {
         prompt: prompt
       }).toPromise();
 
@@ -1529,7 +1584,7 @@ ${this.compilerCode}
 
 Explain what caused this error and how to fix it. Be clear and concise. Do not use markdown formatting like asterisks or bold text. Keep it conversational.`;
 
-      const res: any = await this.http.post('http://localhost:5000/api/ai/generate', {
+      const res: any = await this.http.post('https://orbitbackend-0i66.onrender.com/api/ai/generate', {
         prompt: prompt
       }).toPromise();
 
@@ -1785,7 +1840,7 @@ Explain what caused this error and how to fix it. Be clear and concise. Do not u
       this.hubLoading = true;
       const query = this.searchHubQuery.trim() || 'computer science';
       try {
-        const url = `http://localhost:5000/api/books/search?q=${encodeURIComponent(query)}`;
+        const url = `https://orbitbackend-0i66.onrender.com/api/books/search?q=${encodeURIComponent(query)}`;
         const response: any = await lastValueFrom(this.http.get(url));
         if (response && response.success) {
           this.hubBooks = response.books;
@@ -1804,7 +1859,7 @@ Explain what caused this error and how to fix it. Be clear and concise. Do not u
   async getEducationNews(topic?: string) {
     this.hubLoading = true;
     try {
-      let url = 'http://localhost:5000/api/news';
+      let url = 'https://orbitbackend-0i66.onrender.com/api/news';
       if (topic) {
         url += `?topics=${topic}`;
       }

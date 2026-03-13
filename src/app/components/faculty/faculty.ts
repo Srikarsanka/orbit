@@ -1149,7 +1149,7 @@ export class Faculty implements OnInit {
             if (res.sessionId) {
               const url = `https://orbitbackend-0i66.onrender.com/video/room.html?session=${res.sessionId}&role=faculty&email=${this.user?.email}&name=${encodeURIComponent(this.user?.fullName || '')}&deviceId=${localStorage.getItem('deviceId') || ''}`;
               window.open(url, '_blank');
-              this.showToast('Live session started', 'success');
+              this.showToast('Session started successfully!', 'success');
             }
             startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start Now';
           } catch (e) {
@@ -2595,4 +2595,23 @@ export class Faculty implements OnInit {
     this.selectedStudentDetails = null;
   }
 
+  // ============================================================
+  // LOGOUT
+  // ============================================================
+  logout() {
+    this.http.post<any>(
+      "https://orbitbackend-0i66.onrender.com/auth/logout",
+      {},
+      { withCredentials: true }
+    ).subscribe({
+      next: () => {
+        document.cookie = "orbit_user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        window.location.href = "/login";
+      },
+      error: (err) => {
+        console.error("Logout failed", err);
+        window.location.href = "/login";
+      }
+    });
+  }
 }

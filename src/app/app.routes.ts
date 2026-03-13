@@ -28,13 +28,13 @@ export const routes: Routes = [
     path: 'teacherdashboard',
     component: Faculty,
     canActivate: [AuthGuard, RoleGuard],
-    data: { role: 'faculty' }  // 🔥 Protected route
+    data: { role: 'faculty', hideLayout: true }  // 🔥 Protected route
   },
   {
     path: 'studentdashboard',
     component: Studentdashboard,
     canActivate: [AuthGuard, RoleGuard,],
-    data: { role: 'student' }  // 🔥 Protected route
+    data: { role: 'student', hideLayout: true }  // 🔥 Protected route
   },
   {
     path: 'compiler',
