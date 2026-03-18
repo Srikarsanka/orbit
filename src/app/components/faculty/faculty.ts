@@ -2024,7 +2024,8 @@ export class Faculty implements OnInit {
 
   downloadMaterial(material: Material): void {
     if (material.fileUrl) {
-      window.open('https://orbitbackend-0i66.onrender.com' + material.fileUrl, '_blank');
+      const url = material.fileUrl.startsWith('http') ? material.fileUrl : 'https://orbitbackend-0i66.onrender.com' + material.fileUrl;
+      window.open(url, '_blank');
     } else if (material.externalLink) {
       window.open(material.externalLink, '_blank');
     } else {
@@ -2038,7 +2039,7 @@ export class Faculty implements OnInit {
     if (material.externalLink) {
       shareUrl = material.externalLink;
     } else if (material.fileUrl) {
-      shareUrl = 'https://orbitbackend-0i66.onrender.com' + material.fileUrl;
+      shareUrl = material.fileUrl.startsWith('http') ? material.fileUrl : 'https://orbitbackend-0i66.onrender.com' + material.fileUrl;
     } else {
       this.showToast('No sharable link available');
       return;

@@ -1068,7 +1068,9 @@ export class Studentdashboard implements OnInit {
           }
           content.innerHTML = '';
           list.forEach((m: any) => {
-            const fileUrl = m.fileUrl ? 'https://orbitbackend-0i66.onrender.com' + m.fileUrl : m.externalLink;
+            const fileUrl = m.fileUrl 
+              ? (m.fileUrl.startsWith('http') ? m.fileUrl : 'https://orbitbackend-0i66.onrender.com' + m.fileUrl)
+              : m.externalLink;
             const card = document.createElement('div');
             card.style.cssText = `background:white; padding:16px; margin-bottom:12px; border-radius:12px; border:1px solid #E4E7EB; display:flex; justify-content:space-between; align-items:center;`;
             card.innerHTML = `
