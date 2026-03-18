@@ -131,6 +131,24 @@ export class Studentdashboard implements OnInit {
   loadingAnnouncements: boolean = false;
   announcementSearchText: string = '';
 
+  /* ============================================================
+     MATERIALS STATE
+     ============================================================ */
+  globalMaterials: any[] = [];
+  loadingMaterials: boolean = false;
+  materialsSearchText: string = '';
+
+  get filteredMaterials() {
+    if (!this.materialsSearchText) return this.globalMaterials;
+    const q = this.materialsSearchText.toLowerCase();
+    return this.globalMaterials.filter(m =>
+      (m.title && m.title.toLowerCase().includes(q)) ||
+      (m.className && m.className.toLowerCase().includes(q)) ||
+      (m.facultyName && m.facultyName.toLowerCase().includes(q))
+    );
+  }
+
+
   get filteredAnnouncements() {
     if (!this.announcementSearchText) return this.announcements;
 
@@ -422,6 +440,9 @@ export class Studentdashboard implements OnInit {
       // Load Announcements
       this.fetchAnnouncements();
 
+      // Load Materials
+      this.fetchMaterials();
+
     } catch (error) {
       console.error("Error loading classes:", error);
       this.myClasses = [];
@@ -471,6 +492,28 @@ export class Studentdashboard implements OnInit {
       this.showToast('Failed to load attendance data', 'error');
     } finally {
       this.loadingAttendance = false;
+    }
+  }
+
+  /* ============================================================
+     FETCH MATERIALS
+     ============================================================ */
+  async fetchMaterials() {
+    if (!this.user?.email) return;
+    this.loadingMaterials = true;
+    try {
+      const response: any = await lastValueFrom(this.http.post(
+        'https://orbitbackend-0i66.onrender.com/api/material/student',
+        { studentEmail: this.user.email },
+        { withCredentials: true }
+      ));
+      if (response && response.materials) {
+        this.globalMaterials = response.materials;
+      }
+    } catch (error) {
+      console.error('Error fetching materials:', error);
+    } finally {
+      this.loadingMaterials = false;
     }
   }
 

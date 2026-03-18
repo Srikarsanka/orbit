@@ -954,15 +954,80 @@
       <section *ngIf="selectedSection === 'materials'" class="materials-section">
             <div class="section-header">
                   <h1><i class="fa-solid fa-folder-open"></i> Materials</h1>
-                  <p>Access study materials and resources.</p>
+                  <p>Access study materials and resources from all your classes.</p>
             </div>
-            
-            <div class="materials-container" style="max-width: 1200px; padding: 1rem 0;">
-                  <div id="materials-content" style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-                        <!-- Dynamic materials injected here -->
+
+            <div class="materials-container">
+
+                  <!-- Search Bar -->
+                  <div class="announcement-search-section">
+                        <div class="announcement-search-box">
+                              <i class="fa-solid fa-search search-icon"></i>
+                              <input type="text" [(ngModel)]="materialsSearchText"
+                                    placeholder="Search materials by title, class, or instructor...">
+                        </div>
+                        <div class="announcement-count" *ngIf="materialsSearchText">
+                              Found {{filteredMaterials.length}} material{{filteredMaterials.length !== 1 ? 's' : ''}}
+                        </div>
                   </div>
+
+                  <!-- Loading State -->
+                  <div *ngIf="loadingMaterials" class="announcements-loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <p>Fetching materials...</p>
+                  </div>
+
+                  <!-- Materials List -->
+                  <div class="materials-list" *ngIf="!loadingMaterials && filteredMaterials.length > 0">
+                        <div class="material-card" *ngFor="let mat of filteredMaterials">
+                              <div class="material-icon-wrap">
+                                    <i class="fa-solid"
+                                          [class.fa-file-pdf]="mat.fileUrl?.includes('.pdf') || mat.type === 'pdf'"
+                                          [class.fa-file-image]="mat.type?.includes('image')"
+                                          [class.fa-file-word]="mat.fileUrl?.includes('.doc')"
+                                          [class.fa-file-powerpoint]="mat.fileUrl?.includes('.ppt')"
+                                          [class.fa-file-lines]="!(mat.fileUrl?.includes('.pdf') || mat.fileUrl?.includes('.doc') || mat.fileUrl?.includes('.ppt') || mat.type?.includes('image'))">
+                                    </i>
+                              </div>
+                              <div class="material-info">
+                                    <h3 class="material-title">{{ mat.title }}</h3>
+                                    <div class="material-meta">
+                                          <span class="material-class-badge">
+                                                <i class="fa-solid fa-graduation-cap"></i>
+                                                {{ mat.className }}
+                                          </span>
+                                          <span class="material-faculty">
+                                                <i class="fa-solid fa-user-tie"></i>
+                                                {{ mat.facultyName }}
+                                          </span>
+                                          <span class="material-date">
+                                                <i class="fa-regular fa-calendar"></i>
+                                                {{ mat.createdAt | date:'mediumDate' }}
+                                          </span>
+                                    </div>
+                              </div>
+                              <div class="material-actions-btns">
+                                    <a [href]="(mat.fileUrl && mat.fileUrl.startsWith('http')) ? mat.fileUrl : mat.externalLink"
+                                          target="_blank"
+                                          class="btn-material-download">
+                                          <i class="fa-solid fa-download"></i>
+                                          Download
+                                    </a>
+                              </div>
+                        </div>
+                  </div>
+
+                  <!-- Empty State -->
+                  <div class="announcements-empty" *ngIf="!loadingMaterials && globalMaterials.length === 0">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <h3>No materials yet</h3>
+                        <p>When your instructors upload study materials, they will appear here.</p>
+                  </div>
+
             </div>
       </section>
+
+
 
       <!-- LEARNING HUB SECTION -->
       <section *ngIf="selectedSection === 'ai'" class="hub-section">
