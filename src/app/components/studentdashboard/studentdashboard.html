@@ -1244,20 +1244,9 @@
                               </div>
 
                               <div class="editor-container">
-                                    <div class="line-numbers">
-                                          <div *ngFor="let num of getLineNumbers()" class="line-number">{{ num }}
-                                          </div>
+                                    <div class="monaco-container" style="height: 480px; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid #1e293b; background: #1e1e1e;">
+                                          <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="compilerCode" style="height: 100%;"></ngx-monaco-editor>
                                     </div>
-
-                                    <!-- Syntax Highlighting Overlay -->
-                                    <pre
-                                          class="code-highlight"><code [class]="'language-' + compilerLanguage" [innerHTML]="getHighlightedCode()"></code></pre>
-
-                                    <!-- Transparent Textarea for Input -->
-                                    <textarea class="code-textarea" [(ngModel)]="compilerCode"
-                                          [placeholder]="getCompilerPlaceholder()"
-                                          (input)="updateLineNumbers(); updateHighlight()" (scroll)="syncScroll($event)"
-                                          (keydown)="handleTabKey($event)" spellcheck="false"></textarea>
                               </div>
                         </div>
 

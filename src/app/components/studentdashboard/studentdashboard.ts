@@ -78,12 +78,14 @@ interface HubArticle {
   highlights?: string[];
 }
 
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+
 @Component({
   selector: 'app-studentdashboard',
   templateUrl: './studentdashboard.html',
   styleUrls: ['./studentdashboard.css', './dashboard-modern.css', './attendance-styles.css'],
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule]
+  imports: [HttpClientModule, CommonModule, FormsModule, MonacoEditorModule]
 })
 export class Studentdashboard implements OnInit {
 
@@ -235,6 +237,7 @@ export class Studentdashboard implements OnInit {
     { id: 'cpp', name: 'C++', icon: 'devicon-cplusplus-plain colored' }
   ];
   compilerLanguage: string = 'python';
+  editorOptions = { theme: 'vs-dark', language: 'python', automaticLayout: true };
   compilerCode: string = `# Python Code\nprint("Hello, World!")\n\n# Try some math\nx = 10\ny = 20\nprint(f"Sum: {x + y}")`;
   compilerInput: string = ''; // User input for stdin
   isExecutingCode: boolean = false;
@@ -1473,6 +1476,7 @@ export class Studentdashboard implements OnInit {
   }
 
   onCompilerLanguageChange() {
+    this.editorOptions = { ...this.editorOptions, language: this.compilerLanguage };
     if (this.compilerTemplates[this.compilerLanguage]) {
       this.compilerCode = this.compilerTemplates[this.compilerLanguage];
     }
